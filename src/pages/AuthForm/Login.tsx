@@ -1,47 +1,51 @@
+// Login.tsx (your React component)
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import supabase from '../../api/supabaseClient'; // Adjust the import path
+import { login } from '../../api/authapi'; // Adjust path as needed
 
-const Login = () => {
+const Login: React.FC = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [redirect, setRedirect] = useState(false);
-  const [userRole, setUserRole] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: formData.email,
-        password: formData.password,
-      });
-      console.log('Supabase Response:', data); // Log the response
-      console.log('Supabase Error:', error); // Log any errors
-  
+  e.preventDefault();
+  setIsLoading(true);
+  setMessage('');
 
-      if (error) {
-        throw error;
-      }
+  try {
+    const result = await login(formData);
 
-      // Check the user's role (assuming it's stored in user_metadata)
-      const role = data.user?.user_metadata?.role || 'user';
-      setUserRole(role);
+    if (result.error) {
+      setMessage(result.error);
+      return;
+    }
+
+    // Handle successful login
+    if (result.token && result.profile) {
+      localStorage.setItem('authToken', result.token);
+      localStorage.setItem('userId', result.profile.id);
+      localStorage.setItem('userRole', result.profile.role);
       setRedirect(true);
-    } catch (error: any) {
-      setMessage(error.message || 'Login failed');
-    }
-  };
-
-  if (redirect) {
-    if (userRole === 'admin') {
-      return <Navigate to="/admin-dashboard" />;
     } else {
-      return <Navigate to="/dashboard" />;
+      setMessage("Login successful, but missing user data. Please contact support.");
     }
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+  const userRole = localStorage.getItem('userRole');
+  if (redirect && userRole) {
+    const redirectTo = userRole === 'admin' ? "/admin-dashboard" :
+                     userRole === 'venue_manager' ? "/venue-manager-dashboard" :
+                     "/dashboard";
+    return <Navigate to={redirectTo} />;
   }
 
   return (
@@ -54,6 +58,8 @@ const Login = () => {
           placeholder="Email"
           className="border p-2 w-full mb-4"
           onChange={handleChange}
+          value={formData.email}
+          required
         />
         <input
           type="password"
@@ -61,9 +67,15 @@ const Login = () => {
           placeholder="Password"
           className="border p-2 w-full mb-4"
           onChange={handleChange}
+          value={formData.password}
+          required
         />
-        <button type="submit" className="bg-blue-500 text-white p-2 w-full rounded">
-          Login
+        <button
+          type="submit"
+          className="bg-blue-500 text-white p-2 w-full rounded hover:bg-blue-600 disabled:bg-blue-300"
+          disabled={isLoading}
+        >
+          {isLoading ? 'Logging in...' : 'Login'}
         </button>
         {message && <p className="text-center text-red-500 mt-4">{message}</p>}
       </form>

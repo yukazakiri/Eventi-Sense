@@ -1,6 +1,6 @@
 
 import MainNavbar from "../layout/MainNavbar";
-import Button from "../components/button";
+import Button from "../components/Button/button";
 import CardList from "../layout/cards/Event/cardList";
 import Cardvenues from "../layout/cards/Venue/cardList";
 import CardSuppliers from "../layout/cards/Supplier/cardList";

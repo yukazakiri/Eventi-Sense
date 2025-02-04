@@ -4,6 +4,7 @@ interface ModalProps {
   isOpen: boolean;
   title: string;
   description: string;
+  children?: React.ReactNode;
   onClose: () => void;
   type: "success" | "error";
 }
@@ -11,7 +12,6 @@ interface ModalProps {
 const Modal: React.FC<ModalProps> = ({ isOpen, title, description, onClose, type }) => {
   if (!isOpen) return null;
 
-  // Determine the modal's styling based on the type (success or error)
   const modalStyles = {
     success: {
       bgColor: "bg-green-500",

@@ -1,4 +1,5 @@
 /* src/styles/global.css */
+@import url('https://fonts.googleapis.com/css2?family=Sofia+Sans:ital@0;1&display=swap');
 
 /* Custom class for gradient text */
 .gradient-text {
@@ -79,3 +80,30 @@
 }
 
 /* Custom CSS for back shadow (glowing effect) */
+.input-field {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    outline: none;
+    transition: box-shadow 0.2s ease-in-out;
+  }
+  
+  .input-field:focus {
+    box-shadow: 0 0 0 2px #3b82f6;
+}
+
+.btn-primary {
+    background-color: #2563eb; /* bg-blue-600 */
+    color: #ffffff; /* text-white */
+    padding-left: 1rem; /* px-4 */
+    padding-right: 1rem; /* px-4 */
+    padding-top: 0.5rem; /* py-2 */
+    padding-bottom: 0.5rem; /* py-2 */
+    border-radius: 0.5rem; /* rounded-lg */
+    transition: background-color 0.2s ease-in-out; /* transition */
+  }
+  
+  .btn-primary:hover {
+    background-color: #1d4ed8; /* hover:bg-blue-700 */
+}

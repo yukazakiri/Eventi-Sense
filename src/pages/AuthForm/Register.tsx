@@ -1,116 +1,212 @@
-import React, { useState } from "react";
-import { Navigate } from "react-router-dom";
-import Modal from "../../assets/modal/modal"; // Adjust the import path as necessary
+import { useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
+import supabase from '../../api/supabaseClient';
 
-const Register: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [message, setMessage] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+export default function Auth() {
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState('');
   const [redirect, setRedirect] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
-  const handleRegister = async () => {
+  // Fetch user role after successful sign-in
+  useEffect(() => {
+    if (redirect && userRole) {
+      // Redirect logic is handled in the return statement
+    }
+  }, [redirect, userRole]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSignIn = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+    e.preventDefault();
+    setIsLoading(true);
+    setMessage('');
     try {
-      const response = await fetch("http://localhost:5000/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password, name }),
+      // Sign in the user
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessage("Registration successful!");
-        setIsSuccess(true);
-        setShowModal(true);
-      } else {
-        setMessage(data.message || "Registration failed");
-        setIsSuccess(false);
-        setShowModal(true);
-      }
-    } catch (error) {
-      setMessage("An error occurred. Please try again.");
-      setIsSuccess(false);
-      setShowModal(true);
+      if (error) throw error;
+  
+      // Fetch the user's role from the public.profiles table
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user?.id)
+        .single();
+  
+      if (profileError) throw profileError;
+  
+      console.log('Profile Data:', profileData); // Debugging
+      console.log('Profile Error:', profileError); // Debugging
+  
+      // Set the user role and trigger redirect
+      setUserRole(profileData.role);
+      setRedirect(true);
+    } catch (error: any) {
+      setMessage(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-    if (isSuccess) {
-      setRedirect(true); // Redirect to login after successful registration
+  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+    e.preventDefault();
+    setIsLoading(true);
+    setMessage('');
+    try {
+      const signUpData = {
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+          },
+        },
+      };
+      const { data, error } = await supabase.auth.signUp(signUpData);
+      if (error) throw error;
+
+      console.log('User signed up:', data.user);
+      setMessage('Check your email for the confirmation link.');
+    } catch (error: any) {
+      setMessage(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Redirect to login page after successful registration
-  if (redirect) {
-    return <Navigate to="/login" />;
+  // Redirect logic
+  if (redirect && userRole) {
+    const redirectTo =
+      userRole === 'admin'
+        ? '/admin-dashboard'
+        : '/';
+    return <Navigate to={redirectTo} />;
   }
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded shadow-lg w-full max-w-sm">
-        <h2 className="text-xl font-semibold mb-4">Register</h2>
-        <div className="mb-4">
-          <label htmlFor="name" className="block text-sm font-medium">
-            Name
-          </label>
-          <input
-            id="name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="mt-1 p-2 border w-full rounded"
-          />
+    <>
+      {isSignUp ? (
+        // Sign-Up Form
+        <div className="flex justify-center items-center h-screen bg-gray-100">
+          <form onSubmit={handleSignUp} className="bg-white p-8 rounded-lg shadow-lg w-96">
+            <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Sign Up</h2>
+            <div className="space-y-4">
+              <input
+                type="text"
+                name="firstName"
+                placeholder="First Name"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={handleChange}
+                value={formData.firstName}
+                required
+              />
+              <input
+                type="text"
+                name="lastName"
+                placeholder="Last Name"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={handleChange}
+                value={formData.lastName}
+                required
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={handleChange}
+                value={formData.email}
+                required
+              />
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={handleChange}
+                value={formData.password}
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full mt-6 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300 disabled:bg-blue-300"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Signing up...' : 'Sign Up'}
+            </button>
+            {message && <p className="text-center text-red-500 mt-4">{message}</p>}
+            <p className="text-center mt-4 text-gray-600">
+              Already have an account?{' '}
+              <button
+                type="button"
+                onClick={() => setIsSignUp(false)}
+                className="text-blue-500 hover:underline"
+              >
+                Sign In
+              </button>
+            </p>
+          </form>
         </div>
-        <div className="mb-4">
-          <label htmlFor="email" className="block text-sm font-medium">
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 p-2 border w-full rounded"
-          />
+      ) : (
+        // Sign-In Form
+        <div className="flex justify-center items-center h-screen bg-gray-100">
+          <form onSubmit={handleSignIn} className="bg-white p-8 rounded-lg shadow-lg w-96">
+            <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Sign In</h2>
+            <div className="space-y-4">
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={handleChange}
+                value={formData.email}
+                required
+              />
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={handleChange}
+                value={formData.password}
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full mt-6 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300 disabled:bg-blue-300"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Logging in...' : 'Sign In'}
+            </button>
+            {message && <p className="text-center text-red-500 mt-4">{message}</p>}
+            <p className="text-center mt-4 text-gray-600">
+              Don't have an account?{' '}
+              <button
+                type="button"
+                onClick={() => setIsSignUp(true)}
+                className="text-blue-500 hover:underline"
+              >
+                Sign Up
+              </button>
+            </p>
+          </form>
         </div>
-        <div className="mb-4">
-          <label htmlFor="password" className="block text-sm font-medium">
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 p-2 border w-full rounded"
-          />
-        </div>
-        <button
-          onClick={handleRegister}
-          className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-        >
-          Register
-        </button>
-      </div>
-
-      {/* Modal for success/error messages */}
-      {showModal && (
-        <Modal
-          isOpen={showModal}
-          title={isSuccess ? "Success" : "Error"}
-          description={message}
-          onClose={handleCloseModal}
-          type={isSuccess ? "success" : "error"} // Pass the type prop
-        />
       )}
-    </div>
+    </>
   );
-};
-
-export default Register;
+}

@@ -2,8 +2,9 @@ import { Routes, Route } from 'react-router-dom';
 import Register from '../pages/AuthForm/Register';
 import Login from '../pages/AuthForm/Login';
 
-import AdminDashboard from '../pages/Admin/Dashboard';
-import Dashboard from '../pages/Admin/Dashboard';
+import AdminDashboard from '../app/Admin';
+import Dashboard from '../pages/RegularUser/Dashboard';
+import VenueManagerDashboard from '../app/VenueManager';
 
 import ScrollToTop from '../layout/ScrolltoTop';
 import ScrollToTopButton from '../layout/ScrollTop';
@@ -14,8 +15,16 @@ import FAQ from '../pages/FAQ';
 import ContactUs from '../pages/ContactUs';
 import PricingPage from '../pages/PricingPage';
 
-import ProtectedRoute from '../components/Route-Protection/Admin'; // Import the ProtectedRoute component
+
+import ProtectedRoute from '../components/Route-Protection/protection'; // Import the ProtectedRoute component
 import UnauthorizedPage from '../pages/NoAccess/Unauthorized'; // Import the UnauthorizedPage component
+import UserDetails from '../pages/Admin/UserManagement/UserDetails';
+
+import TestSupabase from '../hooks/TestSupabase';
+import Profile from '../pages/ProfilePage';
+import Settings from '../pages/setting';
+
+
 const AppRouter = () => {
   return (
     <>
@@ -28,16 +37,35 @@ const AppRouter = () => {
         <Route path="/Pricing" element={<PricingPage />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
+
+        <Route path="/UserDetails" element={<UserDetails />} />
+        
         <Route path="/dashboard" element={<Dashboard />} /> {/* Regular user dashboard */}
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
+
+        <Route path="/test-supabase" element={<TestSupabase />} />
+       
+        <Route path="/profile" element={<Profile/>} />
+        <Route path="/settings" element={<Settings/>} />
+
+        <Route path="/Venue-Manager-dashboard/*" element={
+          <ProtectedRoute requiredRole="venue_manager">
+          <VenueManagerDashboard />
+          </ProtectedRoute>
+          } /> {/* Regular user dashboard */}
+
+
+
         <Route
-          path="/admin-dashboard"
+          path="/admin-dashboard/*"
           element={
             <ProtectedRoute requiredRole="admin">
               <AdminDashboard />
             </ProtectedRoute>
           }
-        /> {/* Protected admin dashboard */}
+        /> 
+         
       </Routes>
       <ScrollToTopButton />
     </>
