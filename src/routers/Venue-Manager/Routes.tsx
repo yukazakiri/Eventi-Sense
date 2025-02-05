@@ -15,7 +15,7 @@ const routes: RouteObject[] = [
  { path: '/Profile', element: <Profile /> },
  { path: '/CompanyProfile', element: <Company /> },
  { path: '/Financial-Overview', element: <Testimage /> },
- { path: '/Venue', element: <CreateVenue/> },
+ { path: '/CreateVenue', element: <CreateVenue/> },
  { path: '/Venue/:venueId', element: <VenueDetail  /> },
  { path: '/Venue-List', element: <VenueList/> },
 

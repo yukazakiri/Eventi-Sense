@@ -4,8 +4,20 @@ import { useParams } from 'react-router-dom';
 import VenueInfoForm from './VenueDetails/VenueInfor';
 import AddressForm from './VenueDetails/VenueAddress';
 import ImageUploadForm from './VenueDetails/VenueCoverPage';
-
+import AmenitiesForm from './VenueDetails/Amenities';
 import { Venue } from '../../../types/venue';
+
+interface Amenity {
+    id: string; // UUID
+    name: string;
+}
+
+interface VenueAmenity {
+    venue_id: string; // UUID
+    amenity_id: string; // UUID
+    quantity: number | null;
+    description: string | null;
+}
 
 const VenueDetailPage: React.FC = () => {
     const { venueId: venueIdFromParams = '' } = useParams<{ venueId: string }>();
@@ -15,6 +27,9 @@ const VenueDetailPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [isEditingInfo, setIsEditingInfo] = useState(false);
     const [isEditingAddress, setIsEditingAddress] = useState(false);
+    const [venueAmenities, setVenueAmenities] = useState<VenueAmenity[]>([]);
+    const [amenities, setAmenities] = useState<Amenity[]>([]);
+    const [selectedAmenities, setSelectedAmenities] = useState<VenueAmenity[]>([]);
 
     useEffect(() => {
         const venueIdAsNumber = Number(venueIdFromParams);
@@ -22,30 +37,48 @@ const VenueDetailPage: React.FC = () => {
     }, [venueIdFromParams]);
 
     useEffect(() => {
-        const fetchVenue = async () => {
+        const fetchData = async () => {
             if (!venueId) return;
 
             try {
+                setLoading(true);
+
+                // Fetch venue details
                 const { data: venueData, error: venueError } = await supabase
                     .from('venues')
                     .select('*')
                     .eq('id', venueId)
                     .single();
 
-                if (venueError) {
-                    throw venueError;
-                }
-
+                if (venueError) throw venueError;
                 setVenue(venueData);
+
+                // Fetch venue amenities
+                const { data: venueAmenitiesData, error: venueAmenitiesError } = await supabase
+                    .from('venue_amenities')
+                    .select('*')
+                    .eq('venue_id', venueId);
+
+                if (venueAmenitiesError) throw venueAmenitiesError;
+                setVenueAmenities(venueAmenitiesData || []);
+                setSelectedAmenities(venueAmenitiesData || []);
+
+                // Fetch all amenities
+                const { data: amenitiesData, error: amenitiesError } = await supabase
+                    .from('amenities')
+                    .select('*');
+
+                if (amenitiesError) throw amenitiesError;
+                setAmenities(amenitiesData || []);
             } catch (err) {
-                console.error('Error fetching venue details:', err);
-                setError('An error occurred while fetching the venue details.');
+                console.error('Error fetching data:', err);
+                setError('An error occurred while fetching data.');
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchVenue();
+        fetchData();
     }, [venueId]);
 
     const handleSaveVenue = async (updatedVenue: Venue) => {
@@ -55,17 +88,66 @@ const VenueDetailPage: React.FC = () => {
                 .update(updatedVenue)
                 .eq('id', venue!.id);
 
-            if (error) {
-                throw error;
-            }
+            if (error) throw error;
 
             setVenue(updatedVenue);
             setIsEditingInfo(false);
             setIsEditingAddress(false);
-            alert("Venue updated successfully!");
+            alert('Venue updated successfully!');
         } catch (err: any) {
-            console.error("Error updating venue:", err);
-            setError(err?.message || "An error occurred while updating.");
+            console.error('Error updating venue:', err);
+            setError(err?.message || 'An error occurred while updating.');
+        }
+    };
+
+    const handleSaveVenueAmenities = async (venue: Venue, updatedVenueAmenities: VenueAmenity[]) => {
+        try {
+            if (!venue || !venue.id) {
+                console.error('Venue object or ID is missing.');
+                setError('Venue information is missing. Cannot update amenities.');
+                return;
+            }
+
+            // 1. Fetch existing venue amenities
+            const { data: existingVenueAmenities, error: fetchError } = await supabase
+                .from('venue_amenities')
+                .select('*')
+                .eq('venue_id', venue.id);
+
+            if (fetchError) throw fetchError;
+
+            // 2. Determine which amenities to delete
+            const amenitiesToDelete = existingVenueAmenities.filter(
+                (existing) => !updatedVenueAmenities.some((updated) => updated.amenity_id === existing.amenity_id)
+            );
+
+            // 3. Delete unchecked amenities
+            for (const amenity of amenitiesToDelete) {
+                const { error: deleteError } = await supabase
+                    .from('venue_amenities')
+                    .delete()
+                    .eq('venue_id', venue.id)
+                    .eq('amenity_id', amenity.amenity_id);
+
+                if (deleteError) throw deleteError;
+            }
+
+            // 4. Insert or update checked amenities
+            for (const updatedAmenity of updatedVenueAmenities) {
+                const { error: upsertError } = await supabase
+                    .from('venue_amenities')
+                    .upsert([updatedAmenity], { onConflict: 'venue_id,amenity_id' });
+
+                if (upsertError) throw upsertError;
+            }
+
+            // 5. Update local state
+            setVenueAmenities(updatedVenueAmenities);
+            setSelectedAmenities(updatedVenueAmenities);
+            alert('Venue amenities updated successfully!');
+        } catch (err: any) {
+            console.error('Error updating venue amenities:', err);
+            setError(err?.message || 'An error occurred while updating venue amenities.');
         }
     };
 
@@ -83,35 +165,37 @@ const VenueDetailPage: React.FC = () => {
 
     return (
         <div className="p-8">
-            <div className='mx-auto font-sofia'>
-                <section className='my-4'>
+            <div className="mx-auto font-sofia">
+                <section className="my-4">
                     {!isEditingInfo && !isEditingAddress && (
                         <>
-                            <button onClick={() => setIsEditingInfo(true)} 
-                                className="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mr-2"
+                            <button
+                                onClick={() => setIsEditingInfo(true)}
+                                className="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full  text-sm px-8 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mr-2"
                             >
                                 Edit Venue Information
                             </button>
-                            <button onClick={() => setIsEditingAddress(true)} 
-                                className="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                            <button
+                                onClick={() => setIsEditingAddress(true)}
+                                className="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full  text-sm px-8 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                             >
                                 Edit Venue Address
                             </button>
                         </>
                     )}
                     {(isEditingInfo || isEditingAddress) && (
-                        <button 
+                        <button
                             onClick={() => {
                                 setIsEditingInfo(false);
                                 setIsEditingAddress(false);
                             }}
-                            className="text-white bg-red-400 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-blue-800"
+                            className="text-white bg-red-400 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full  text-sm px-8 py-2.5 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-blue-800"
                         >
                             Cancel
                         </button>
                     )}
                 </section>
-                <div className='grid lg:grid-cols-2 gap-8'>
+                <div className="grid lg:grid-cols-2 grid-flow-row gap-8">
                     <div>
                         <VenueInfoForm
                             venue={venue}
@@ -119,21 +203,31 @@ const VenueDetailPage: React.FC = () => {
                             isEditing={isEditingInfo}
                             setIsEditing={setIsEditingInfo}
                         />
-                    </div>
-                    <div>
-                        <AddressForm 
-                            venue={venue} 
-                            onSave={handleSaveVenue} 
-                            isEditing={isEditingAddress} 
-                            setIsEditing={setIsEditingAddress}
-                        />
-                    </div>
-                    <div className='col-span-1'>
+                        <div className='my-8'>
                         <ImageUploadForm venueId={venue.id.toString()} />
                     </div>
-                    <div className='col-span-1  bg-white p-[10rem]'>
-                        asdsad
                     </div>
+                    <div>
+                        <AddressForm
+                            venue={venue}
+                            onSave={handleSaveVenue}
+                            isEditing={isEditingAddress}
+                            setIsEditing={setIsEditingAddress}
+                        />
+                        <div className="my-8">
+                            <AmenitiesForm
+                                venue={venue}
+                                amenities={amenities}
+                                selectedAmenities={selectedAmenities}
+                                onSave={(venue, updatedVenueAmenities) =>
+                                    handleSaveVenueAmenities(venue, updatedVenueAmenities)
+                                }
+                                isEditing={isEditingInfo}
+                                setIsEditing={setIsEditingInfo}
+                            />
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>

@@ -40,7 +40,7 @@ const AddressForm: React.FC<AddressFormProps> = ({ venue, onSave, isEditing, set
 
     if (!isEditing) {
         return (
-            <div className="bg-white p-[2.5rem] shadow-md">
+            <div className="bg-white p-[2.5rem] shadow-xl">
             <h2 className="text-xl font-semibold mb-4">Venue Address</h2>
             <p 
                 className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
@@ -113,7 +113,7 @@ const AddressForm: React.FC<AddressFormProps> = ({ venue, onSave, isEditing, set
 
                 <button
                     type="submit"
-                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-500 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                     Save Changes
                 </button>

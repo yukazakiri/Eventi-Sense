@@ -105,7 +105,7 @@ const ImageUploadForm: React.FC<ImageUploadFormProps> = ({ venueId }) => {
     };
 
     return (
-        <div className="p-8 border bg-white  shadow-lg">
+        <div className="p-8 border bg-white  shadow-xl">
             <h2 className="text-lg font-semibold mb-4">Upload Venue Cover Image</h2>
 
             {currentImageUrl && (
@@ -132,7 +132,7 @@ const ImageUploadForm: React.FC<ImageUploadFormProps> = ({ venueId }) => {
             <button
                 onClick={handleUpload}
                 disabled={uploading}
-                className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-blue-600 disabled:bg-blue-300"
+                className="bg-indigo-600 text-white px-8 py-2 rounded-full  hover:bg-blue-600 disabled:bg-blue-300"
             >
                 {uploading ? 'Uploading...' : 'Upload Image'}
             </button>
