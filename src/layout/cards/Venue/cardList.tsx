@@ -1,67 +1,72 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from './cardDesign'; // Import the Card component
+import supabase from '../../../api/supabaseClient';
+import { useNavigate } from 'react-router-dom';
 
 type CardVenuesProps = {
   limit?: number; // Optional prop to limit the number of cards
 };
 
 const CardVenues: React.FC<CardVenuesProps> = ({ limit }) => {
-  const cardData = [
-    {
-      VenueName: "The Coldest Sunset",
-      PlaceName: "The Hotel 1",
-      Guests: "Up to 500 Guest",
-      image:
-        "https://images.pexels.com/photos/1072179/pexels-photo-1072179.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      rating: 4, // Rating out of 5
-    },
-    {
-      VenueName: "Beautiful Sunrise",
-      PlaceName: "The Hotel 2",
-      Guests: "Up to 500 Guest",
-      image:
-        "https://images.pexels.com/photos/1072179/pexels-photo-1072179.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      rating: 5,
-    },
-    {
-      VenueName: "City Lights at Night",
-      PlaceName: "The Hotel 3",
-      Guests: "Up to 500 Guest",
-      image:
-        "https://images.pexels.com/photos/1072179/pexels-photo-1072179.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      rating: 3,
-    },
-    {
-      VenueName: "Mountain Adventure",
-      PlaceName: "The Hotel 4",
-      Guests: "Up to 500 Guest",
-      image:
-        "https://images.pexels.com/photos/1072179/pexels-photo-1072179.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      rating: 4,
-    },
-    {
-      VenueName: "Beach Paradise",
-      PlaceName: "The Hotel 5",
-      Guests: "Up to 500 Guest",
-      image:
-        "https://images.pexels.com/photos/1072179/pexels-photo-1072179.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      rating: 5,
-    },
-  ];
+  const [venues, setVenues] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  const navigate = useNavigate(); // Initialize useNavigate
 
-  // If a limit is provided, slice the cardData array; otherwise, show all cards
-  const displayedCardData = limit ? cardData.slice(0, limit) : cardData;
+
+  useEffect(() => {
+    const fetchVenues = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('venues') // Replace 'venues' with your actual table name
+          .select('*') // Select all columns
+          .order('id', { ascending: false }); // Sort by ID in descending order
+
+        if (error) {
+          throw error; // Re-throw the error to be caught below
+        }
+
+        if (data) {
+          setVenues(data);
+        } else {
+          setVenues([]); // Handle the case where no data is returned
+        }
+      } catch (error) {
+        setError(error as Error);
+        console.error("Error fetching venues:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVenues();
+  }, []); // Empty dependency array ensures this runs only once on mount
+ 
+  const handleCardClick = (venueId: number) => {  // venueId should match your venue's ID type
+    console.log("Clicked venue ID:", venueId); 
+    navigate(`/venue/${venueId}`); // Navigate to the venue details page
+  };
+
+  if (loading) {
+    return <div>Loading venues...</div>; // Or a more sophisticated loading indicator
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>; // Display the error message
+  }
+
+  const displayedVenues = limit ? venues.slice(0, limit) : venues;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      {displayedCardData.map((data, index) => (
-        <div key={index}>
+      {displayedVenues.map((venue) => (
+        <div key={venue.id} onClick={() => handleCardClick(venue.id)}> {/* Important: Use a unique key from your data (e.g., venue.id) */}
           <Card
-            VenueName={data.VenueName}
-            Guests={data.Guests}
-            PlaceName={data.PlaceName}
-            image={data.image}
-            rating={data.rating} // Pass the rating
+            VenueName={venue.name} // Access properties from your 'venues' data
+            Guests={venue.Guests}
+            PlaceName={venue.location}
+            image={venue.cover_image_url} // Assuming your image URL is in 'image_url'
+            rating={venue.rating} // Access the rating
           />
         </div>
       ))}

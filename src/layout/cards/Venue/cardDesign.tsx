@@ -9,6 +9,8 @@ type CardProps = {
 };
 
 const Card: React.FC<CardProps> = ({ VenueName, PlaceName, Guests, image, rating }) => {
+  console.log("VenueName:", VenueName); // Add these lines
+  console.log("Image URL:", image);
   return (
     <div className="gradient-background overflow-hidden group cursor-pointer rounded-[20px] w-full group">
       {/* Image */}

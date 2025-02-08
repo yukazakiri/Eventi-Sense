@@ -5,6 +5,7 @@ import Login from '../pages/AuthForm/Login';
 import AdminDashboard from '../app/Admin';
 import Dashboard from '../pages/RegularUser/Dashboard';
 import VenueManagerDashboard from '../app/VenueManager';
+import SupplierDashboard from '../app/Supplier';
 
 import ScrollToTop from '../layout/ScrolltoTop';
 import ScrollToTopButton from '../layout/ScrollTop';
@@ -16,7 +17,7 @@ import ContactUs from '../pages/ContactUs';
 import PricingPage from '../pages/PricingPage';
 
 
-import ProtectedRoute from '../components/Route-Protection/protection'; // Import the ProtectedRoute component
+import ProtectedRoute from '../components/Route-Protection/Protection';
 import UnauthorizedPage from '../pages/NoAccess/Unauthorized'; // Import the UnauthorizedPage component
 import UserDetails from '../pages/Admin/UserManagement/UserDetails';
 
@@ -52,6 +53,12 @@ const AppRouter = () => {
         <Route path="/Venue-Manager-dashboard/*" element={
           <ProtectedRoute requiredRole="venue_manager">
           <VenueManagerDashboard />
+          </ProtectedRoute>
+          } /> {/* Regular user dashboard */}
+
+        <Route path="/Supplier-dashboard/*" element={
+          <ProtectedRoute requiredRole="supplier">
+          <SupplierDashboard />
           </ProtectedRoute>
           } /> {/* Regular user dashboard */}
 

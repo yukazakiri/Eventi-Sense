@@ -85,18 +85,18 @@ const CompanyVenuesPage: React.FC = () => {
   }, [companyProfile]);
 
   const handleVenueClick = (venueId: string) => {
-    navigate(`/Venue-Manager-Dashboard/Venue/${venueId}`);
+    navigate(`/Venue-Manager-Dashboard/VenueDetails/${venueId}`);
   };
 
   if (loading) return <div>Loading venues...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="max-w-screen-xl mx-auto p-5 sm:p-10 md:p-16 font-sofia">
-    <div className='flex '>
+    <div className="max-w-screen-xl mx-auto p-5 sm:p-10 md:p-16 font-sofia text-[1.4rem]">
+    <div className='flex  '>
           <Breadcrumbs items={breadcrumbItems} />
         </div>
-      <div className=" mb-4 flex justify-start items-start"> 
+      <div className=" mb-4 flex justify-between"> 
       <h2 className="text-3xl font-bold  ">
       Venues 
     </h2>
@@ -112,44 +112,50 @@ const CompanyVenuesPage: React.FC = () => {
     </div>
       
       {venues.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-10 group cursor-pointer">
-          {venues.map((venue) => (
-            <div key={venue.id} className="rounded overflow-hidden shadow-lg hover:bg-white">
-              <div className="relative">
-                <a  onClick={() => handleVenueClick(venue.id)}> {/* Link to venue details */}
-                  <img
-                    className="w-full"
-                    src={venue.cover_image_url || "https://via.placeholder.com/500"} // Placeholder if no image
-                    alt={venue.name}
-                  />
-                  <div className="hover:bg-transparent transition duration-300 absolute bottom-0 top-0 right-0 left-0 bg-gray-900 opacity-25"></div>
-                </a>
-                <div className="absolute bottom-0 left-0 bg-indigo-600 px-4 py-2 text-white text-sm hover:bg-white hover:text-indigo-600 transition duration-500 ease-in-out">
-                  {venue.venue_type} {/* Display venue type */}
-                </div>
-                {/* Date/Number Overlay -  You'll likely need to format the created_at date */}
-                {/* <div className="text-sm absolute top-0 right-0 bg-indigo-600 px-4 text-white rounded-full h-16 w-16 flex flex-col items-center justify-center mt-3 mr-3 hover:bg-white hover:text-indigo-600 transition duration-500 ease-in-out">
-                  <span className="font-bold">27</span>
-                  <small>March</small>
-                </div> */}
-              </div>
-              <div className="px-6 py-4">
-                <a href="#" onClick={() => handleVenueClick(venue.id)} className="font-semibold text-lg inline-block hover:text-indigo-600 transition duration-500 ease-in-out">
-                  {venue.name}
-                </a>
-                <p className="text-gray-500 text-sm">{venue.address_city}, {venue.address_state}</p> {/* Simplified location */}
-              </div>
-              <div className="px-6 py-4 flex flex-row items-center">
-                <span className="py-1 text-sm font-regular text-gray-900 mr-1 flex flex-row items-center">
-                  {/* You'll need to handle the time ago logic */}
-                  <span>{/* Time Ago */}</span>
-                </span>
-              </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-10">
+        {venues.map((venue) => (
+          <div key={venue.id} className="overflow-hidden h-auto group cursor-pointer w-full hover:bg-navy-blue-5 rounded-xl transition-all duration-300 shadow-2xl">
+            {/* Image */}
+            <div className="overflow-hidden rounded-t-xl " 
+            onClick={() => handleVenueClick(venue.id)}
+            >
+         
+              <img
+                className="w-full h-48 sm:h-56 md:h-64 object-cover transform transition-transform duration-300 group-hover:scale-110"
+                src={venue.cover_image_url || "https://via.placeholder.com/500"}
+                alt={venue.name}
+              />
+         
             </div>
-          ))}
-        </div>
-      ) : (
-        <p>No venues found for your company.</p>
+
+            {/* Content */}
+            <div className="px-4 py-4">
+              <h3 className="font-bold text-xl mb-2 gradient-text"> {/* Reduced margin-bottom */}
+                {venue.name}
+              </h3>
+              <p className="text-gray-500 text-base">{venue.description}</p> {/* Simplified location */}
+            </div>
+
+            {/* Tags - Assuming venue_type is used as a tag */}
+            <div className="px-4 pt-2 pb-4">
+              <span
+                className="inline-block bg-gray-200 rounded-full px-3 py-2 text-sm font-semibold text-gray-700 mr-2 mb-2"
+              >
+                #{venue.venue_type}
+              </span>
+              {/* Add more tags if needed from venue data */}
+            </div>
+            <div className="px-6 py-4 flex flex-row items-center">
+                <span className="py-1 text-sm font-regular text-gray-900 mr-1 flex flex-row items-center">
+                  {/* You'll need to handle the time ago logic */}
+                  <span>{/* Time Ago */}</span>
+                </span>
+              </div>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p>No venues found for your company.</p>
       )}
     </div>
   );

@@ -92,6 +92,7 @@ export default function Auth() {
     const redirectTo =
       userRole === 'admin'
         ? '/admin-dashboard'
+    
         : '/';
     return <Navigate to={redirectTo} />;
   }

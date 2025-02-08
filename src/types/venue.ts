@@ -1,5 +1,4 @@
 export interface VenueFormData {
-
     name: string;
   
     address_street: string;
@@ -25,6 +24,7 @@ export interface VenueFormData {
     venue_type: string;
   
     amenities: { id: string; quantity: number | null; description: string | null }[];
+  
   
     company_id: string;
   
@@ -60,5 +60,9 @@ export interface VenueAmenity {
     description: string | null;
 }
 
-
+export interface AmenityForm {
+    id: string;
+    quantity: number | null;
+    description: string | null;
+  }
 

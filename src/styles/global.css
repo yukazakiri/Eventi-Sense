@@ -107,3 +107,6 @@
   .btn-primary:hover {
     background-color: #1d4ed8; /* hover:bg-blue-700 */
 }
+.masonry {
+  column-gap: 2rem;
+}

@@ -44,6 +44,7 @@ const Login: React.FC = () => {
   if (redirect && userRole) {
     const redirectTo = userRole === 'admin' ? "/admin-dashboard" :
                      userRole === 'venue_manager' ? "/venue-manager-dashboard" :
+                     userRole === 'supplier' ? "/venue-manager-dashboard" :
                      "/dashboard";
     return <Navigate to={redirectTo} />;
   }

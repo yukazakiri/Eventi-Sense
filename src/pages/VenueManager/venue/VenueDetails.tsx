@@ -1,11 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import supabase from '../../../api/supabaseClient';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import VenueInfoForm from './VenueDetails/VenueInfor';
 import AddressForm from './VenueDetails/VenueAddress';
 import ImageUploadForm from './VenueDetails/VenueCoverPage';
 import AmenitiesForm from './VenueDetails/Amenities';
 import { Venue } from '../../../types/venue';
+import Breadcrumbs from '../../../components/BreadCrumbs/breadCrumbs';
+import { HomeIcon } from '@heroicons/react/24/solid';
+import { FaCalendarDay, FaImage } from 'react-icons/fa';
+
+
+const breadcrumbItems = [
+  { label: 'Home', href: '/Venue-Manager-Dashboard/Home' , icon: <HomeIcon className="h-4 w-4 mr-1" /> },
+  { label: 'Venues', href: '/Venue-Manager-Dashboard/Venue-List' },
+  { label: 'Venue Details', href: '' } // Current page (empty href)
+];
 
 interface Amenity {
     id: string; // UUID
@@ -163,10 +173,14 @@ const VenueDetailPage: React.FC = () => {
         return <div>Venue not found.</div>;
     }
 
-    return (
-        <div className="p-8">
+    return (    
+        <div className="p-8 my-6">
             <div className="mx-auto font-sofia">
-                <section className="my-4">
+            <div className='flex items-center '>
+                    <Breadcrumbs items={breadcrumbItems} />
+                </div>
+                <section className="my-4 flex justify-between items-center h-full"> 
+                <div className="items-start ">
                     {!isEditingInfo && !isEditingAddress && (
                         <>
                             <button
@@ -194,7 +208,25 @@ const VenueDetailPage: React.FC = () => {
                             Cancel
                         </button>
                     )}
+                </div>
+                <div className="flex items-end"> 
+                    <div className='flex' >
+                        <div className='px-6 py-4 bg-indigo-600 hover:bg-indigo-800 max-w-auto text-white rounded-3xl mr-4 flex items-center'>
+                        <Link to={`/Venue-Manager-Dashboard/Venue-Details/${venue.id}/add-availability`} className="flex items-center">
+                            <FaCalendarDay className="mr-2 h-[2rem] w-[3rem] text-slate-100" /> {/* Use react-icons */}
+                            <span>Add Availability</span>
+                        </Link>
+                        </div>
+                        <div className='px-6 py-4 bg-white hover:bg-indigo-800 group  border-2 border-indigo-600 hover:text-white hover:border-indigo-200 max-w-auto text-indigo-600 rounded-3xl flex items-center'>
+                        <Link to={`/Venue-Manager-Dashboard/Venue-Details/${venue.id}/add-photos`} className="flex items-center">
+                            <FaImage className="mr-2 h-[3rem] w-[3rem]  text-indigo-600 group-hover:text-slate-100 " /> {/* Use react-icons */}
+                            <span>Add Photos for Venue</span>
+                        </Link>
+                        </div>
+                    </div>
+                    </div>
                 </section>
+                
                 <div className="grid lg:grid-cols-2 grid-flow-row gap-8">
                     <div>
                         <VenueInfoForm
@@ -226,6 +258,8 @@ const VenueDetailPage: React.FC = () => {
                                 setIsEditing={setIsEditingInfo}
                             />
                         </div>
+                
+
                     </div>
                     
                 </div>
