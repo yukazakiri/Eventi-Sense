@@ -25,6 +25,8 @@ import TestSupabase from '../hooks/TestSupabase';
 import Profile from '../pages/ProfilePage';
 import Settings from '../pages/setting';
 
+import PublicVenueDetails from '../pages/VenueManager/VenuePublic/PublicVenueDetails';
+
 
 const AppRouter = () => {
   return (
@@ -41,6 +43,10 @@ const AppRouter = () => {
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
         <Route path="/UserDetails" element={<UserDetails />} />
+
+
+        {/* Venue Public */}
+        <Route path="/venue/:venueId" element={<PublicVenueDetails/>} />
         
         <Route path="/dashboard" element={<Dashboard />} /> {/* Regular user dashboard */}
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
@@ -55,6 +61,8 @@ const AppRouter = () => {
           <VenueManagerDashboard />
           </ProtectedRoute>
           } /> {/* Regular user dashboard */}
+
+
 
         <Route path="/Supplier-dashboard/*" element={
           <ProtectedRoute requiredRole="supplier">

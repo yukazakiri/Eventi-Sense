@@ -45,7 +45,7 @@ const VenueDetailPage: React.FC = () => {
         const venueIdAsNumber = Number(venueIdFromParams);
         setVenueId(isNaN(venueIdAsNumber) ? venueIdFromParams : venueIdAsNumber);
     }, [venueIdFromParams]);
-
+    
     useEffect(() => {
         const fetchData = async () => {
             if (!venueId) return;

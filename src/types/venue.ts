@@ -1,3 +1,11 @@
+export interface CompanyProfile{
+    company_name: string;
+    company_address: string;
+    company_email: string;
+    company_phone: string;
+    company_website?: string | null;
+    company_logo_url?: string | null;
+}
 export interface VenueFormData {
     name: string;
   
@@ -32,6 +40,7 @@ export interface VenueFormData {
   export interface Venue {
     id: string; // UUID
     name: string;
+    
     address_street: string;
     address_city: string;
     address_state: string;
@@ -65,4 +74,8 @@ export interface AmenityForm {
     quantity: number | null;
     description: string | null;
   }
-
+export interface VenueImage {
+    id: string;
+  image_url: string;
+ 
+}
