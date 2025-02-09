@@ -37,7 +37,7 @@ const VenueDetailPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [isEditingInfo, setIsEditingInfo] = useState(false);
     const [isEditingAddress, setIsEditingAddress] = useState(false);
-    const [venueAmenities, setVenueAmenities] = useState<VenueAmenity[]>([]);
+    const [_venueAmenities, setVenueAmenities] = useState<VenueAmenity[]>([]);
     const [amenities, setAmenities] = useState<Amenity[]>([]);
     const [selectedAmenities, setSelectedAmenities] = useState<VenueAmenity[]>([]);
 

@@ -45,6 +45,7 @@ export default function Profile() {
           });
         }
         setEmail(user.email || '');
+        console.log(email);
       }
     };
 

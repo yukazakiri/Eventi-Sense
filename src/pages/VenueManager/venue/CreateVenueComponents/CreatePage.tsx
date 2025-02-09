@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../../../../api/supabaseClient';
-import { VenueFormData, Amenity, VenueAmenity } from '../../../../types/venue';
+import { VenueFormData, Amenity} from '../../../../types/venue';
 import Breadcrumbs from '../../../../components/BreadCrumbs/breadCrumbs';
 import { HomeIcon } from '@heroicons/react/24/solid';
 import CreateInfoVenueForm from './CreateInfo';
 import CreateAddressVenueForm from './CreateAddress';
-import { validateVenueForm, isValidEmail, isValidZip } from './FormValidation'; // Import validations
+import { validateVenueForm, } from './FormValidation'; // Import validations
 import CreatePhotoCover from './CreateCoverPhoto'
 
 
@@ -48,14 +48,14 @@ const VenueForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
  
 
-  const [user, setUser] = useState<any | null>(null);
-  const [companyProfile, setCompanyProfile] = useState<any | null>(null);
-  const [companyProfileLoading, setCompanyProfileLoading] = useState(true);
-  const [companyProfileError, setCompanyProfileError] = useState<string | null>(null);
-  const [formErrors, setFormErrors] = useState({});
+  const [_user, setUser] = useState<any | null>(null);
+  const [_companyProfile, setCompanyProfile] = useState<any | null>(null);
+  const [_companyProfileLoading, setCompanyProfileLoading] = useState(true);
+  const [ _companyProfileError, setCompanyProfileError] = useState<string | null>(null);
+  const [_formErrors, setFormErrors] = useState({});
   const [venueId, setVenueId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [initialImageUrl, setInitialImageUrl] = useState<string | null>(null);
+  const [initialImageUrl, _setInitialImageUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null); // Move selectedFile state here
   const [imageUrl, setImageUrl] = useState<string | null>(initialImageUrl || null);
   const [uploading, setUploading] = useState(false);
@@ -189,7 +189,7 @@ const VenueForm = () => {
 
     try {
       const filePath = `VenuesPhoto/CoverPhoto/${venueId}/${selectedFile.name}`; // Correct file path
-      const { data, error } = await supabase.storage
+      const {  error } = await supabase.storage
         .from('company_logos') // Your bucket name
         .upload(filePath, selectedFile, {
           contentType: selectedFile.type,

@@ -10,6 +10,7 @@ interface ProfileAvatarProps {
 function ProfileAvatar({ user, profile }: ProfileAvatarProps) {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   
+  console.log('User:', user);
 
 
 // Handle logout

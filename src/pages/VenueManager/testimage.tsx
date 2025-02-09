@@ -52,7 +52,7 @@ const ImageUploader: React.FC = () => {
     const filePath = `logos/${user.id}_${Date.now()}_${file.name}`; // Unique filename
 
     // Upload to Supabase Storage
-    const { data, error } = await supabase.storage
+    const {  error } = await supabase.storage
       .from('company_logos') // Ensure correct bucket name is used here
       .upload(filePath, file, { cacheControl: '3600', upsert: false });
 

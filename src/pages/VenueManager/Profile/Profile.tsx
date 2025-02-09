@@ -5,6 +5,7 @@ import Modal from '../../../assets/modal/modal';
 export default function Profile() {
   const [profile, setProfile] = useState<any>(null);
   const [email, setEmail] = useState<string>('');
+
   const [isEditing, setIsEditing] = useState(false);
   const [modalData, setModalData] = useState<{
     isOpen: boolean;
@@ -45,6 +46,7 @@ export default function Profile() {
           });
         }
         setEmail(user.email || '');
+        console.log(email);
       }
     };
 
