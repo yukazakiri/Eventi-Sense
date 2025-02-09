@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
-import { addVenueAvailability, deleteVenueAvailability } from '../../../../../api/apicalendar';
+import { addVenueAvailability } from '../../../../../api/apicalendar';
 import "react-datepicker/dist/react-datepicker.css";
 import supabase from '../../../../../api/supabaseClient';
 import FullCalendar from '@fullcalendar/react';
@@ -237,10 +237,10 @@ const breadcrumbItems = [
             dateFormat="MMMM d, yyyy h:mm aa"
             minDate={selectedDate || new Date()}
             calendarClassName="font-sofia"
-            dayClassName={(date: Date) => " hover:bg-gray-200"}
-            weekDayClassName={(date: Date) => "text-gray-700"}
-            monthClassName={(date: Date) => "text-red-700 z-50 font-bold"}
-            yearClassName={(date: Date) => "text-gray-700 z-50"}
+            dayClassName={() => " hover:bg-gray-200"}
+            weekDayClassName={() => "text-gray-700"}
+            monthClassName={() => "text-red-700 z-50 font-bold"}
+            yearClassName={() => "text-gray-700 z-50"}
             className="border rounded w-full py-2 px-3 z-50 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>

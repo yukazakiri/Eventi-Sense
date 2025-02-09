@@ -197,7 +197,7 @@ const handleSave = async () => {
         query = query.upsert([companyToSave]).eq("id", user.id); // Use upsert for existing company
       }
   
-      const { data, error } = await query.select("*"); // Select the updated/inserted data
+      const { error } = await query.select("*"); // Select the updated/inserted data
   
       if (error) {
         throw error;
