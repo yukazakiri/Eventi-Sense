@@ -28,8 +28,10 @@ export async function getVenueImages(venueId: string): Promise<VenueImage[]> {
     const filePath = `venue_gallery/${venueId}/${Date.now()}_${imageFile.name}`;
     
     const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('venue_images')
-      .upload(filePath, imageFile);
+    .from('venue_images')
+    .upload(filePath, imageFile);
+  
+  console.log('File uploaded:', uploadData);
   
     if (uploadError) throw uploadError;
   

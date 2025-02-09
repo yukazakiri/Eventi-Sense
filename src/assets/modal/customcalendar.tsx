@@ -27,14 +27,9 @@ const CustomModal: React.FC<ModalProps> = ({
   onDelete,
   onCreate,
   selectedEvent,
-  selectedDate,
   startDateTime,
   endDateTime,
-  setStartDateTime,
-  setEndDateTime,
-  error,
   setError,
-  successMessage,
   setSuccessMessage,
 }) => {
   if (!isOpen) return null;
