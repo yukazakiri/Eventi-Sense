@@ -82,7 +82,7 @@ const PublicVenueDetails: React.FC = () => {
       <img
         src={venue.cover_image_url}
         alt={venue.name}
-        className="h-full w-full object-cover rounded-3xl"
+        className="h-[600px] w-full object-cover rounded-3xl"
       />
       <div className='absolute top-5 left-5 z-30 cursor-pointer flex items-center bg-white text-white bg-opacity-50 rounded-xl m-4 py-2 px-4 font-bonanova shadow-lg hover:bg-opacity-70 hover:text-gray-100 hover:border-gray-300 transition duration-300 ease-in-out transform hover:scale-110'>
         {companyProfile?.company_logo_url && (

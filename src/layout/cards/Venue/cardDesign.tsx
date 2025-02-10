@@ -15,7 +15,7 @@ const Card: React.FC<CardProps> = ({ VenueName, PlaceName, Guests, image, rating
     <div className="gradient-background overflow-hidden group cursor-pointer rounded-[20px] w-full group">
       {/* Image */}
       <img
-        className="w-full h-auto object-cover transform transition-transform duration-300 group-hover:scale-110"
+        className="w-full h-[300px] object-cover transform transition-transform duration-300 group-hover:scale-110"
         src={image}
         alt={VenueName}
       />

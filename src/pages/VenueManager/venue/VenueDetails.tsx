@@ -40,6 +40,7 @@ const VenueDetailPage: React.FC = () => {
     const [_venueAmenities, setVenueAmenities] = useState<VenueAmenity[]>([]);
     const [amenities, setAmenities] = useState<Amenity[]>([]);
     const [selectedAmenities, setSelectedAmenities] = useState<VenueAmenity[]>([]);
+    const [isEditingAmenities, setIsEditingAmenities] = useState(false);
 
     useEffect(() => {
         const venueIdAsNumber = Number(venueIdFromParams);
@@ -254,8 +255,9 @@ const VenueDetailPage: React.FC = () => {
                                 onSave={(venue, updatedVenueAmenities) =>
                                     handleSaveVenueAmenities(venue, updatedVenueAmenities)
                                 }
-                                isEditing={isEditingInfo}
-                                setIsEditing={setIsEditingInfo}
+                                isEditing={isEditingAmenities}
+                                setIsEditing={setIsEditingAmenities}
+                              
                             />
                         </div>
                 

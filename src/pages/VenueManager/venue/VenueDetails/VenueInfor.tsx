@@ -114,7 +114,7 @@ const VenueInfoForm: React.FC<VenueInfoFormProps> = ({ venue, onSave, isEditing 
                   <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Website</label>
                   <input
                         type="text"
-                        value={name}
+                        value={website}
                         onChange={(e) => setWebsite(e.target.value)}
                         className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     />
@@ -123,7 +123,7 @@ const VenueInfoForm: React.FC<VenueInfoFormProps> = ({ venue, onSave, isEditing 
                   <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Venue Type</label>
                   <input
                         type="text"
-                        value={name}
+                        value={venue_type}
                         onChange={(e) => setVenue_type(e.target.value)}
                         className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     />
