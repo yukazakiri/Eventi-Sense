@@ -71,7 +71,7 @@ function HomePage() {
             </div>
         </section>
 
-        <section className="mx-auto 2xl:mx-[16rem] xl:mx-[8rem] my-[4rem] ">
+        <section className="mx-auto px-4 md:px-8 xl:px-[2rem] 3xl:px-[16rem] my-[4rem] ">
                    <div className="flex justify-center  ">
                     <h1 className=" text-4xl  font-bold font-bonanova gradient-text  uppercase">Upcoming Events</h1>
                    </div>
@@ -81,7 +81,7 @@ function HomePage() {
         </section>
 
         <section className="relative noise-bg py-[2rem]">
-                    <section className="mx-4 2xl:mx-[16rem] xl:mx-[8rem] my-[4rem]">
+                    <section className="mx-4 2xl:mx-[12rem] xl:mx-[8rem] my-[4rem]">
                      <div className="flex justify-between py-[10px]">
                        <h1 className="text-4xl font-bold font-bonanova gradient-text uppercase">Venues</h1>
                        <div className="text-white flex justify-end font-montserrat cursor-pointer hover:text-yellow-300">
