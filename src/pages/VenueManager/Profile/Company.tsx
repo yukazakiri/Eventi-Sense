@@ -240,106 +240,153 @@ const handleSave = async () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-      <h2 className="text-2xl font-semibold text-center text-gray-800">
-        {company?.id ? "Edit Company Profile" : "Create Company Profile"}
-      </h2>
-
-      <form className="space-y-6 mt-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Company Name</label>
-          <input
-            type="text"
-            value={company.company_name}
-            onChange={(e) => handleInputChange(e, "company_name")}
-            disabled={!editing}
-            className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
+    <div className="py-4  px-2">
+      <div className="m-4 bg-white p-6 border border-gray-300 rounded-2xl font-sofia">
+        <div className="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-6">
+          <div className="flex-shrink-0">
+            <div className="w-20 h-20 rounded-full bg-gray-300 overflow-hidden">
+              <img
+                src={company.company_logo_url || '/avatar.svg'}
+                alt="Profile avatar"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+          <div className="capitalize tracking-wide ">
+            <p className="font-semibold text-gray-700 text-lg mt-2">{company.company_name} </p>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <p className="text-sm text-gray-500 mt-2 pr-4 border-r border-gray-300">{company.company_phone}</p>
+              <p className="text-sm text-gray-500 mt-2 sm:px-3 normal-case">{company.company_email}</p>
+            </div>
+          </div>
         </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Company Address</label>
-          <input
-            type="text"
-            value={company.company_address}
-            onChange={(e) => handleInputChange(e, "company_address")}
-            disabled={!editing}
-            className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Company Email</label>
-          <input
-            type="email"
-            value={company.company_email}
-            onChange={(e) => handleInputChange(e, "company_email")}
-            disabled={!editing}
-            className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Company Phone</label>
-          <input
-            type="text"
-            value={company.company_phone}
-            onChange={(e) => handleInputChange(e, "company_phone")}
-            disabled={!editing}
-            className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Company Website</label>
-          <input
-            type="text"
-            value={company.company_website || ""}
-            onChange={(e) => handleInputChange(e, "company_website")}
-            disabled={!editing}
-            className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Company Logo</label>
-          <input
-            type="file"
-            onChange={handleLogoUpload}
-            disabled={!editing}
-            className="mt-2 block w-full text-sm text-gray-600"
-          />
-          {company.company_logo_url && (
-             <img 
-             src={company.company_logo_url} 
-             alt="Company Logo" 
-             className="mt-4 max-w-full h-auto rounded-md" 
-             onError={(e) => console.error("Image load error", e)} // Error handling for image display
-           />
+      </div>
+      <div className={`m-4 bg-white p-6 border border-gray-300 rounded-2xl font-sofia ${editing ? 'border-2 border-indigo-300' : ''}`}>
+     
+   <form className="space-y-6 ">
+   <div className=" flex items-center justify-between">
+          <h2 className="text-lg font-bold text-gray-700 tracking-wide mb-4 sm:mb-0">
+            {company?.id ? "Edit Company Profile" : "Create Company Profile"}
+          </h2>
+          <div className="flex flex-col sm:flex-row gap-4 mt-2">
+          {editing ? (
+            <div className="flex gap-4">
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={loading}
+              className="text-white bg-green-400 hover:bg-green-600 px-5 py-2 rounded-2xl"
+            >
+              {loading ? "Saving..." : "Save Changes"}
+            </button>
+            <button type="button" onClick={() => setEditing(false)} className="text-gray-700 bg-gray-200 hover:bg-gray-300 px-5 py-2 rounded-2xl">Cancel</button>
+            </div>
+            
+          ) : (
+            <button
+              type="button"
+              onClick={() => setEditing(true)}
+              className="text-white bg-indigo-600 hover:bg-indigo-700 px-5 py-2 rounded-2xl"
+            >
+              Edit Profile
+            </button>
           )}
         </div>
+        </div>
+  {/* Grid for inputs */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    {/* Company Name */}
+    <div>
+      <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Company Name</label>
+      <input
+        type="text"
+        value={company.company_name}
+        onChange={(e) => handleInputChange(e, "company_name")}
+        disabled={!editing}
+       className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"                      
+                    
+      />
+    </div>
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+    {/* Company Address */}
+    <div>
+      <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Company Address</label>
+      <input
+        type="text"
+        value={company.company_address}
+        onChange={(e) => handleInputChange(e, "company_address")}
+        disabled={!editing}
+       className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"                      
+                    
+      />
+    </div>
 
-        {editing ? (
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={loading}
-            className="w-full py-2 px-4 mt-4 bg-indigo-600 text-white font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 hover:bg-indigo-700"
-          >
-            {loading ? "Saving..." : "Save Changes"}
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setEditing(true)}
-            className="w-full py-2 px-4 mt-4 bg-gray-600 text-white font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 hover:bg-gray-700"
-          >
-            Edit Profile
-          </button>
-        )}
+    {/* Company Email */}
+    <div>
+      <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Company Email</label>
+      <input
+        type="email"
+        value={company.company_email}
+        onChange={(e) => handleInputChange(e, "company_email")}
+        disabled={!editing}
+       className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"                      
+                    
+      />
+    </div>
+
+    {/* Company Phone */}
+    <div>
+      <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Company Phone</label>
+      <input
+        type="text"
+        value={company.company_phone}
+        onChange={(e) => handleInputChange(e, "company_phone")}
+        disabled={!editing}
+       className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"                      
+                    
+      />
+    </div>
+
+    {/* Company Website */}
+    <div>
+      <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Company Website</label>
+      <input
+        type="text"
+        value={company.company_website || ""}
+        onChange={(e) => handleInputChange(e, "company_website")}
+        disabled={!editing}
+       className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"                      
+                    
+      />
+    </div>
+
+    {/* Company Logo */}
+    <div className="col-span-2">
+      <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Company Logo</label>
+      <input
+        type="file"
+        onChange={handleLogoUpload}
+        disabled={!editing}
+        className="mt-2 block w-full text-sm text-gray-600"
+      />
+      {company.company_logo_url && (
+        <img
+          src={company.company_logo_url}
+          alt="Company Logo"
+          className="mt-4 w-48 h-48 rounded-md"
+          onError={(e) => console.error("Image load error", e)}
+        />
+      )}
+    </div>
+  </div>
+
+  {/* Error Message */}
+  {error && <p className="text-red-500 text-sm">{error}</p>}
+
+  {/* Buttons */}
+ 
       </form>
-
+      </div>
       <Modal
         isOpen={showModal}
         title={modalTitle}

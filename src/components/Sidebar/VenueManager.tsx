@@ -92,11 +92,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setSidebarOpen }) => {
         <nav>
           <ul className={`space-y-2 ${isCollapsed ? 'mt-[4rem]' : 'mt-0'}`}>
             <SidebarItem to="/Venue-Manager-Dashboard/Home" icon={<GoHome className={`text-2xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Home" isCollapsed={isCollapsed} />
-            <SidebarItem to="/Venue-Manager-Dashboard/Company" icon={<MdOutlineManageAccounts className={`text-2xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="User Management" isCollapsed={isCollapsed} />
+            <SidebarItem to="/Venue-Manager-Dashboard/Profiles" icon={<MdOutlineManageAccounts className={`text-2xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Profiles" isCollapsed={isCollapsed} />
             <SidebarItem to="/Venue-Manager-Dashboard/Create-User" icon={<MdPeople className={`text-2xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Attendee Management" isCollapsed={isCollapsed} />
             <SidebarItem to="/Venue-Manager-Dashboard/Financial-Overview" icon={<MdAttachMoney className={`text-2xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Financial Overview" isCollapsed={isCollapsed} />
             <SidebarItem to="/Venue-Manager-Dashboard/Venue-List" icon={<MdAssignment className={`text-2xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Venue" isCollapsed={isCollapsed} />
-            <SidebarItem to="/Venue-Manager-Dashboard/Analytics" icon={<MdAnalytics className={`text-2xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Analytics" isCollapsed={isCollapsed} />
+            <SidebarItem to="/Venue-Manager-Dashboard/Booking-List" icon={<MdAnalytics className={`text-2xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Bookings" isCollapsed={isCollapsed} />
             <SidebarItem to="/Venue-Manager-Dashboard/Settings" icon={<MdSettings className={`text-2xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Settings" isCollapsed={isCollapsed} />
             <SidebarItem to="/Venue-Manager-Dashboard/Support-Help" icon={<MdHelpOutline className={`text-2xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Support & Help" isCollapsed={isCollapsed} />
           </ul>

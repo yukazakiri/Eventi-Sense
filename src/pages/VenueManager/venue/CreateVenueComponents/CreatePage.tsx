@@ -35,9 +35,12 @@ const VenueForm = () => {
     phone_number: '',
     email: '',
     website: '',
-    capacity: 0,
+    capacity: '',
+    accessibility: [],
+    price: '',
+    pricing_model: [],
     description: '',
-    venue_type: '',
+    venue_type: [],
     amenities: [], // Initialize as an empty array
     company_id: '',
   });
@@ -61,23 +64,78 @@ const VenueForm = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
+  const [venueTypes, setVenueTypes] = useState<any[]>([]);
+  const [venueTypesLoading, setVenueTypesLoading] = useState(true);
+  const [venueTypesError, setVenueTypesError] = useState<string | null>(null);
+
+  const [accessibilities, setAccessibilities] = useState<any[]>([]);
+  const [accessibilitiesLoading, setAccessibilitiesLoading] = useState(true);
+  const [accessibilitiesError, setAccessibilitiesError] = useState<string | null>(null);
+
+  const [pricingModels, setPricingModels] = useState<any[]>([]);
+  const [pricingModelsLoading, setPricingModelsLoading] = useState(true);
+  const [pricingModelsError, setPricingModelsError] = useState<string | null>(null);
+
+
   useEffect(() => {
     const fetchUserAndCompanyProfile = async () => {
-      const { data: { user }, error } = await supabase.auth.getUser();
+        const { data: { user }, error } = await supabase.auth.getUser();
 
-      if (error) {
-        console.error("Error fetching user:", error);
-        return;
-      }
+        if (error) {
+            console.error("Error fetching user:", error);
+            return;
+        }
 
-      if (user) {
-        setUser(user);
-        fetchCompanyProfile(user.id);
-      }
+        if (user) {
+            setUser(user);
+            fetchCompanyProfile(user.id); // Keep this to set the company ID
+        }
     };
 
+    const fetchAllRelatedData = async () => {  // Moved outside
+        try {
+            const [
+                { data: venueTypesData, error: venueTypesError },
+                { data: accessibilitiesData, error: accessibilitiesError },
+                { data: pricingModelsData, error: pricingModelsError },
+                { data: amenitiesData, error: amenitiesError },
+            ] = await Promise.all([
+                supabase.from('venue_types').select('id, name'),
+                supabase.from('venue_accessibilities').select('id, name'),
+                supabase.from('venue_pricing_models').select('id, name'),
+                supabase.from('amenities').select('id, name'),
+            ]);
+
+            if (venueTypesError) throw venueTypesError;
+            setVenueTypes(venueTypesData);
+
+            if (accessibilitiesError) throw accessibilitiesError;
+            setAccessibilities(accessibilitiesData);
+
+            if (pricingModelsError) throw pricingModelsError;
+            setPricingModels(pricingModelsData);
+
+            if (amenitiesError) throw amenitiesError;
+            setAmenities(amenitiesData);
+
+        } catch (error: any) {
+            console.error("Error fetching related data:", error);
+            setVenueTypesError(error.message);
+            setAccessibilitiesError(error.message);
+            setPricingModelsError(error.message);
+            setAmenitiesError(error.message);
+        } finally {
+            setVenueTypesLoading(false);
+            setAccessibilitiesLoading(false);
+            setPricingModelsLoading(false);
+            setAmenitiesLoading(false);
+        }
+    };
+
+    // Call both functions concurrently
     fetchUserAndCompanyProfile();
-  }, []);
+    fetchAllRelatedData(); // Now called independently
+}, []);
 
   const fetchCompanyProfile = async (userId: string) => {
     setCompanyProfileLoading(true);
@@ -103,6 +161,7 @@ const VenueForm = () => {
     } finally {
       setCompanyProfileLoading(false);
     }
+    
   };
 
   useEffect(() => {
@@ -132,7 +191,14 @@ const VenueForm = () => {
     }));
   };
 
-
+  const handleMultiCheckboxChange = (name: keyof VenueFormData, value: string) => {
+    setFormData(prev => ({
+        ...prev,
+        [name]: (prev[name] as string[] || []).includes(value)
+            ? (prev[name] as string[]).filter(item => item !== value)
+            : [...(prev[name] as string[] || []), value]
+    }));
+};
   const handleCheckboxChange = (amenity: Amenity) => {
     setFormData(prevData => {
       const existingIndex = prevData.amenities.findIndex(a => a.id === amenity.id);
@@ -223,69 +289,132 @@ const VenueForm = () => {
   };
 
 
-  const handleSubmit = async (e: React.FormEvent) => {
+
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errors = validateVenueForm(formData);
     setFormErrors(errors);
 
     if (Object.keys(errors).length > 0) {
-      return;
+        return;
     }
 
     setIsSubmitting(true);
     setUploading(true);
 
     try {
-      let newVenueId = venueId; 
+        let newVenueId: string | null = null;
+        const { amenities, venue_type, accessibility, pricing_model, ...venueData } = formData;
 
-      // Always create the venue first
-      const { amenities, ...venueData } = formData;
-      const { data: newVenueData, error: venueError } = await supabase
-        .from("venues")
-        .insert([venueData])
-        .select("id")
-        .single();
+        const { data: newVenueData, error: venueError } = await supabase
+            .from("venues")
+            .insert([venueData])
+            .select("id")
+            .single();
 
-      if (venueError) throw venueError;
-      newVenueId = newVenueData?.id;
-      if (!newVenueId) throw new Error("Venue ID not found");
+        if (venueError) throw venueError;
+        newVenueId = newVenueData?.id;
+        if (!newVenueId) throw new Error("Venue ID not found");
 
-      setVenueId(newVenueId);
+        setVenueId(newVenueId);
 
-      // Upload cover photo after venue creation
-      if (selectedFile && newVenueId) {
-        await handleUpload(newVenueId);
-      }
+        if (selectedFile && newVenueId) {
+            await handleUpload(newVenueId);
+        }
 
-      // Insert amenities
-      if (newVenueId && formData.amenities.length > 0) {
-        const amenityInserts = formData.amenities.map(({ id, quantity, description }) => ({
-          venue_id: newVenueId,
-          amenity_id: id,
-          quantity,
-          description,
-        }));
+        await Promise.all([
+            ...venue_type.map(type => insertRelatedDataWithNames(newVenueId, type, 'venue_types', 'venues_venue_types', 'venue_type_id')),
+            ...accessibility.map(acc => insertRelatedDataWithNames(newVenueId, acc, 'venue_accessibilities', 'venues_venue_accessibilities', 'venue_accessibility_id')),
+            ...pricing_model.map(price => insertRelatedDataWithNames(newVenueId, price, 'venue_pricing_models', 'venues_venue_pricing_models', 'venue_pricing_model_id')),
+        ]);
 
-        const { error: amenitiesError } = await supabase
-          .from("venue_amenities")
-          .insert(amenityInserts);
+        if (newVenueId && formData.amenities && formData.amenities.length > 0) {
+            const amenityInserts = formData.amenities.map(({ id, quantity, description }) => ({
+                venue_id: newVenueId,
+                amenity_id: id,
+                quantity,
+                description,
+            }));
 
-        if (amenitiesError) throw amenitiesError;
-      }
+            const { error: amenitiesError } = await supabase
+                .from("venue_amenities")
+                .insert(amenityInserts);
 
-      alert("Venue successfully created!");
-      navigate('/Venue-Manager-Dashboard/Venue-List');
-    
+            if (amenitiesError) throw amenitiesError;
+        }
+
+        alert("Venue successfully created!");
+        navigate('/Venue-Manager-Dashboard/Venue-List');
+
     } catch (error) {
-      console.error("Error during submission:", error);
-      alert("An error occurred. Please try again.");
+        console.error("Error during submission:", error);
+        alert("An error occurred. Please try again.");
     } finally {
-      setIsSubmitting(false);
-      setUploading(false);
+        setIsSubmitting(false);
+        setUploading(false);
     }
-  };
+};
+
+const insertRelatedDataWithNames = async (
+    venueId: string,
+    name: string,
+    tableName: string,
+    joinTableName: string,
+    foreignKey: string
+) => {
+    if (!name) return;
+
+    try {
+        const id = await fetchId(name, tableName);
+        if (id) {
+            await insertRelatedData(venueId, id, joinTableName, foreignKey);
+        } else {
+            console.warn(`No ID found for name "${name}" in table "${tableName}". Skipping insertion.`);
+        }
+    } catch (error) {
+        console.error(`Error inserting related data for ${tableName}:`, error);
+    }
+};
+
+const fetchId = async (name: string, tableName: string): Promise<string | null> => {
+    if (!name) return null;
+
+    try {
+        const { data, error } = await supabase
+            .from(tableName)
+            .select('id')
+            .eq('name', name)
+            .single();
+
+        if (error) {
+            throw error;
+        }
+
+        return data?.id || null;
+    } catch (error) {
+        console.error(`Error fetching ID from ${tableName}:`, error);
+        return null;
+    }
+};
+
+const insertRelatedData = async (
+    venueId: string,
+    selectedId: string,
+    joinTableName: string,
+    foreignKey: string
+) => {
+    const insert = {
+        venue_id: venueId,
+        [foreignKey]: selectedId,
+    };
+    const { error } = await supabase.from(joinTableName).insert([insert]);
+    if (error) {
+        throw error;
+    }
+};
+
   return (
-    <div className="max-w-7xl mx-auto my-[6rem] font-sofia">
+    <div className="max-w-screen-xl mx-auto my-[6rem] font-sofia">
   
       <form onSubmit={handleSubmit} className='grid lg:grid-cols-2 gap-8'>
         <div className='col-span-2 '>
@@ -314,11 +443,15 @@ const VenueForm = () => {
         </div>
           <section>
           <div className='mb-8'>
-            <CreateInfoVenueForm
-              formData={formData}
-              handleInputChange={handleInputChange}
-              isEditing={isEditing}
-            />
+          <CreateInfoVenueForm
+            formData={formData}
+            handleInputChange={handleInputChange}
+            handleMultiCheckboxChange={handleMultiCheckboxChange}
+            isEditing={isEditing}
+            accessibilities={accessibilities}
+            pricingModels={pricingModels}
+            venueTypes={venueTypes}
+          />
           </div>
           <div>
           <CreatePhotoCover

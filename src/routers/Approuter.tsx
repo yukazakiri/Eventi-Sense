@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import Register from '../pages/AuthForm/Register';
-import Login from '../pages/AuthForm/Login';
+
 
 import AdminDashboard from '../app/Admin';
 import Dashboard from '../pages/RegularUser/Dashboard';
@@ -26,6 +26,7 @@ import Profile from '../pages/ProfilePage';
 import Settings from '../pages/setting';
 
 import PublicVenueDetails from '../pages/VenueManager/VenuePublic/PublicVenueDetails';
+import BookVenue from '../pages/Booking/VenueBooking';
 
 
 const AppRouter = () => {
@@ -39,8 +40,9 @@ const AppRouter = () => {
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/Pricing" element={<PricingPage />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
+
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
+        <Route path="/venues/:venueId/book" element={<BookVenue />} /> {/* New route */}
 
         <Route path="/UserDetails" element={<UserDetails />} />
 
@@ -61,6 +63,8 @@ const AppRouter = () => {
           <VenueManagerDashboard />
           </ProtectedRoute>
           } /> {/* Regular user dashboard */}
+
+          
 
 
 

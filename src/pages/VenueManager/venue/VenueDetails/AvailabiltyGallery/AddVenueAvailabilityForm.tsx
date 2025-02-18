@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
-import { addVenueAvailability } from '../../../../../api/apicalendar';
 import "react-datepicker/dist/react-datepicker.css";
 import supabase from '../../../../../api/supabaseClient';
 import FullCalendar from '@fullcalendar/react';
@@ -9,255 +8,373 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import CustomModal from '../../../../../assets/modal/customcalendar';
-import Breadcrumbs from '../../../../../components/BreadCrumbs/breadCrumbs';
-import { HomeIcon } from '@heroicons/react/20/solid';
 
-
-const maxTime = new Date();
-maxTime.setHours(23, 59, 59);
 
 interface AvailabilityEvent {
   id: string;
   title: string;
   start: string;
   end: string;
+  color?: string; // Add this line
+  backgroundColor?: string;
+  
 }
 
 const AddVenueAvailabilityForm: React.FC = () => {
-  const { venueId } = useParams();
-  const [error, setError] = useState<string>('');
-  const [successMessage, setSuccessMessage] = useState<string>('');
-  const [calendarEvents, setCalendarEvents] = useState<AvailabilityEvent[]>([]);
+  const { venueId } = useParams<{ venueId: string }>();
+  const [events, setEvents] = useState<AvailabilityEvent[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<AvailabilityEvent | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<string>('');
-  const [modalStartDateTime, setModalStartDateTime] = useState<Date | null>(null);
-  const [modalEndDateTime, setModalEndDateTime] = useState<Date | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [newAvailability, setNewAvailability] = useState({
+    start: null as Date | null,
+    end: null as Date | null,
+    title: '',
+  });
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const calendarRef = useRef<FullCalendar>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedStart, setEditedStart] = useState<Date | null>(null);
+  const [editedEnd, setEditedEnd] = useState<Date | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string>('');
 
 
-const breadcrumbItems = [
-  { label: 'Home', href: '/Venue-Manager-Dashboard/Home' , icon: <HomeIcon className="h-4 w-4 mr-1" /> },
-  { label: 'Venues', href: '/Venue-Manager-Dashboard/Venue-List' },
-  { 
-    label:  'Venue Details', // Dynamic label
-    href: `/Venue-Manager-Dashboard/VenueDetails/${venueId}`, // Dynamic href
-  },
-  { label: 'Add Availability', href: '' }
-];
 
 
+  // Fetch events when venueId changes
   useEffect(() => {
     if (venueId) {
-      fetchAvailabilities();
+      fetchEvents();
     }
   }, [venueId]);
 
-  const fetchAvailabilities = async () => {
+  const fetchEvents = async () => {
+    setIsCreating(false);
     try {
       const { data, error } = await supabase
         .from("venue_availability")
         .select("*")
         .eq("venue_id", venueId);
-
-      if (error) {
-        throw new Error(`Error fetching availabilities: ${error.message}`);
-      }
-
-      const events = data?.map((availability: any): AvailabilityEvent => ({
-        id: availability.id,
-        title: 'Not_Available',
-        start: availability.available_start,
-        end: availability.available_end,
-      })) || [];
-
-      setCalendarEvents(events);
+  
+      if (error) throw error;
+      console.log("Fetched events:", data); // Debugging
+  
+      const eventsForCalendar = data.map((event: any): AvailabilityEvent => ({
+        id: event.id,
+        title: event.title || 'Not_Available',
+        start: event.available_start,
+        end: event.available_end,
+        backgroundColor: event.color || '#CDB0E8', // Default color if not specified
+      }));
+      setEvents(eventsForCalendar);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching events:", error);
+      setError("Failed to fetch events. Please try again.");
     }
   };
 
-  const handleCreateAvailability = async (start: Date, end: Date) => {
-    setError('');
-    setSuccessMessage('');
+// Update handleEventClick
+const handleEventClick = (info: any) => {
+  const clickedEventId = info.event.id;
+  const originalEvent = events.find(event => event.id === clickedEventId);
 
-    if (!venueId) {
-      setError('Venue ID is missing');
-      return;
-    }
-
-    try {
-      const startTimeISO = start.toISOString();
-      const endTimeISO = end.toISOString();
-
-      await addVenueAvailability(venueId, startTimeISO, endTimeISO);
-      setSuccessMessage('Availability added successfully!');
-      fetchAvailabilities();
-      closeModal();
-    } catch (err) {
-      console.error("Error in handleCreateAvailability:", err);
-      setError(err instanceof Error ? err.message : 'Failed to add availability');
-    }
-  };
-
-  const handleDeleteAvailability = async (id: string | undefined = undefined) => {
-    const eventId = id || (selectedEvent && selectedEvent.id);
-    if (!eventId) {
-      setError("No availability selected to delete.");
-      return;
-    }
-
-    try {
-      const { error: deleteError } = await supabase
-        .from("venue_availability")
-        .delete()
-        .eq("id", eventId);
-
-      if (deleteError) {
-        throw new Error(`Error deleting availability: ${deleteError.message}`);
-      }
-
-      setSuccessMessage("Availability deleted successfully!");
-      setSelectedEvent(null);
-      fetchAvailabilities();
-      closeModal();
-    } catch (err) {
-      console.error("Error in handleDeleteAvailability:", err);
-      setError(err instanceof Error ? err.message : 'Failed to delete availability');
-    }
-  };
-
-  const handleDateClick = (info: any) => {
-    setSelectedDate(info.date);
-    setModalStartDateTime(info.date);
-    setModalEndDateTime(info.date);
-
-    const clickedEvents = calendarEvents.filter(event => {
-        const eventStart = new Date(event.start);
-        const eventEnd = new Date(event.end);
-        const clickedStart = info.date; // Start of the clicked day
-        const clickedEnd = new Date(info.date); // End of the clicked day
-        clickedEnd.setDate(info.date.getDate() + 1); // Set it to the next day for proper comparison
-
-        return eventStart < clickedEnd && eventEnd > clickedStart; // Check for overlap
-    });
-
-    if (clickedEvents.length > 0) {
-        const eventTimes = clickedEvents.map(event => `${new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`).join("<br/>");
-        setModalContent(`Unavailable Times:<br/>${eventTimes}`); // Changed to "Unavailable Times"
-    } else {
-        setModalContent("No unavailability set for this day."); // Keep this message
-    }
-    openModal();
-};
-
-  const handleEventClick = (info: any) => {
-    setSelectedEvent(info.event);
-    setSelectedDate(new Date(info.event.start));
-    setModalStartDateTime(new Date(info.event.start));
-    setModalEndDateTime(new Date(info.event.end));
-    setModalContent(`Available Time: ${new Date(info.event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(info.event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
-    openModal();
-  };
-
-  const openModal = () => {
+  if (originalEvent) {
+    setSelectedEvent(originalEvent);
+    setEditedStart(new Date(originalEvent.start));
+    setEditedEnd(new Date(originalEvent.end));
+    setSelectedColor(originalEvent.color || '#E2D6FF'); // Set the event's color
     setIsModalOpen(true);
-  };
+  }
+};
+const handleDateClick = (info: any) => {
+  setSelectedDate(info.date);
+  setIsEditing(false); // Ensure we're not in edit mode
+
+  // Filter events that overlap with the clicked date
+  const clickedEvents = events.filter((event) => {
+    const eventStart = new Date(event.start);
+    const eventEnd = new Date(event.end);
+    const clickedStart = info.date;
+    const clickedEnd = new Date(info.date);
+    clickedEnd.setDate(info.date.getDate() + 1); // Next day
+
+    // Check if the event overlaps with the clicked date
+    return eventStart < clickedEnd && eventEnd > clickedStart;
+  });
+
+  // Format unavailable times for display
+  let unavailableTimes = "No unavailability set for this day.";
+  if (clickedEvents.length > 0) {
+    unavailableTimes = clickedEvents
+      .map((event) => {
+        const startTime = new Date(event.start).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        const endTime = new Date(event.end).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        return `${startTime} - ${endTime}`;
+      })
+      .join("<br/>");
+    unavailableTimes = `Unavailable Times:<br/>${unavailableTimes}`;
+  }
+
+  // Set modal content and open the modal
+  setModalContent(unavailableTimes);
+  setIsModalOpen(true);
+};
 
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedEvent(null);
+    setSelectedDate(null);
     setError('');
     setSuccessMessage('');
-    setModalStartDateTime(null);
-    setModalEndDateTime(null);
   };
 
+  const handleCreateClick = () => {
+    setIsCreating(true);
+    setNewAvailability({ start: selectedDate, end: null, title: '' });
+    setSelectedColor('#E2D6FF'); // Set a default color
+    setError('');
+    setSuccessMessage('');
+  };
 
+  const handleNewAvailabilityChange = (field: string, value: string | Date | null) => {
+    if (field === 'color') {
+      setSelectedColor(value as string);
+    } else {
+      setNewAvailability(prev => ({ ...prev, [field]: value }));
+    }
+  };
+
+  const handleSaveAvailability = async () => {
+    setError('');
+    setSuccessMessage('');
   
+    if (!newAvailability.start || !newAvailability.end) {
+      setError("Please select start and end times.");
+      return;
+    }
+    if (newAvailability.end <= newAvailability.start) {
+      setError('End time must be after start time');
+      return;
+    }
+  
+    try {
+      const { error } = await supabase
+        .from("venue_availability")
+        .insert([{
+          venue_id: venueId,
+          available_start: newAvailability.start.toISOString(),
+          available_end: newAvailability.end.toISOString(),
+          title: newAvailability.title,
+          color: selectedColor, // Ensure this line is present
+        }]);
+  
+      if (error) throw error;
+  
+      fetchEvents();
+      closeModal();
+      setIsCreating(false);
+      setNewAvailability({ start: null, end: null, title: '' });
+      setSuccessMessage("Availability saved successfully!");
+    } catch (error) {
+      console.error("Error saving availability:", error);
+      setError("Error saving availability. Please try again.");
+    }
+  };
+  const handleCancelCreate = () => {
+    setIsCreating(false);
+    setNewAvailability({ start: null, end: null, title: '' });
+    setError('');
+    setSuccessMessage('');
+  };
 
+  const handleDeleteAvailability = async (id: string) => {
+    setError('');
+    setSuccessMessage('');
+
+    try {
+      const { error } = await supabase
+        .from("venue_availability")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+
+      fetchEvents();
+      closeModal();
+      setSuccessMessage("Availability deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting availability:", error);
+      setError("Error deleting availability. Please try again.");
+    }
+  };
+    // Add update function
+    const handleUpdateAvailability = async () => {
+      if (!selectedEvent || !editedStart || !editedEnd) return;
+    
+      try {
+        const { error } = await supabase
+          .from("venue_availability")
+          .update({
+            available_start: editedStart.toISOString(),
+            available_end: editedEnd.toISOString(),
+            color: selectedColor, // Ensure this line is present
+          })
+          .eq("id", selectedEvent.id);
+    
+        if (error) throw error;
+    
+        fetchEvents();
+        setIsEditing(false);
+        setSuccessMessage("Availability updated successfully!");
+      } catch (error) {
+        console.error("Error updating availability:", error);
+        setError("Error updating availability. Please try again.");
+      }
+    };
   return (
-    <div className='container mx-auto p-4 my-[2rem] font-sofia'>
-       <div className='flex items-center'>
-                    <Breadcrumbs items={breadcrumbItems} />
-                    </div>
-      <div>
-        {selectedDate && (
-          <p className="mb-4">Selected date: {selectedDate.toDateString()}</p>
-        )}
-      </div>
-  
-      <h2 className="text-2xl font-bold mb-4">Existing Availabilities</h2>
-      <div className="border rounded mb-8 overflow-hidden bg-white p-4 shadow-lg">
-        <FullCalendar
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-          initialView="dayGridMonth"
-          events={calendarEvents}
-          eventColor="#043677"
-          dateClick={handleDateClick}
-          eventClick={handleEventClick}
-          height={600}
-        />
-        {selectedEvent && (
-          <div className="mt-4">
-            <button
-              onClick={() => handleDeleteAvailability(selectedEvent.id)}
-              className="bg-red-500 hover:bg-red-700 text-black z-50 font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
-            >
-              Delete Availability
+    <div className=' py-4 my-[2rem] font-sofia bg-white mx-4 p-8 rounded-3xl border-[1px] border-gray-300'>
+    
+      {selectedDate && (
+        <p className="mb-4">Selected date: {selectedDate.toDateString()}</p>
+      )}
+      <div className='flex justify-between my-4'>
+        <div>
+        <h2 className="text-3xl font-semibold text-gray-700 mb-4 font-bonanova">Existing Events</h2>
+      
+        </div>
+        {isCreating ? (
+          <div className="border rounded-xl mb-8 overflow-hidden max-w-max bg-white p-4 shadow-lg">
+            <h3 className="text-xl font-bold mb-2">Create New Availability</h3>
+            <label htmlFor="start">Start Time:</label><br />
+            <DatePicker
+              selected={newAvailability.start}
+              onChange={(date) => handleNewAvailabilityChange('start', date)}
+              showTimeSelect
+              dateFormat="Pp"
+            /><br /><br />
+
+            <label htmlFor="end">End Time:</label><br />
+            <DatePicker
+              selected={newAvailability.end}
+              onChange={(date) => handleNewAvailabilityChange('end', date)}
+              showTimeSelect
+              dateFormat="Pp"
+            /><br /><br />
+
+            <label htmlFor="title">Title:</label><br />
+            <textarea
+              value={newAvailability.title}
+              onChange={(e) => handleNewAvailabilityChange('title', e.target.value)}
+              className="border rounded w-full p-2"
+            /><br /><br />
+
+            <button onClick={handleSaveAvailability} className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mr-2">
+              Save
+            </button>
+            <button onClick={handleCancelCreate} className="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">
+              Cancel
             </button>
           </div>
+        ) : (
+          <button onClick={handleCreateClick} className="bg-indigo-500 hover:bg-indigo-700 text-white  py-4 px-4 rounded-2xl">
+           Add Event+
+          </button>
         )}
       </div>
+      <div className='text-gray-500 my-4 ml-4'>
+        <div className='flex gap-2 mb-2' > <p style={{backgroundColor: '#E2D6FF'}} className='w-4 h-4 rounded'></p>
+          <h2 className='flex justify-center'>
+           <span className='text-indigo-500'>Scheduled: </span> This indicates an event or task that is planned for a future date and time.
+          </h2>
+        </div>
+        <div className='flex gap-2 mb-2' > <p style={{backgroundColor: '#FCD9D9'}} className='w-4 h-4 rounded'></p>
+          <h2 className='flex justify-center'>
+            <span className='text-red-500'>Cancelled: </span> This indicates that an event or task has been canceled or postponed.
+          </h2>
+        </div>
+        <div className='flex gap-2 mb-2' > <p style={{backgroundColor: '#D6FFE7'}} className='w-4 h-4 rounded'></p>
+          <h2 className='flex justify-center'>
+           <span className='text-green-500'>Completed: </span> This indicates that an event or task has been completed.
+          </h2>
+        </div>
+        <div className='flex gap-2 mb-2' > <p style={{backgroundColor: '#FFE9D6'}} className='w-4 h-4 rounded'></p>
+          <h2 className='flex justify-center'>
+            <span className=' text-orange-500'>On Progress: </span> This indicates that an event or task is currently in progress.
+          </h2>
+        </div>
+      
+      </div>
+      <div className="border rounded-3xl mb-8 overflow-hidden bg-white p-8 shadow-lg">
+      <FullCalendar
+        ref={calendarRef}
+        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+        initialView="dayGridMonth"
+        headerToolbar={{
+          left: 'prev,next today',
+          center: 'title',  
+          right: 'dayGridMonth,timeGridWeek,timeGridDay',
+        }}
+        events={events} // Pass the events array with color properties
+
+        eventClick={handleEventClick}
+        dateClick={handleDateClick}
+        // Add eventContent for more customization if needed
+        eventContent={(arg) => {
+        return (
+          <div
+          className="fc-event-content flex flex-col py-4 xl:flex-row items-center justify-start md:justify-between md:space-x-4 rounded-lg px-4 w-full"
+          style={{ backgroundColor: arg.event.backgroundColor, color: arg.event.textColor }}
+        >
+    {/* Event Dot */}
+    <div className="fc-daygrid-event-line w-2  h-2 rounded-full mb-2 md:mb-0 py-4" style={{ backgroundColor: arg.event.backgroundColor,color: arg.event.textColor, filter: 'brightness(0.8)' }}></div>
   
+    {/* Event Details */}
+    <div className="flex flex-col xl:flex-row items-center justify-start md:justify-between md:space-x-4 w-full">
+      {/* Event Title */}
+      <div className="fc-event-time text-center md:text-left mb-2 md:mb-0">
+        {arg.event.title}
+      </div>
+  
+    </div>
+  </div>
+ )
+  }}
+/>
+      </div>
+
+  
+
       <CustomModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        title="Availability Details"
-        onDelete={handleDeleteAvailability}
-        onCreate={handleCreateAvailability}
-        selectedEvent={selectedEvent}
-        selectedDate={selectedDate}
-        startDateTime={modalStartDateTime}
-        endDateTime={modalEndDateTime}
-        setStartDateTime={setModalStartDateTime}
-        setEndDateTime={setModalEndDateTime}
-        error={error}
-        setError={setError}
-        successMessage={successMessage}
-        setSuccessMessage={setSuccessMessage}
-      >
-        <div dangerouslySetInnerHTML={{ __html: modalContent }} />
-        <div className="mb-2 my-[4rem]">
-          <label className="block text-gray-700 font-bold mb-2">Start Date & Time:</label>
-          <DatePicker
-            selected={modalStartDateTime}
-            onChange={(date: Date | null) => setModalStartDateTime(date)}
-            showTimeSelect
-            dateFormat="MMMM d, yyyy h:mm aa"
-            minDate={selectedDate || new Date()}
-            calendarClassName="font-sofia"
-            dayClassName={() => " hover:bg-gray-200"}
-            weekDayClassName={() => "text-gray-700"}
-            monthClassName={() => "text-red-700 z-50 font-bold"}
-            yearClassName={() => "text-gray-700 z-50"}
-            className="border rounded w-full py-2 px-3 z-50 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 font-bold mb-2">End Date & Time:</label>
-          <DatePicker
-            selected={modalEndDateTime}
-            onChange={(date: Date | null) => setModalEndDateTime(date)}
-            showTimeSelect
-            dateFormat="MMMM d, yyyy h:mm aa"
-            minDate={modalStartDateTime || selectedDate || new Date()}
-            minTime={modalStartDateTime || new Date()}
-            maxTime={maxTime}
-            className="border rounded w-full py-2 z-50 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-      </CustomModal>
+  isOpen={isModalOpen}
+  onClose={closeModal}
+  title="Availability Details"
+  selectedEvent={selectedEvent}
+  selectedDate={selectedDate}
+  error={error}
+  setError={setError}
+  successMessage={successMessage}
+  setSuccessMessage={setSuccessMessage}
+  modalContent={modalContent}
+  onDelete={handleDeleteAvailability}
+  onUpdate={handleUpdateAvailability}
+  isEditing={isEditing}
+  setIsEditing={setIsEditing}
+  editedStart={editedStart}
+  editedEnd={editedEnd}
+  setEditedStart={setEditedStart}
+  setEditedEnd={setEditedEnd}
+  selectedColor={selectedColor} // Add this line
+  setSelectedColor={setSelectedColor} // Add this line
+/>
     </div>
   );
 };

@@ -43,6 +43,7 @@ module.exports = {
   			'blue-2': '#0362DD',
   			'blue-3': '#035969',
   			'blue-4': ' #126180',
+			'blue-500': '#3641f5',
   			'navy-blue-1': '#043677	',
   			'navy-blue-2': '#032D63',
   			'navy-blue-3': '#02244F',

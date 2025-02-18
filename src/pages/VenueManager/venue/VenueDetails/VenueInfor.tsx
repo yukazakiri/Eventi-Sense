@@ -1,159 +1,381 @@
-import React, { useState } from 'react';
-import { Venue } from '../../../../types/venue'
-
-
+import React, { useState, useEffect } from 'react';
+import supabase from '../../../../api/supabaseClient';
+import { Venue } from '../../../../types/venue';
 
 interface VenueInfoFormProps {
-
     venue: Venue;
-
-    onSave: (updatedVenue: Venue) => Promise<void>;
-
     isEditing: boolean;
-
     setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
-
 }
 
-const VenueInfoForm: React.FC<VenueInfoFormProps> = ({ venue, onSave, isEditing }) => {
-    const [name, setName] = useState(venue.name);
-    const [description, setDescription] = useState(venue.description);
-    const [capacity, setCapacity] = useState(venue.capacity);
-    const [phone_number, setPhoneNumber] = useState(venue.phone_number);
-    const [website,setWebsite] = useState (venue.website);
-    const [venue_type,setVenue_type] = useState (venue.venue_type);
-    const [location, setLocation] = useState(venue.location);
+const VenueInfoForm: React.FC<VenueInfoFormProps> = ({ venue, isEditing, setIsEditing }) => {
+    const [formData, setFormData] = useState<Venue>(venue);
+    const [venueTypes, setVenueTypes] = useState<any[]>([]);
+    const [accessibilities, setAccessibilities] = useState<any[]>([]);
+    const [pricingModels, setPricingModels] = useState<any[]>([]);
+    const [selectedVenueTypes, setSelectedVenueTypes] = useState<string[]>([]);
+    const [selectedAccessibilities, setSelectedAccessibilities] = useState<string[]>([]);
+    const [selectedPricingModels, setSelectedPricingModels] = useState<string[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-
-        const updatedVenue: Venue = {
-            ...venue,  // Important: Include the original venue properties
-            name,
-            capacity,
-            website,
-            phone_number,
-            venue_type,
-            description,
-            location,
-
+    useEffect(() => {
+        const fetchOptions = async () => {
+            try {
+                setLoading(true);
+    
+                const [venueTypesPromise, accessibilitiesPromise, pricingModelsPromise] = [
+                    supabase.from('venue_types').select('*'),
+                    supabase.from('venue_accessibilities').select('*'),
+                    supabase.from('venue_pricing_models').select('*'),
+                ];
+    
+                const results = await Promise.all([venueTypesPromise, accessibilitiesPromise, pricingModelsPromise]);
+    
+                const [
+                    { data: venueTypesData, error: venueTypesError },
+                    { data: accessibilitiesData, error: accessibilitiesError },
+                    { data: pricingModelsData, error: pricingModelsError },
+                ] = results;
+    
+                if (venueTypesError) {
+                    console.error("Error fetching venue types:", venueTypesError);
+                    setError("Error fetching venue types.");
+                } else {
+                    setVenueTypes(venueTypesData || []);
+                }
+    
+                if (accessibilitiesError) {
+                    console.error("Error fetching accessibilities:", accessibilitiesError);
+                    setError("Error fetching accessibilities.");
+                } else {
+                    setAccessibilities(accessibilitiesData || []);
+                }
+    
+                if (pricingModelsError) {
+                    console.error("Error fetching pricing models:", pricingModelsError);
+                    setError("Error fetching pricing models.");
+                } else {
+                    setPricingModels(pricingModelsData || []);
+                }
+    
+                if (venue && venue.id) {
+                    const { data: venueData, error: venueError } = await supabase
+                        .from('venues')
+                        .select('id') // Only select the ID from the venues table
+                        .eq('id', venue.id)
+                        .single();
+    
+                    if (venueError) {
+                        console.error("Error fetching venue details:", venueError);
+                        setError("Error fetching venue details."); // Set an error message
+                    } else if (venueData) {
+                        const fetchJoinTableData = async (tableName: string, foreignKeyColumn: string) => {
+                            const { data, error } = await supabase
+                                .from(tableName)
+                                .select(foreignKeyColumn)
+                                .eq('venue_id', venueData.id);
+    
+                            if (error) {
+                                console.error(`Error fetching ${tableName}:`, error);
+                                setError(`Error fetching ${tableName}.`); // Set an error message
+                                return []; // Return an empty array in case of an error
+                            }
+                            return data ? data.map((item:any) => item[foreignKeyColumn]) : [];
+                        };
+    
+                        const venueTypes = await fetchJoinTableData('venues_venue_types', 'venue_type_id');
+                        const accessibilities = await fetchJoinTableData('venues_venue_accessibilities', 'venue_accessibility_id');
+                        const pricingModels = await fetchJoinTableData('venues_venue_pricing_models', 'venue_pricing_model_id');
+    
+                        setSelectedVenueTypes(venueTypes);
+                        setSelectedAccessibilities(accessibilities);
+                        setSelectedPricingModels(pricingModels);
+                    }
+                }
+    
+            } catch (err) {
+                console.error("Error fetching options:", err);
+                setError("An error occurred while fetching options."); // Set a general error message
+            } finally {
+                setLoading(false);
+            }
         };
+    
+        fetchOptions();
+    }, [venue]);
 
-        onSave(updatedVenue); // Call the callback function to save in the parent component
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value, type } = e.target;
+        let checked: boolean | undefined;
+    
+        if (e.target instanceof HTMLInputElement) {
+            checked = e.target.checked;
+        }
+    
+        if (name === 'venue_type') {
+            const updatedVenueTypes = checked === true
+              ? [...selectedVenueTypes, value]
+              : selectedVenueTypes.filter((type) => type!== value);
+            setSelectedVenueTypes(updatedVenueTypes);
+        } else if (name === 'accessibility') {
+            const updatedAccessibilities = checked === true
+              ? [...selectedAccessibilities, value]
+              : selectedAccessibilities.filter((access) => access!== value);
+            setSelectedAccessibilities(updatedAccessibilities);
+        } else if (name === 'pricing_model') {
+            const updatedPricingModels = checked === true
+              ? [...selectedPricingModels, value]
+              : selectedPricingModels.filter((model) => model!== value);
+            setSelectedPricingModels(updatedPricingModels);
+        } else if (type === 'checkbox') { // Handles other checkbox fields in venues table
+            if (checked !== undefined) {
+                setFormData({...formData, [name]: checked });
+            }
+        } else { // Handles text, number, and other input types in venues table
+            setFormData({...formData, [name]: value });
+        }
     };
 
-    if (!isEditing) {
-        return (
-            <div className="bg-white p-[2.5rem]  shadow-xl">
-                <h2 className="text-xl font-semibold mb-4">Venue Information</h2>
-                <p 
-                    className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <strong>Name:</strong> {venue.name}
-                </p>
-                <p
-                    className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <strong>Capacity:</strong>{venue.capacity}
-                </p>
-                <p
-                    className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <strong>Phone Number:</strong>{venue.phone_number}
-                </p>
-                <p
-                    className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <strong>Website:</strong>{venue.website}
-                </p>
-                <p
-                    className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <strong>Venue Type:</strong>{venue.venue_type}
-                </p>
-                <p 
-                    className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <strong>Description:</strong> {venue.description}
-                </p>
-                <p 
-                    className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <strong>Location:</strong> {venue.location}
-                </p>
-           
-            </div>
-        );
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+    
+        try {
+            if (!venue || !venue.id) {
+                console.error("Venue object or ID is missing.");
+                setError("Venue information is missing. Cannot update.");
+                return;
+            }
+    
+            // Update other venue data (if any) in the 'venues' table *before* updating join tables.
+            const { error: venueUpdateError } = await supabase
+                .from('venues')
+                .update(formData) // Assuming formData contains other venue fields (name, address, etc.)
+                .eq('id', venue.id);
+    
+            if (venueUpdateError) {
+                throw venueUpdateError; // Re-throw to be caught in the main try/catch
+            }
+    
+    
+            const updateJoinTable = async (tableName: string, venueId: string, selectedIds: string[], foreignKeyColumn: string) => {
+                const { data: existingIdsData, error: existingIdsError } = await supabase
+                    .from(tableName)
+                    .select(foreignKeyColumn)
+                    .eq('venue_id', venueId);
+    
+                if (existingIdsError) {
+                    throw existingIdsError;
+                }
+    
+                const existingIds = existingIdsData?.map((item:any) => item[foreignKeyColumn]) || [];
+    
+                const idsToAdd = selectedIds.filter(id => !existingIds.includes(id));
+                const idsToRemove = existingIds.filter(id => !selectedIds.includes(id));
+    
+                if (idsToAdd.length > 0) {
+                    const newEntries = idsToAdd.map(id => ({
+                        venue_id: venueId,
+                        [foreignKeyColumn]: id,
+                    }));
+                    const { error: insertError } = await supabase.from(tableName).insert(newEntries);
+                    if (insertError) throw insertError;
+                }
+    
+                if (idsToRemove.length > 0) {
+                    const { error: deleteError } = await supabase
+                        .from(tableName)
+                        .delete()
+                        .in(foreignKeyColumn, idsToRemove)
+                        .eq('venue_id', venueId);
+                    if (deleteError) throw deleteError;
+                }
+            };
+    
+            // Now update the join tables
+            await updateJoinTable('venues_venue_types', venue.id.toString(), selectedVenueTypes, 'venue_type_id');
+            await updateJoinTable('venues_venue_accessibilities', venue.id.toString(), selectedAccessibilities, 'venue_accessibility_id');
+            await updateJoinTable('venues_venue_pricing_models', venue.id.toString(), selectedPricingModels, 'venue_pricing_model_id');
+    
+            alert("Venue and related information updated successfully!");
+            setIsEditing(false);
+        } catch (error) {
+            console.error("Error updating venue:", error);
+            setError("An error occurred while updating the venue.");  // Set the error state
+        }
+    };
+
+    if (loading) {
+        return <div>Loading options...</div>;
     }
 
-    return (
-        <div className="bg-white p-[2rem]  shadow-xl">
-            <h2 className="text-xl font-semibold mb-4">Venue Information</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                    <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Name</label>
-                    <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    />
-                </div>
-                <div className="mb-4">
-                  <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Capacity</label>
-                  <input
-                        type="text"
-                        value={capacity}
-                        onChange={(e) => setCapacity(Number(e.target.value))}
-                        className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    />
-                </div>
-                <div className="mb-4">
-                  <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Phone Number</label>
-                  <input
-                        type="number"
-                        value={phone_number}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    />
-                </div>
-                <div className="mb-4">
-                  <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Website</label>
-                  <input
-                        type="text"
-                        value={website}
-                        onChange={(e) => setWebsite(e.target.value)}
-                        className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    />
-                </div>
-                <div className="mb-4">
-                  <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Venue Type</label>
-                  <input
-                        type="text"
-                        value={venue_type}
-                        onChange={(e) => setVenue_type(e.target.value)}
-                        className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Description</label>
-                    <textarea
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Location</label>
-                    <input
-                        type="text"
-                        value={location}
-                        onChange={(e) => setLocation(e.target.value)}
-                        className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    />
-                </div>
-                <button
-                    type="submit"
-                    className="inline-flex justify-center py-2 px-8 border border-transparent shadow-sm text-sm font-medium rounded-full  text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                    Save Changes
-                </button>
-            </form>
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
+    return ( 
+        <div className={`bg-white p-[2rem] shadow-xl ${isEditing ? 'border-2 rounded-xl border-indigo-400' : ''}`}>
+        <form onSubmit={handleSubmit}>
+        <div className='grid md:grid-cols-2 gap-2'>
+            <div className="mb-4">
+                <label htmlFor="name" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Venue Name:</label>
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name || ''}
+                    onChange={handleChange}   
+                    className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"                      
+                    placeholder="Example: The Grand Ballroom"
+                    disabled={!isEditing}
+                />
+            </div>
+            <div className="mb-4">
+                <label htmlFor="capacity" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Capacity:</label>
+                <input
+                    type="text"
+                    id="capacity"
+                    name="capacity"
+                    value={formData.capacity || ''}
+                    onChange={handleChange}
+                    className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"                        
+                    placeholder="Example: 500-600 people, depending on the event"
+                    disabled={!isEditing}
+                />
+            </div>
+            <div className="mb-4">
+                <label htmlFor="email" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Email:</label>
+                <input
+                    type="text"
+                    id="email"
+                    name="email"
+                    value={formData.email || ''}
+                    onChange={handleChange}
+                    className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    disabled={!isEditing}
+                />
+            </div>
+            <div className="mb-4">
+                <label htmlFor="price" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Price:</label>
+                <input
+                    type="text"
+                    id="price"
+                    name="price"
+                    value={formData.price || ''}
+                    onChange={handleChange}                   
+                    className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Example: Ranging from PHP5000-PHP10000"
+                    disabled={!isEditing}
+                />
+            </div>
+            <div className="mb-4">
+                <label htmlFor="phone_number" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Phone Number:</label>
+                <input
+                    type="text"
+                    id="phone_number"
+                    name="phone_number"
+                    value={formData.phone_number || ''}
+                    onChange={handleChange}                   
+                    className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"                       
+                    placeholder="Example: 123-456-7890"
+                    disabled={!isEditing}
+                />
+            </div>
+            <div className="mb-4">
+                <label htmlFor="website" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Website:</label>
+                <input
+                    type="text"
+                    id="website"
+                    name="website"
+                    value={formData.website || ''}
+                    onChange={handleChange}                    
+                    className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Example: https://example.com" 
+                    disabled={!isEditing}
+                />
+            </div>
+            <div className="mb-4 col-span-2">
+                <label htmlFor="description" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Description:</label>
+                <input
+                    type="text"
+                    id="description"
+                    name="description"
+                    value={formData.description || ''}
+                    onChange={handleChange}                    
+                    className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-48 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    disabled={!isEditing}
+                />
+            </div>
+            
         </div>
+            <div className='my-4'>
+                <label className="block text-gray-700 font-bold mb-2">Venue Type:</label>
+                <div className="grid grid-cols-3 ">
+                {venueTypes.map((type) => (
+                    <label key={type.id} className="flex items-center space-x-2 mb-2">
+                        <input
+                            type="checkbox"
+                            name="venue_type"
+                            value={type.id.toString()}
+                            checked={selectedVenueTypes.includes(type.id.toString())}
+                            onChange={handleChange}
+                            className="mr-2"
+                            disabled={!isEditing}
+                        />
+                        <span>{type.name}</span>
+                    </label>
+                ))}
+                 </div>
+            </div>
+    
+            <div className="mb-4">
+                <label className="block text-gray-700 font-bold mb-2">Accessibility:</label>
+                <div className="grid grid-cols-2 gap-2">
+                {accessibilities.map((access) => (
+                    <label key={access.id} className="inline-flex items-center mr-4">
+                        <input
+                            type="checkbox"
+                            name="accessibility"
+                            value={access.id.toString()}
+                            checked={selectedAccessibilities.includes(access.id.toString())}
+                            onChange={handleChange}
+                            className="mr-2"
+                            disabled={!isEditing}
+                        />
+                        <span>{access.name}</span>
+                    </label>
+                ))}
+            </div>
+            </div>
+    
+            <div className='mb-4'>
+                <label className="block text-gray-700 font-bold mb-2">Pricing Model:</label>
+                <div className="grid grid-cols-2 gap-2">
+                {pricingModels.map((model) => (
+                    <label key={model.id} className="inline-flex items-center mr-4">
+                        <input
+                            type="checkbox"
+                            name="pricing_model"
+                            value={model.id.toString()}
+                            checked={selectedPricingModels.includes(model.id.toString())}
+                            onChange={handleChange}
+                            className="mr-2"
+                            disabled={!isEditing}
+                        />
+                        <span>{model.name}</span>
+                    </label>
+                ))}
+                </div>
+            </div>
+            
+    
+            {/* Add other form fields here as needed */}
+    
+            <input type="hidden" name="id" value={venue.id} />
+            <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Save</button>
+        </form>
+        </div>      
     );
 };
 
-export default VenueInfoForm;
+    export default VenueInfoForm;

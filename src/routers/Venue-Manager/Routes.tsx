@@ -9,7 +9,9 @@ import VenueList from '../../pages/VenueManager/venue/ListVenues';
 //import  AvailabilityPage  from '../../pages/VenueManager/venue/VenueDetails/Availabilty/AvailabilityPage';
 import VenueCalendar from '../../pages/VenueManager/venue/VenueDetails/AvailabiltyGallery/AddVenueAvailabilityForm';
 import VenueGallery from '../../pages/VenueManager/venue/VenueDetails/AvailabiltyGallery/Gallery';
-
+import BookingDetails from '../../pages/VenueManager/Booking/BookingDetails';
+import BookingList from '../../pages/VenueManager/BookingList';
+import Profiles from '../../pages/VenueManager/Profile/Profiles';
 
 
 const routes: RouteObject[] = [ 
@@ -29,7 +31,15 @@ const routes: RouteObject[] = [
  
  { path: '/Venue-Details/:venueId/add-availability', element: <VenueCalendar/> },
 
- { path: '/Venue-Details/:venueId/add-photos', element: <VenueGallery/> }
+ { path: '/Venue-Details/:venueId/add-photos', element: <VenueGallery/> },
+ { path: '/BookingDetail/:venueId', element: <BookingDetails/> },
+
+ { path: '/Booking-List', element: <BookingList/> },
+
+ { path: '/Profiles', element: <Profiles /> },
+ 
+
+
 
 
 

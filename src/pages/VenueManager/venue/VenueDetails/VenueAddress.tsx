@@ -65,7 +65,7 @@ const AddressForm: React.FC<AddressFormProps> = ({ venue, onSave, isEditing, set
     }
 
     return (
-        <div className="bg-white p-[2rem]  shadow-md">
+        <div className={`bg-white p-[2rem] shadow-xl ${isEditing ? 'border-2 rounded-xl border-indigo-400' : ''}`}>
             <h2 className="text-xl mb-4">Venue Address</h2>
             <form onSubmit={handleSubmit}>
                 {/* ... (input fields remain the same) */}

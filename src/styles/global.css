@@ -108,5 +108,9 @@
     background-color: #1d4ed8; /* hover:bg-blue-700 */
 }
 .masonry {
-  column-gap: 2rem;
+  column-gap: 1rem;
 }
+
+
+
+
