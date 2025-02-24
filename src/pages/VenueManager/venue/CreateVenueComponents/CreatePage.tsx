@@ -56,7 +56,7 @@ const VenueForm = () => {
   const [_companyProfileLoading, setCompanyProfileLoading] = useState(true);
   const [ _companyProfileError, setCompanyProfileError] = useState<string | null>(null);
   const [_formErrors, setFormErrors] = useState({});
-  const [venueId, setVenueId] = useState<string | null>(null);
+  const [_venueId, setVenueId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [initialImageUrl, _setInitialImageUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null); // Move selectedFile state here
@@ -412,7 +412,25 @@ const insertRelatedData = async (
         throw error;
     }
 };
-
+if (venueTypesLoading) {
+  return <div>Loading venue types...</div>;
+}
+if (accessibilitiesLoading) {
+  return <div>Loading venue types...</div>;
+}
+if (venueTypesError) {
+  console.error('Error fetching venue types:', venueTypesError);
+  // or display an error message to the user
+}
+if (accessibilitiesError) {
+  console.error('Error fetching accessibilities:', accessibilitiesError);
+}
+if (pricingModelsLoading) {
+  return <div>Loading pricing models...</div>;
+}
+if (pricingModelsError) {
+  console.error('Error fetching pricing models:', pricingModelsError);
+}
   return (
     <div className="max-w-screen-xl mx-auto my-[6rem] font-sofia">
   

@@ -45,7 +45,33 @@ const AmenitiesForm: React.FC<AmenitiesFormProps> = ({
     };
 
     return (
-        <div className="bg-white p-8 shadow-xl">
+        <div className={`bg-white p-[2rem]  border-[1px] border-gray-300 rounded-3xl ${isEditing ? 'border-2 rounded-3xl border-indigo-400' : ''}`}>
+                     <div className='flex justify-between mb-4'>
+                   <h1 className="text-3xl font-bold font-bonanova text-gray-700 ">Amenities</h1>
+                   <div>
+                         {!isEditing &&  (
+                       <>
+                           <button
+                               onClick={() => setIsEditing(true)}
+                               className="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mr-2"
+                           >
+                               Edit 
+                           </button>
+                      
+                       </>
+                   )}
+                   {isEditing  && (
+                       <button
+                           onClick={() => {
+                               setIsEditing(false);
+                             
+                           }}
+                           className="text-white bg-red-400 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-blue-800"
+                       >
+                           Cancel
+                       </button>
+                   )}</div>
+                      </div>
             {isEditing ? (
                 <div>
                     {amenities.map((amenity) => {
@@ -124,12 +150,7 @@ const AmenitiesForm: React.FC<AmenitiesFormProps> = ({
                             })
                         )}
                     </ul>
-                    <button
-                        onClick={() => setIsEditing(true)}
-                        className="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 my-4 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                    >
-                        Edit
-                    </button>
+                 
                 </div>
             )}
         </div>

@@ -1,6 +1,9 @@
  import React, { useState, useEffect } from "react";
-import supabase from "../../../api/supabaseClient";
-import Modal from "../../../assets/modal/modal"; // Import your Modal component
+import supabase from "../../api/supabaseClient";
+import Modal from "../../assets/modal/modal"; // Import your Modal component
+import { LuPencil } from "react-icons/lu";
+import { MdOutlineMailOutline } from "react-icons/md";
+import { FiPhone } from "react-icons/fi";
 
 interface Company {
   id?: string;
@@ -240,7 +243,7 @@ const handleSave = async () => {
   }
 
   return (
-    <div className="py-4  px-2">
+    <div className="pb-4  px-2">
       <div className="m-4 bg-white p-6 border border-gray-300 rounded-2xl font-sofia">
         <div className="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-6">
           <div className="flex-shrink-0">
@@ -265,7 +268,7 @@ const handleSave = async () => {
      
    <form className="space-y-6 ">
    <div className=" flex items-center justify-between">
-          <h2 className="text-lg font-bold text-gray-700 tracking-wide mb-4 sm:mb-0">
+          <h2 className="text-[16px] font-semibold tracking-wider text-gray-800 my-4 ml-4 font-sofia  ">
             {company?.id ? "Edit Company Profile" : "Create Company Profile"}
           </h2>
           <div className="flex flex-col sm:flex-row gap-4 mt-2">
@@ -283,13 +286,10 @@ const handleSave = async () => {
             </div>
             
           ) : (
-            <button
-              type="button"
-              onClick={() => setEditing(true)}
-              className="text-white bg-indigo-600 hover:bg-indigo-700 px-5 py-2 rounded-2xl"
-            >
-              Edit Profile
-            </button>
+          <button type="button" onClick={() => setEditing(true)} className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-3 rounded-full flex items-center">
+                       <LuPencil className="mr-2" />
+                       Edit 
+                     </button>
           )}
         </div>
         </div>
@@ -297,7 +297,7 @@ const handleSave = async () => {
   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
     {/* Company Name */}
     <div>
-      <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Company Name</label>
+      <label className="block mb-2 text-sm font-medium text-gray-800  dark:text-white">Company Name</label>
       <input
         type="text"
         value={company.company_name}
@@ -310,7 +310,7 @@ const handleSave = async () => {
 
     {/* Company Address */}
     <div>
-      <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Company Address</label>
+      <label className="block mb-2 text-sm font-medium text-gray-800  dark:text-white">Business Address</label>
       <input
         type="text"
         value={company.company_address}
@@ -323,33 +323,44 @@ const handleSave = async () => {
 
     {/* Company Email */}
     <div>
-      <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Company Email</label>
+      <label className="block mb-2 text-sm font-medium text-gray-800  dark:text-white">Business Email</label>
+          <div className='relative'>
+           <div className="absolute inset-y-0 left-0 flex items-center px-3 pointer-events-none border-r-[1px]  border-gray-200">
+              <MdOutlineMailOutline className="w-5 h-5 text-gray-500" />
+          </div>
       <input
         type="email"
         value={company.company_email}
         onChange={(e) => handleInputChange(e, "company_email")}
         disabled={!editing}
-       className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"                      
+       className="bg-white pl-14  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"                      
                     
       />
+    </div>
     </div>
 
     {/* Company Phone */}
     <div>
-      <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Company Phone</label>
+      <label className="block mb-2 text-sm font-medium text-gray-800  dark:text-white">Business Phone</label>
+      <div className='relative'>
+           <div className="absolute inset-y-0 left-0 flex items-center px-3 pointer-events-none border-r-[1px]  border-gray-200">
+              <FiPhone className="w-4 h-4 text-gray-500" />
+          </div>
       <input
         type="text"
         value={company.company_phone}
         onChange={(e) => handleInputChange(e, "company_phone")}
         disabled={!editing}
-       className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"                      
+       className="bg-white  pl-14 border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"                      
                     
       />
+    </div>
     </div>
 
     {/* Company Website */}
     <div>
-      <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Company Website</label>
+      <label className="block mb-2 text-sm font-medium text-gray-800  dark:text-white">Business Website</label>
+    
       <input
         type="text"
         value={company.company_website || ""}
@@ -360,9 +371,10 @@ const handleSave = async () => {
       />
     </div>
 
+
     {/* Company Logo */}
     <div className="col-span-2">
-      <label className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Company Logo</label>
+      <label className="block mb-2 text-sm font-medium text-gray-800  dark:text-white">Business Logo</label>
       <input
         type="file"
         onChange={handleLogoUpload}

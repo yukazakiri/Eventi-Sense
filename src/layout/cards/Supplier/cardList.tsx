@@ -1,69 +1,87 @@
-import React from 'react';
-import Card from './cardDesign'; // Import the Card component
+import React, { useState, useEffect } from 'react';
+import Card from './cardDesign';
+import supabase from '../../../api/supabaseClient';
+import { CompanyProfile, Supplier } from '../../../types/supplier';
+import { useNavigate } from 'react-router-dom';
+
 type CardSuppliersProps = {
-  limit?: number; // Optional prop to limit the number of cards
+  limit?: number;
 };
 
 const CardSuppliers: React.FC<CardSuppliersProps> = ({ limit }) => {
-  const cardData = [
-    {
-      SupplierName: "John Doe",
-      CompanyName: "ABC Suppliers",
-      Services: "Event Planning, Catering",
-      image:
-        "https://images.pexels.com/photos/1072179/pexels-photo-1072179.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      rating: 4, // Rating out of 5
-    },
-    {
-      SupplierName: "Jane Smith",
-      CompanyName: "XYZ Suppliers",
-      Services: "Decorations, Lighting",
-      image:
-        "https://images.pexels.com/photos/1072179/pexels-photo-1072179.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      rating: 5,
-    },
-    {
-      SupplierName: "Bob Johnson",
-      CompanyName: "DEF Suppliers",
-      Services: "Audio Visual, Photography",
-      image:
-        "https://images.pexels.com/photos/1072179/pexels-photo-1072179.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      rating: 3,
-    },
-    {
-      SupplierName: "Alice Brown",
-      CompanyName: "GHI Suppliers",
-      Services: "Floral Arrangements",
-      image:
-        "https://images.pexels.com/photos/1072179/pexels-photo-1072179.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      rating: 4,
-    },
-    {
-      SupplierName: "Charlie Davis",
-      CompanyName: "JKL Suppliers",
-      Services: "Entertainment, DJ",
-      image:
-        "https://images.pexels.com/photos/1072179/pexels-photo-1072179.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      rating: 5,
-    },
-  ];
+  const [cardData, setCardData] = useState<{ supplier: Supplier; companyProfile: CompanyProfile | null }[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate(); // Initialize useNavigate
 
-  // If a limit is provided, slice the cardData array; otherwise, show all cards
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const { data: suppliersData, error: suppliersError } = await supabase
+          .from('supplier')
+          .select('*')
+        console.log('id', suppliersData);
+
+        if (suppliersError) {
+          throw new Error(suppliersError.message);
+        }
+
+        const companyProfiles = await supabase
+        .from('company_profiles')
+        .select('*')
+        .in('id', suppliersData.map(supplier => supplier.company_id));
+      
+      const suppliersWithCompanyProfiles = suppliersData.map(supplier => ({
+        supplier,
+        companyProfile: companyProfiles.data?.find(companyProfile => companyProfile.id === supplier.company_id),
+      }));
+      
+      setCardData(suppliersWithCompanyProfiles);
+      } catch (e) {
+        if (e instanceof Error) {
+          setError(e.message);
+        } else {
+          setError('An unexpected error occurred');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+  const handleCardClick = (supplierId: string) => { // Change to string
+    console.log("Clicked supplier ID:", supplierId);
+    navigate(`/supplier/${supplierId}`); // Keep as string
+};
+  if (loading) {
+    return <div>Loading suppliers...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   const displayedCardData = limit ? cardData.slice(0, limit) : cardData;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      {displayedCardData.map((data, index) => (
-        <div key={index}>
-          <Card
-            SupplierName={data.SupplierName}
-            Services={data.Services}
-            CompanyName={data.CompanyName}
-            image={data.image}
-            rating={data.rating} // Pass the rating
-          />
-        </div>
-      ))}
+      {displayedCardData.map(({ supplier, companyProfile }, index) => {
+        console.log('ids',supplier.id)
+        return (
+          <div key={index} onClick={() => handleCardClick(supplier.id ?? '')}>
+            <Card
+              SupplierName={supplier.name}
+              Services={supplier.address_city}
+              CompanyName={companyProfile ? companyProfile.company_name : 'Company Name Not Found'}
+              image={supplier.cover_image_url}
+              rating={supplier.rating || 0}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 };

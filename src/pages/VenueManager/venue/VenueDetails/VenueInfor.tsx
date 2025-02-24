@@ -214,9 +214,36 @@ const VenueInfoForm: React.FC<VenueInfoFormProps> = ({ venue, isEditing, setIsEd
         return <div>Error: {error}</div>;
     }
     return ( 
-        <div className={`bg-white p-[2rem] shadow-xl ${isEditing ? 'border-2 rounded-xl border-indigo-400' : ''}`}>
+        <div className={`bg-white p-[2rem]  border-[1px] border-gray-300 rounded-3xl ${isEditing ? 'border-2 rounded-3xl border-indigo-400' : ''}`}>
+                <div className='flex justify-between mb-4'>
+                        <h1 className="text-2xl font-bold font-bonanova text-gray-700 ">Information</h1>
+                        <div>
+                              {!isEditing &&  (
+                            <>
+                                <button
+                                    onClick={() => setIsEditing(true)}
+                                    className="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mr-2"
+                                >
+                                    Edit 
+                                </button>
+                           
+                            </>
+                        )}
+                        {isEditing  && (
+                            <button
+                                onClick={() => {
+                                    setIsEditing(false);
+                                  
+                                }}
+                                className="text-white bg-red-400 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-blue-800"
+                            >
+                                Cancel
+                            </button>
+                        )}</div>
+                           </div>
+
         <form onSubmit={handleSubmit}>
-        <div className='grid md:grid-cols-2 gap-2'>
+        <div className='grid md:grid-cols-2 xl:grid-cols-3 gap-2'>
             <div className="mb-4">
                 <label htmlFor="name" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Venue Name:</label>
                 <input
@@ -294,7 +321,7 @@ const VenueInfoForm: React.FC<VenueInfoFormProps> = ({ venue, isEditing, setIsEd
                     disabled={!isEditing}
                 />
             </div>
-            <div className="mb-4 col-span-2">
+            <div className="mb-4 col-span-3">
                 <label htmlFor="description" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Description:</label>
                 <input
                     type="text"
@@ -302,17 +329,17 @@ const VenueInfoForm: React.FC<VenueInfoFormProps> = ({ venue, isEditing, setIsEd
                     name="description"
                     value={formData.description || ''}
                     onChange={handleChange}                    
-                    className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-48 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-auto p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     disabled={!isEditing}
                 />
             </div>
             
         </div>
-            <div className='my-4'>
+        <div className={`bg-white p-[2rem] mb-4  border-[1px] border-gray-300 rounded-3xl ${isEditing ? 'border-2 rounded-3xl border-indigo-400' : ''}`}>
                 <label className="block text-gray-700 font-bold mb-2">Venue Type:</label>
-                <div className="grid grid-cols-3 ">
+                <div className="grid lg:grid-cols-4 ">
                 {venueTypes.map((type) => (
-                    <label key={type.id} className="flex items-center space-x-2 mb-2">
+                    <label key={type.id} className="flex items-center space-x-2 mb-2 text-gray-700">
                         <input
                             type="checkbox"
                             name="venue_type"
@@ -327,12 +354,13 @@ const VenueInfoForm: React.FC<VenueInfoFormProps> = ({ venue, isEditing, setIsEd
                 ))}
                  </div>
             </div>
-    
-            <div className="mb-4">
+    <section className='grid grid-cols-2 gap-4 mb-4'>
+    <div className={`bg-white p-[2rem]  border-[1px] border-gray-300 rounded-3xl ${isEditing ? 'border-2 rounded-3xl border-indigo-400' : ''}`}>
+
                 <label className="block text-gray-700 font-bold mb-2">Accessibility:</label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid md:grid-cols-2 gap-2">
                 {accessibilities.map((access) => (
-                    <label key={access.id} className="inline-flex items-center mr-4">
+                    <label key={access.id} className="inline-flex items-center mr-4 text-gray-700" >
                         <input
                             type="checkbox"
                             name="accessibility"
@@ -348,11 +376,11 @@ const VenueInfoForm: React.FC<VenueInfoFormProps> = ({ venue, isEditing, setIsEd
             </div>
             </div>
     
-            <div className='mb-4'>
+            <div className={`bg-white p-[2rem]  border-[1px] border-gray-300 rounded-3xl ${isEditing ? 'border-2 rounded-3xl border-indigo-400' : ''}`}>
                 <label className="block text-gray-700 font-bold mb-2">Pricing Model:</label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid md:grid-cols-2 gap-2">
                 {pricingModels.map((model) => (
-                    <label key={model.id} className="inline-flex items-center mr-4">
+                    <label key={model.id} className="inline-flex items-center mr-4 text-gray-700">
                         <input
                             type="checkbox"
                             name="pricing_model"
@@ -367,12 +395,23 @@ const VenueInfoForm: React.FC<VenueInfoFormProps> = ({ venue, isEditing, setIsEd
                 ))}
                 </div>
             </div>
-            
+ </section>    
     
             {/* Add other form fields here as needed */}
     
             <input type="hidden" name="id" value={venue.id} />
-            <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Save</button>
+            {isEditing &&
+            <>
+             <button type="submit" className="bg-green-500 hover:bg-green-600 text-white  py-2 px-8 rounded-full focus:outline-none focus:shadow-outline">Save</button>
+             <button
+             className="inline-flex justify-center py-2 px-4 mx-4 border border-transparent shadow-sm text-sm font-medium rounded-full text-white bg-red-500 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+             onClick={() => setIsEditing(false)}
+         >
+             Cancel
+         </button>
+         </>
+            }
+
         </form>
         </div>      
     );

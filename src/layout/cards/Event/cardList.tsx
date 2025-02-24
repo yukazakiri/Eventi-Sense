@@ -1,62 +1,50 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Card from './cardDesign';
-import image1 from '../../../assets/images/La Trinidad Benguet City Lights.jpg'
+import supabase from '../../../api/supabaseClient';
 
-// Define the props for CardList
 type CardListProps = {
-  limit?: number; // sOptional prop to limit the number of cards
+  limit?: number;
 };
 
 const CardList: React.FC<CardListProps> = ({ limit }) => {
-  const cardData = [
-    {
-      title: 'The Coldest Sunset',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque.',
-      image: image1,
-      tags: ['photography', 'travel', 'winter'],
-    },
-    {
-      title: 'Beautiful Sunrise',
-      description:
-        'An amazing sunrise captured from the top of the mountain with perfect lighting and serenity.',
-      image: image1,
-      tags: ['nature', 'sunrise', 'peaceful'],
-    },
-    {
-      title: 'City Lights at Night',
-      description:
-        'A stunning view of the city skyline at night, illuminated by countless lights reflecting off the buildings.',
-      image: image1,
-      tags: ['city', 'nightlife', 'urban'],
-    },
-    {
-      title: 'Mountain Adventure',
-      description:
-        'Explore the breathtaking beauty of mountains and enjoy the thrill of adventure.',
-      image: image1,
-      tags: ['adventure', 'mountains', 'hiking'],
-    },
-    {
-      title: 'Beach Paradise',
-      description:
-        'Relax on the sandy beaches and enjoy the crystal-clear waters of the ocean.',
-      image: image1,
-      tags: ['beach', 'relaxation', 'vacation'],
-    },
-  ];
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // If a limit is provided, slice the cardData array; otherwise, show all cards
-  const displayedCardData = limit ? cardData.slice(0, limit) : cardData;
+  useEffect(() => {
+    const fetchEvents = async () => {
+      const { data, error } = await supabase
+        .from('events')
+        .select('*');
+
+      if (error) {
+        console.error('Error fetching events:', error);
+      } else {
+        setEvents(data);
+      }
+      setLoading(false);
+    };
+
+    fetchEvents();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  const displayedCardData = limit ? events.slice(0, limit) : events;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
-      {displayedCardData.map((data, index) => (
-        <div key={index}
-        className={index >= 3 ? "hidden sm:block" : ""} 
-        >
-        <Card {...data} />
-      </div>
+      {displayedCardData.map((event, index) => (
+        <div key={event.id} className={index >= 3 ? "hidden sm:block" : ""}>
+          <Card
+            id={event.id}
+            title={event.name} // Use event.name instead of event.title
+            description={event.description}
+            image={event.image_url}
+            tags={event.tags || []} // Pass tags to the Card component
+          />
+        </div>
       ))}
     </div>
   );

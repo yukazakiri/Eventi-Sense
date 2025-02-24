@@ -1,8 +1,32 @@
 import { RouteObject } from 'react-router-dom';
-import Home from '../../pages/VenueManager/Home';
+import Home from '../../pages/Supplier/Home';
+import Profiles from '../../pages/Profile/Profiles';
+//import CreateInfo from '../../pages/Supplier/Create-Information';
+import CreateCompany from '../../pages/Profile/CreateCompany';
+import SupplierInfo from '../../pages/Supplier/Supplier-Information';
+import Services from '../../pages/Supplier/ServicesPage'
+import CalendarPage from '../../pages/Supplier/Calendar';
+import Booking from '../../pages/Supplier/BookingPage';
+import CreateEventForm from '../../pages/Events/CreateEvents';
+import UpdateEvents from '../../pages/Events/UpdateEvent';
+import EventListing from '../../pages/Supplier/Event-List';
+
 
 const routes: RouteObject[] = [
-  { path: '/', element: <Home /> }
+  { path: '/', element: <Home /> },
+  { path: '/Home', element: <Home /> },
+  { path: '/Profiles', element: <Profiles /> },
+  { path: '/Supplier', element: <SupplierInfo /> },
+  { path: '/CreateCompanyProfile', element: <CreateCompany /> },
+  { path: '/Services', element: <Services/>},
+  { path: '/Calendar', element: <CalendarPage /> },
+  { path: '/Booking', element: <Booking/> },
+  { path: '/CreateEvents', element: <CreateEventForm/>},
+  { path: '/UpdateEvents/:id', element: <UpdateEvents/>},
+  { path: '/EventList', element: <EventListing /> },
+
+
+
 ];
 
 export default routes;

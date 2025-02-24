@@ -1,15 +1,26 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 type CardProps = {
+  id: string;
   title: string;
   description: string;
   image: string;
-  tags: string[];
+  tags: string[]; // Add tags to the props
 };
 
-const Card: React.FC<CardProps> = ({ title, description, image, tags }) => {
+const Card: React.FC<CardProps> = ({ id, title, description, image, tags }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/events/${id}`);
+  };
+
   return (
-    <div className="overflow-hidden h-auto group cursor-pointer w-full hover:bg-navy-blue-5 rounded-xl transition-all duration-300  shadow-2xl">
+    <div
+      className="overflow-hidden h-auto group cursor-pointer w-full hover:bg-navy-blue-5 rounded-xl transition-all duration-300 shadow-2xl"
+      onClick={handleClick}
+    >
       {/* Image */}
       <div className="overflow-hidden rounded-t-xl">
         <img
@@ -21,22 +32,21 @@ const Card: React.FC<CardProps> = ({ title, description, image, tags }) => {
 
       {/* Content */}
       <div className="px-4 py-4">
-        <h3 className="font-bold text-xl mb-6 gradient-text ">
+        <h3 className="font-bold text-xl mb-6 gradient-text">
           {title}
         </h3>
         <p className="text-gray-500 text-base">{description}</p>
-      </div>
-
-      {/* Tags */}
-      <div className="px-4 pt-2 pb-4">
-        {tags.map((tag, index) => (
-          <span
-            key={index}
-            className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-          >
-            #{tag}
-          </span>
-        ))}
+        {/* Display Tags */}
+        <div className="mt-4 flex flex-wrap gap-2">
+          {tags.map((tag, index) => (
+            <span
+              key={index}
+              className="bg-blue-100 text-blue-800 text-sm font-medium px-2 py-1 rounded"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );

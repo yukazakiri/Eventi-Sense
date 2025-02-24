@@ -10,6 +10,7 @@ import { Venue } from '../../../types/venue';
 import Breadcrumbs from '../../../components/BreadCrumbs/breadCrumbs';
 import { HomeIcon } from '@heroicons/react/24/solid';
 import { FaCalendarDay, FaImage } from 'react-icons/fa';
+import SocialMediaLinks from '../../VenueManager/Social/SocialLinks';
 
 const breadcrumbItems = [
     { label: 'Home', href: '/Venue-Manager-Dashboard/Home', icon: <HomeIcon className="h-4 w-4 mr-1" /> },
@@ -42,6 +43,8 @@ const VenueDetailPage: React.FC = () => {
     const [amenities, setAmenities] = useState<Amenity[]>([]);
     const [selectedAmenities, setSelectedAmenities] = useState<VenueAmenity[]>([]);
     const [isEditingAmenities, setIsEditingAmenities] = useState(false);
+     const [isEditingImage, setIsEditingImage]= useState(false);
+     const [isEditing, setIsEditing]= useState(false)
 
 
     useEffect(() => {
@@ -178,41 +181,11 @@ const VenueDetailPage: React.FC = () => {
         return <div>Venue not found.</div>;
     }
     return (
-        <div className="p-8 my-6">
+        <div className="px-8 mb-6">
             <div className="mx-auto font-sofia">
-                <div className='flex items-center '>
-                    <Breadcrumbs items={breadcrumbItems} />
-                </div>
+           
                 <section className="my-4 flex justify-between items-center h-full">
-                    <div className="items-start ">
-                        {!isEditingInfo && !isEditingAddress && (
-                            <>
-                                <button
-                                    onClick={() => setIsEditingInfo(true)}
-                                    className="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full  text-sm px-8 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mr-2"
-                                >
-                                    Edit Venue Information
-                                </button>
-                                <button
-                                    onClick={() => setIsEditingAddress(true)}
-                                    className="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full  text-sm px-8 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                >
-                                    Edit Venue Address
-                                </button>
-                            </>
-                        )}
-                        {(isEditingInfo || isEditingAddress) && (
-                            <button
-                                onClick={() => {
-                                    setIsEditingInfo(false);
-                                    setIsEditingAddress(false);
-                                }}
-                                className="text-white bg-red-400 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full  text-sm px-8 py-2.5 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-blue-800"
-                            >
-                                Cancel
-                            </button>
-                        )}
-                    </div>
+                  
                     <div className="flex items-end">
                         <div className='flex' >
                             <div className='px-6 py-4 bg-indigo-600 hover:bg-indigo-800 max-w-auto text-white rounded-3xl mr-4 flex items-center'>
@@ -229,13 +202,22 @@ const VenueDetailPage: React.FC = () => {
                             </div>
                         </div>
                     </div>
+                    <div className="flex items-end  ">
+                <Breadcrumbs items={breadcrumbItems} />
+            </div>
                 </section>
     
                 <div className="grid lg:grid-cols-2 grid-flow-row gap-8">
-                    <div>
+                <div className='col-span-2'>
+                        <SocialMediaLinks venue_id={venue.id.toString()} isEditing={isEditing} setIsEditing={setIsEditing}/>
+                    </div>
+                <div className='col-span-2'>
+                            <ImageUploadForm venueId={venue.id.toString()} isEditing={isEditingImage} setIsEditingImage={setIsEditingImage}  />
+                        </div>
+                    <div className=' col-span-2'>
                         <VenueInfoForm
                             venue={venue}
-                        
+                         
                             isEditing={isEditingInfo}
                             setIsEditing={setIsEditingInfo}
                         />
@@ -248,7 +230,9 @@ const VenueDetailPage: React.FC = () => {
                             isEditing={isEditingAddress}
                             setIsEditing={setIsEditingAddress}
                         />
-                        <div className="my-8">
+                      
+                    </div> 
+                     <div className="">
                             <AmenitiesForm
                                 venue={venue}
                                 amenities={amenities}
@@ -257,11 +241,8 @@ const VenueDetailPage: React.FC = () => {
                                 isEditing={isEditingAmenities}
                                 setIsEditing={setIsEditingAmenities}
                             />
-                            <div className='my-8'>
-                            <ImageUploadForm venueId={venue.id.toString()} />
+                      
                         </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

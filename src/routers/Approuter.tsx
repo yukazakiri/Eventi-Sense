@@ -25,8 +25,12 @@ import TestSupabase from '../hooks/TestSupabase';
 import Profile from '../pages/ProfilePage';
 import Settings from '../pages/setting';
 
-import PublicVenueDetails from '../pages/VenueManager/VenuePublic/PublicVenueDetails';
+import PublicVenueDetails from '../pages/PublicVenueDetails';
+import PublicSupplierDetails from '../pages/PublicSupplierDetails';
 import BookVenue from '../pages/Booking/VenueBooking';
+import BookSupplier from '../pages/Booking/SupplierBooking';
+import EventDetails from '../pages/Events/Event';
+import EventUpdate from '../pages/Events/UpdateEvent';
 
 
 const AppRouter = () => {
@@ -43,12 +47,15 @@ const AppRouter = () => {
 
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route path="/venues/:venueId/book" element={<BookVenue />} /> {/* New route */}
+        <Route path="/suppliers/:supplierId/book" element={<BookSupplier />} /> {/* New route */}
 
         <Route path="/UserDetails" element={<UserDetails />} />
-
-
+        <Route path="/events/:id" element={<EventDetails />} />
+        <Route path="/UpdateEvent/:id" element={<EventUpdate />} />
+      
         {/* Venue Public */}
         <Route path="/venue/:venueId" element={<PublicVenueDetails/>} />
+        <Route path="/supplier/:supplierId" element={<PublicSupplierDetails/>} />
         
         <Route path="/dashboard" element={<Dashboard />} /> {/* Regular user dashboard */}
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
@@ -61,7 +68,7 @@ const AppRouter = () => {
         <Route path="/Venue-Manager-dashboard/*" element={
           <ProtectedRoute requiredRole="venue_manager">
           <VenueManagerDashboard />
-          </ProtectedRoute>
+        </ProtectedRoute>
           } /> {/* Regular user dashboard */}
 
           

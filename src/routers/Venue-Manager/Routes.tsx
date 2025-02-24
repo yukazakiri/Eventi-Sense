@@ -1,7 +1,7 @@
 import { RouteObject } from 'react-router-dom';
 import  Home  from '../../pages/VenueManager/Home';
-import Profile from '../../pages/VenueManager/Profile/Profile';
-import Company from '../../pages/VenueManager/Profile/Company';
+import Profile from '../../pages/Profile/Profile';
+import Company from '../../pages/Profile/Company';
 import Testimage from '../../pages/VenueManager/testimage';
 import CreateVenue from '../../pages/VenueManager/venue/CreateVenueComponents/CreatePage';
 import VenueDetail from '../../pages/VenueManager/venue/VenueDetails';
@@ -11,7 +11,7 @@ import VenueCalendar from '../../pages/VenueManager/venue/VenueDetails/Availabil
 import VenueGallery from '../../pages/VenueManager/venue/VenueDetails/AvailabiltyGallery/Gallery';
 import BookingDetails from '../../pages/VenueManager/Booking/BookingDetails';
 import BookingList from '../../pages/VenueManager/BookingList';
-import Profiles from '../../pages/VenueManager/Profile/Profiles';
+import Profiles from '../../pages/Profile/Profiles';
 
 
 const routes: RouteObject[] = [ 

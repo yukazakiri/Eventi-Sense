@@ -10,7 +10,7 @@ interface BreadcrumbItem {
 
 const Breadcrumbs = ({ items }: { items: BreadcrumbItem[] }) => {
   return (
-    <nav className="mb-8 font-sofia flex items-center" aria-label="Breadcrumb ">
+    <nav className="my-6 font-sofia flex items-center" aria-label="Breadcrumb ">
       <ol className="flex items-center space-x-2">
         {items.map((item, index) => (
           <li key={item.label} className="flex items-center">

@@ -73,7 +73,6 @@ const Home: React.FC = () => {
         <p className="mt-2 text-gray-600">Here is a list of all bookings associated with your company.</p>
         
       </div>
-      
     <CompanyProfile company={company} />
     </main>
   );

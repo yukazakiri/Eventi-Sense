@@ -1,14 +1,10 @@
-import {BrowserRouter as Router } from "react-router-dom"
-import PageRoutes from "./routers/Approuter"
-import "./styles/global.css"
+import PageRoutes from "./routers/Approuter";
+import "./styles/global.css";
 
 function App() {
-
   return (
-    <Router>
-      <PageRoutes/>
-    </Router>
-  )
+    <PageRoutes /> // No Router here! Just the routes component
+  );
 }
 
-export default App
+export default App;

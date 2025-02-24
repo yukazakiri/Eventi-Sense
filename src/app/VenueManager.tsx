@@ -3,16 +3,16 @@ import { Routes, Route } from 'react-router-dom';
 import supabase from '../api/supabaseClient';
 import Sidebar from '../components/Sidebar/VenueManager';
 import routes from '../routers/Venue-Manager/Routes';
-import CompanyProfile from '../components/Profile/VMcompany'; // Add import for CompanyProfile component
-import UserProfile from '../components/Profile/VMprofileAvatar'; // Add import for UserProfile component
+
+import UserProfile from '../components/Profile/StockHoldersProfileAvatar'; // Add import for UserProfile component
 
 function VenueManagerDashboard() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
-  const [companyProfile, setCompanyProfile] = useState<any>(null); // State for company profile
+
   const [loading, setLoading] = useState(true);
-  const [isCompanyProfile, setIsCompanyProfile] = useState(false); // State to toggle between company or user profile
+
 
   // Fetch the user's profile
   const fetchProfile = async (userId: string) => {
@@ -68,15 +68,13 @@ function VenueManagerDashboard() {
 
       setUser(userData);
       const profileData = await fetchProfile(userData.user.id);
-      const companyData = await fetchCompanyProfile(userData.user.id);
+      
 
       if (profileData) {
         setProfile(profileData);
       }
 
-      if (companyData) {
-        setCompanyProfile(companyData);
-      }
+
     } catch (error) {
       console.error('Error in fetchUser:', error);
     } finally {
@@ -93,14 +91,14 @@ function VenueManagerDashboard() {
       if (event === 'SIGNED_IN' && session) {
         setUser(session.user);
         const profileData = await fetchProfile(session.user.id);
-        const companyData = await fetchCompanyProfile(session.user.id);
+
 
         if (profileData) setProfile(profileData);
-        if (companyData) setCompanyProfile(companyData);
+    
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
         setProfile(null);
-        setCompanyProfile(null);
+
       }
     });
 
@@ -111,33 +109,24 @@ function VenueManagerDashboard() {
       }
     };
   }, []);
+  if (loading) {
+    return  <div className="loader-container">
+    <div className="loader"></div>
+  </div>;
+  }
 
-  const toggleProfileType = () => {
-    setIsCompanyProfile(!isCompanyProfile); // Toggle between company and user profile
-  };
+
 
   return (
     <div className="flex h-screen bg-blue-light-1  ">
       <Sidebar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex justify-end p-4 bg-white shadow-md z-0 font-sofia text-gray-800">
-          {loading ? (
-            <div>Loading...</div>
-          ) : user && (profile || companyProfile) ? (
-            <div className='flex'>
-              <button onClick={toggleProfileType} className=" p-2 rounded-md mb-4 font-sofia ">
-                {isCompanyProfile ? 'Switch to Personal' : 'Switch to Company '}
-              </button>
-
-              {isCompanyProfile ? (
-                <CompanyProfile company={companyProfile} /> // Render Company Profile component
-              ) : (
-                <UserProfile user={user} profile={profile} /> // Render User Profile component
-              )}
-            </div>
-          ) : (
-            <div>No user or profile data found.</div>
-          )}
+         
+                <UserProfile user={user} profile={profile} /> 
+         
+ 
+   
         </div>
 
         <main className="flex-1 overflow-y-auto bg-blue-light-1 mx-4 ">

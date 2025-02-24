@@ -3,9 +3,11 @@ import supabase from '../../../../api/supabaseClient';
 
 interface ImageUploadFormProps {
     venueId: string;
+    isEditing: boolean;
+    setIsEditingImage: (value: boolean) => void;
 }
 
-const ImageUploadForm: React.FC<ImageUploadFormProps> = ({ venueId }) => {
+const ImageUploadForm: React.FC<ImageUploadFormProps> = ({ venueId, isEditing, setIsEditingImage  }) => {
     const [image, setImage] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -105,37 +107,67 @@ const ImageUploadForm: React.FC<ImageUploadFormProps> = ({ venueId }) => {
     };
 
     return (
-        <div className="p-8 border bg-white  shadow-xl">
-            <h2 className="text-lg font-semibold mb-4">Upload Venue Cover Image</h2>
+        <div className={`bg-white p-[2rem]  border-[1px] border-gray-300 rounded-3xl ${isEditing ? 'border-2 rounded-3xl border-indigo-400' : ''}`}>
+        <div className='flex justify-between mb-4'>
+                   <h1 className="text-3xl font-bold font-bonanova text-gray-700 ">Cover Photo</h1>
+                   <div>
+                         {!isEditing &&  (
+                       <>
+                           <button
+                               onClick={() => setIsEditingImage(true)}
+                               className="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mr-2"
+                           >
+                               Edit 
+                           </button>
+                      
+                       </>
+                   )}
+                   {isEditing  && (
+                       <button
+                           onClick={() => {
+                               setIsEditingImage(false);
+                             
+                           }}
+                           className="text-white bg-red-400 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-blue-800"
+                       >
+                           Cancel
+                       </button>
+                   )}</div>
+                      </div>
 
             {currentImageUrl && (
                 <img
                     src={currentImageUrl}
                     alt="Current Cover Image"
-                    className="mb-4 w-auto h-auto flex justify-center"
+                    className="mb-4 h-[500px] w-full flex justify-center "
                 />
             )}
             
-            <div className='py-4'>
-            <input
-                    type="file"
-                    onChange={handleImageChange}
-                    className="block w-full text-sm text-slate-500
-                        file:mr-4 file:py-4 file:px-6
-                        file:rounded-full file:border-0  file:p-2
-                        file:text-sm file:font-semibold
-                        file:bg-violet-50 file:text-indigo-600
-                        hover:file:bg-violet-100
-                    "
-                />
-            </div>
-            <button
-                onClick={handleUpload}
-                disabled={uploading}
-                className="bg-indigo-600 text-white px-8 py-2 rounded-full  hover:bg-blue-600 disabled:bg-blue-300"
-            >
-                {uploading ? 'Uploading...' : 'Upload Image'}
-            </button>
+            {isEditing && (
+                <>
+                <div className='py-4'>
+                    <input
+                        type="file"
+                        onChange={handleImageChange}
+                        className="block w-full text-sm text-slate-500
+                            file:mr-4 file:py-4 file:px-6
+                            file:rounded-full file:border-0  file:p-2
+                            file:text-sm file:font-semibold
+                            file:bg-violet-50 file:text-indigo-600
+                            hover:file:bg-violet-100
+                        "
+                    />
+                </div>
+             
+                <button
+                    onClick={handleUpload}
+                    disabled={uploading}
+                    className="bg-indigo-600 text-white px-8 py-2 rounded-full  hover:bg-blue-600 disabled:bg-blue-300"
+                >
+                    {uploading ? 'Uploading...' : 'Upload Image'}
+                </button>
+                </>
+            )}
             {error && <p className="text-red-500 mt-2">{error}</p>}
             {success && <p className="text-green-500 mt-2">Image uploaded successfully!</p>}
         </div>

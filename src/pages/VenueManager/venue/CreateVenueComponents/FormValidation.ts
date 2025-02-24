@@ -25,12 +25,6 @@ export const validateVenueForm = (formData: VenueFormData) => {
   if (!formData.email) {
     errors.email = "Email is required";
   }
-  if (!formData.venue_type) {
-    errors.venue_type = "Venue Type is required";
-  }
-  if (formData.amenities.length === 0) {
-    errors.amenities = "At least one amenity is required";
-  }
 
   return errors; // Return the errors object
 };
