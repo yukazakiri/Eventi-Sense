@@ -1,4 +1,14 @@
 import  supabase  from '../api/supabaseClient';
+export interface Ticket {
+  id: string;
+  event_id: string;
+  user_id: string;
+  quantity: number;
+  status: string;
+  purchase_date: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface Event {
     id?: string;

@@ -61,3 +61,10 @@ export interface UserAuthProfile {
     token?: string; // Added for login response
   }
   
+  export interface Profile {
+    id: string;
+    first_name: string;
+    avatar_url: string;
+    // Add other profile properties as needed
+  }
+  

@@ -155,6 +155,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setSidebarOpen }) => {
                                  <nav>
                                     <ul className="space-y-2 text-gray-800">
                                         <SidebarItem to="/Supplier-Dashboard/EventList" icon={<MdHelpOutline className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Events List" isCollapsed={isCollapsed} />
+                                        <SidebarItem to="/Supplier-Dashboard/TicketList" icon={<MdHelpOutline className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Ticket List" isCollapsed={isCollapsed} />
+                                    
                                     </ul>
                                 </nav>
                             </section>

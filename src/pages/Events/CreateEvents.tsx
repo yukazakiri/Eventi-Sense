@@ -2,7 +2,16 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { createEvent, Event } from '../../types/event';
 import supabase from '../../api/supabaseClient';
+import Breadcrumbs from '../../components/BreadCrumbs/breadCrumbs';
+import { HomeIcon } from '@heroicons/react/20/solid';
 
+
+
+const breadcrumbItems = [
+  { label: 'Home', href: '/Supplier-Dashboard/Home', icon: <HomeIcon className="h-4 w-4 mr-1" /> },
+  { label: 'CreateEvents', href: '' },
+
+];
 const CreateEventForm: React.FC = () => {
     const navigate = useNavigate(); // Initialize useNavigate
     const [event, setEvent] = useState<Event>({
@@ -155,9 +164,18 @@ const CreateEventForm: React.FC = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <div  className='md:mx-10'>
+              <div className='flex justify-between'>
+            <h1 className="text-3xl flex items-center font-semibold tracking-tight text-gray-700 my-4 font-bonanova ">Create Events</h1>
+            <div className="flex items-end  ">
+                <Breadcrumbs items={breadcrumbItems} />
+            </div>
+        </div>
+        <div className='m-4 bg-white p-6 border border-gray-300 rounded-2xl font-sofia'>
+        <form onSubmit={handleSubmit} className="space-y-4 ">
+        <div className="grid gap-6 mb-6 md:grid-cols-2">
             <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-700">
                     Event Name
                 </label>
                 <input
@@ -167,12 +185,12 @@ const CreateEventForm: React.FC = () => {
                     value={event.name}
                     onChange={handleInputChange}
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
             </div>
 
             <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-700">
                     Description
                 </label>
                 <textarea
@@ -181,12 +199,12 @@ const CreateEventForm: React.FC = () => {
                     value={event.description}
                     onChange={handleInputChange}
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
             </div>
 
             <div>
-                <label htmlFor="date" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="date" className="block mb-2 text-sm font-medium text-gray-700">
                     Date and Time
                 </label>
                 <input
@@ -196,12 +214,12 @@ const CreateEventForm: React.FC = () => {
                     value={event.date}
                     onChange={handleInputChange}
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
             </div>
 
             <div>
-                <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="location" className="block mb-2 text-sm font-medium text-gray-700">
                     Location
                 </label>
                 <input
@@ -211,12 +229,12 @@ const CreateEventForm: React.FC = () => {
                     value={event.location}
                     onChange={handleInputChange}
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
             </div>
 
             <div>
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-700">
                     Category
                 </label>
                 <input
@@ -225,12 +243,12 @@ const CreateEventForm: React.FC = () => {
                     name="category"
                     value={event.category}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
             </div>
 
             <div>
-                <label htmlFor="tags" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="tags" className="block mb-2 text-sm font-medium text-gray-700">
                     Tags
                 </label>
                 <div className="flex gap-2">
@@ -240,7 +258,7 @@ const CreateEventForm: React.FC = () => {
                         value={tagInput}
                         onChange={handleTagInputChange}
                         placeholder="Add a tag"
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                         className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     />
                     <button
                         type="button"
@@ -270,7 +288,7 @@ const CreateEventForm: React.FC = () => {
             </div>
 
             <div>
-                <label htmlFor="image" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="image" className="block mb-2 text-sm font-medium text-gray-700">
                     Event Image
                 </label>
                 <input
@@ -279,14 +297,14 @@ const CreateEventForm: React.FC = () => {
                     name="image"
                     onChange={handleFileChange}
                     accept="image/*"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
                 {previewUrl && <img src={previewUrl} alt="Preview" className="mt-2 max-h-40" />}
                 {uploading && <p className="text-sm text-gray-500">Uploading image...</p>}
             </div>
 
             <div>
-                <label htmlFor="ticket_price" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="ticket_price" className="block mb-2 text-sm font-medium text-gray-700">
                     Ticket Price
                 </label>
                 <input
@@ -295,12 +313,12 @@ const CreateEventForm: React.FC = () => {
                     name="ticket_price"
                     value={event.ticket_price}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
             </div>
 
             <div>
-                <label htmlFor="capacity" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="capacity" className="block mb-2 text-sm font-medium text-gray-700">
                     Capacity
                 </label>
                 <input
@@ -309,10 +327,10 @@ const CreateEventForm: React.FC = () => {
                     name="capacity"
                     value={event.capacity}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
             </div>
-
+            </div>
             <div>
                 <button
                     type="submit"
@@ -323,6 +341,8 @@ const CreateEventForm: React.FC = () => {
                 </button>
             </div>
         </form>
+    </div>
+    </div>
     );
 };
 

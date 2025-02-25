@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import supabase from '../../api/supabaseClient';
 import { LuPencil } from 'react-icons/lu';
 
@@ -13,6 +13,7 @@ const UpdateEvent: React.FC = () => {
     const [file, setFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
+    const navigate = useNavigate(); // Initialize useNavigate
 
     useEffect(() => {
         const fetchEventDetails = async () => {
@@ -26,7 +27,7 @@ const UpdateEvent: React.FC = () => {
                 if (error) throw error;
 
                 setEvent(data);
-                setPreviewUrl(data.image_url); // Set initial preview URL
+                setPreviewUrl(data.image_url);
             } catch (err) {
                 console.error('Error fetching event details:', err);
                 setError('Failed to load event details. Please try again later.');
@@ -125,16 +126,15 @@ const UpdateEvent: React.FC = () => {
                     .select('*')
                     .eq('id', id)
                     .single();
-    
+
                 if (error) throw error;
-    
-                // Initialize tags as an empty array if it's null or undefined
+
                 if (!data.tags) {
                     data.tags = [];
                 }
-    
+
                 setEvent(data);
-                setPreviewUrl(data.image_url); // Set initial preview URL
+                setPreviewUrl(data.image_url);
             } catch (err) {
                 console.error('Error fetching event details:', err);
                 setError('Failed to load event details. Please try again later.');
@@ -142,11 +142,12 @@ const UpdateEvent: React.FC = () => {
                 setLoading(false);
             }
         };
-    
+
         if (id) {
             fetchEventDetails();
         }
     }, [id]);
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setEvent((prevEvent: any) => ({
@@ -192,7 +193,14 @@ const UpdateEvent: React.FC = () => {
 
         return `<span class="math-inline">\{year\}\-</span>{month}-<span class="math-inline">\{day\}T</span>{hours}:${minutes}`;
     };
-
+    const handleViewTickets = () => {
+        if (event && event.id) { // check if event and venue_id exists.
+            navigate(`/Supplier-Dashboard/tickets?eventId=${event.id}`);
+        } else {
+            console.error("Venue ID is missing or event data is not loaded.");
+            alert("Cannot view tickets. Venue ID is missing.");
+        }
+    };
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
@@ -229,10 +237,15 @@ const UpdateEvent: React.FC = () => {
                             <button type="button" onClick={() => setIsEditing(false)} className="text-gray-700 bg-gray-200 hover:bg-gray-300 px-5 py-2 rounded-2xl">Cancel</button>
                         </div>
                     ) : (
+                        <div>
                         <button type="button" onClick={() => setIsEditing(true)} className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-3 rounded-full flex items-center">
                             <LuPencil className="mr-2" />
                             Edit
                         </button>
+                            <button type="button" onClick={handleViewTickets} className="text-white bg-purple-500 hover:bg-purple-600 px-5 py-3 rounded-full flex items-center">
+                            View Tickets
+                        </button>
+                        </div>
                     )}
                 </div>
                 <div className={`m-4 bg-white p-6 border border-gray-300 rounded-2xl font-sofia ${isEditing ? 'border-2 border-indigo-300' : ''}`}>

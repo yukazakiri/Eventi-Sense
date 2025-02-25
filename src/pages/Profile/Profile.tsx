@@ -213,8 +213,8 @@ export default function Profile() {
       <div className={`m-4 bg-white p-6 border border-gray-300 rounded-2xl font-sofia ${isEditing ? 'border-2 border-indigo-300' : ''}`}>
         {profile ? (
           <form onSubmit={handleSubmit}>
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-              <h1 className="text-[16px] font-semibold tracking-wider text-gray-800 font-sofia  ">Edit Personal Information</h1>
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                <h1 className="text-[16px] font-semibold tracking-wider text-gray-800 font-sofia  ">Edit Personal Information</h1>
               {isEditing ? (
                 <div className="flex space-x-4">
                   <button type="submit" className="text-white bg-green-400 hover:bg-green-600 px-5 py-2 rounded-2xl">Save Changes</button>

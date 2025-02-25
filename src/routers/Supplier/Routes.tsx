@@ -10,6 +10,8 @@ import Booking from '../../pages/Supplier/BookingPage';
 import CreateEventForm from '../../pages/Events/CreateEvents';
 import UpdateEvents from '../../pages/Events/UpdateEvent';
 import EventListing from '../../pages/Supplier/Event-List';
+import TicketList from '../../pages/Events/TicketsList';
+import RequestTicket from '../../pages/Events/RequestTickets';
 
 
 const routes: RouteObject[] = [
@@ -24,6 +26,8 @@ const routes: RouteObject[] = [
   { path: '/CreateEvents', element: <CreateEventForm/>},
   { path: '/UpdateEvents/:id', element: <UpdateEvents/>},
   { path: '/EventList', element: <EventListing /> },
+  { path: '/TicketList', element: <TicketList  /> },
+  { path: '/tickets', element: <RequestTicket   /> },
 
 
 
