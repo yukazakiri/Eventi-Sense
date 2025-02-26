@@ -79,6 +79,52 @@ function MainNavbar() {
   const navbarStyle =
     scrollDirection === 'down' ? 'bg-white text-black' : 'bg-navy-blue-5 text-white';
 
+  // User role specific navbar
+  if (profile?.role === 'user') {
+    return (
+      <div>
+        <nav className={` shadow-2xl fixed top-0 left-0 w-full z-50 transition-colors duration-300 bg-navy-blue-5`}>
+          {/* Top bar with profile */}
+          <div className=" border-b-[1px] border-gray-500">
+            <div className="container mx-auto px-4 py-2 flex justify-end">
+              <ProfileAvatar user={user} profile={profile} />
+            </div>
+          </div>
+          
+          {/* Main navigation */}
+          <div className="container mx-auto px-4 py-2">
+            <div className="flex items-center justify-between text-white">
+              <a href="#" className="text-[1.3rem] gradient-text font-bonanova uppercase">
+                EventiSense
+              </a>
+              <div className="flex items-center space-x-6 text-sm font-sofia uppercase">
+                <NavLink 
+                  to="/" 
+                  className={({ isActive }) => `${isActive ? 'gradient-text' : ''}`}
+                >
+                  Home
+                </NavLink>
+                <NavLink 
+                  to="/user-dashboard" 
+                  className="uppercase "
+                >
+                  Dashboard
+                </NavLink>
+                <NavLink 
+                  to="/create-event" 
+                  className=" "
+                >
+                  Create Event
+                </NavLink>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+    );
+  }
+
+  // Default navbar for other roles and non-authenticated users
   return (
     <div>
       <nav className={`py-4 shadow-2xl fixed top-0 left-0 w-full z-50 transition-colors duration-300 ${navbarStyle}`}>
@@ -142,6 +188,7 @@ function MainNavbar() {
             <NavLink to="/contact" className={({ isActive }) => `uppercase ${isActive ? 'gradient-text ' : ''}`}>
               Contact
             </NavLink>
+
             {profile?.role === 'venue_manager' && <NavLink to="/venue-manager-dashboard" className="uppercase">Dashboard</NavLink>}
             {profile?.role === 'supplier' && <NavLink to="/supplier-dashboard" className="uppercase">Dashboard</NavLink>}
           </div>
@@ -162,6 +209,7 @@ function MainNavbar() {
           </div>
         </div>
       </nav>
+     
     </div>
   );
 }

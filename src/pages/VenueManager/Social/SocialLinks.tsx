@@ -4,7 +4,7 @@ import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaTiktok } from 'react-
 
 interface VenueSocialMedia {
     id?: string;
-    venue_id: string;
+    venues_id: string;
     platform: string;
     link: string;
     created_at?: string;
@@ -13,17 +13,17 @@ interface VenueSocialMedia {
 }
 
 interface VenueSocialMediaLinksProps {
-    venue_id: string;
+    venues_id: string;
     isEditing: boolean;
     setIsEditing: (value: boolean) => void;
 }
 
-function VenueSocialMediaLinks({ venue_id, isEditing, setIsEditing }: VenueSocialMediaLinksProps) {
+function VenueSocialMediaLinks({ venues_id, isEditing, setIsEditing }: VenueSocialMediaLinksProps) {
     const [socialMedia, setSocialMedia] = useState<VenueSocialMedia[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [newSocialMedia, setNewSocialMedia] = useState<VenueSocialMedia>({
-        venue_id: '',
+        venues_id: '',
         platform: '',
         link: '',
     });
@@ -36,9 +36,9 @@ function VenueSocialMediaLinks({ venue_id, isEditing, setIsEditing }: VenueSocia
             try {
                 setLoading(true);
                 const { data, error } = await supabase
-                    .from('venue_social_media')
+                    .from('venues_social_media')
                     .select('*')
-                    .eq('venue_id', venue_id);
+                    .eq('venues_id', venues_id);
 
                 if (error) {
                     setError('Error fetching social media links.');
@@ -55,7 +55,7 @@ function VenueSocialMediaLinks({ venue_id, isEditing, setIsEditing }: VenueSocia
         };
 
         fetchLinks();
-    }, [venue_id]);
+    }, [venues_id]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -69,17 +69,17 @@ function VenueSocialMediaLinks({ venue_id, isEditing, setIsEditing }: VenueSocia
 
         try {
             const { error } = await supabase
-                .from('venue_social_media')
-                .insert([{ ...newSocialMedia, venue_id: venue_id }]);
+                .from('venues_social_media')
+                .insert([{ ...newSocialMedia, venues_id: venues_id }]);
 
             if (error) {
                 setError('Error adding social media link.');
                 console.error('Error adding link:', error);
             } else {
                 setSuccessMessage('Social media link added successfully!');
-                setNewSocialMedia({ venue_id: '', platform: '', link: '' });
+                setNewSocialMedia({ venues_id: '', platform: '', link: '' });
                 setShowInput(false);
-                const updatedLinks = await supabase.from('venue_social_media').select('*').eq('venue_id', venue_id);
+                const updatedLinks = await supabase.from('venues_social_media').select('*').eq('venues_id', venues_id);
                 if (updatedLinks.data) {
                     setSocialMedia(updatedLinks.data.map(item => ({ ...item, isEditing: false })));
                 }
@@ -98,7 +98,7 @@ function VenueSocialMediaLinks({ venue_id, isEditing, setIsEditing }: VenueSocia
 
     const handleCancel = () => {
         setShowInput(false);
-        setNewSocialMedia({ venue_id: '', platform: '', link: '' });
+        setNewSocialMedia({ venues_id: '', platform: '', link: '' });
         setSelectedPlatform(null);
     };
 

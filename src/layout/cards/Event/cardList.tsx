@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Card from './cardDesign';
 import supabase from '../../../api/supabaseClient';
 
+
 type CardListProps = {
   limit?: number;
 };
@@ -12,7 +13,7 @@ const CardList: React.FC<CardListProps> = ({ limit }) => {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const { data, error } = await supabase
+      const { data, error } = await supabase  
         .from('events')
         .select('*');
 

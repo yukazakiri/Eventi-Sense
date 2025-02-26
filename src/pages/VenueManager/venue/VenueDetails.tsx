@@ -209,7 +209,7 @@ const VenueDetailPage: React.FC = () => {
     
                 <div className="grid lg:grid-cols-2 grid-flow-row gap-8">
                 <div className='col-span-2'>
-                        <SocialMediaLinks venue_id={venue.id.toString()} isEditing={isEditing} setIsEditing={setIsEditing}/>
+                        <SocialMediaLinks venues_id={venue.id.toString()} isEditing={isEditing} setIsEditing={setIsEditing}/>
                     </div>
                 <div className='col-span-2'>
                             <ImageUploadForm venueId={venue.id.toString()} isEditing={isEditingImage} setIsEditingImage={setIsEditingImage}  />

@@ -5,7 +5,7 @@ import { RiMegaphoneFill } from 'react-icons/ri';
 import { IoIosTimer } from "react-icons/io";
 import { TiLocation } from 'react-icons/ti';
 import { IoPeopleSharp } from "react-icons/io5";
-import { BiCategoryAlt } from "react-icons/bi";
+import { BiCategoryAlt, BiTag } from "react-icons/bi";
 import { LuPartyPopper } from 'react-icons/lu';
 
 const EventDetails: React.FC = () => {
@@ -16,18 +16,78 @@ const EventDetails: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [quantity, setQuantity] = useState(1); // State for ticket quantity
     const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
+    const [eventTags, setEventTags] = useState<any[]>([]);
 
     useEffect(() => {
         const fetchEventDetails = async () => {
             try {
-                const { data, error } = await supabase
+                const { data: eventData, error: eventError } = await supabase
                     .from('events')
                     .select('*')
                     .eq('id', id)
                     .single();
 
-                if (error) throw error;
-                setEvent(data);
+                if (eventError) throw eventError;
+                setEvent(eventData);
+
+                // First fetch event tags
+                const { data: tagData, error: tagError } = await supabase
+                    .from('event_tags')
+                    .select(`
+                        id,
+                        event_id,
+                        tagged_entity_id,
+                        tagged_entity_type,
+                        is_confirmed
+                    `)
+                    .eq('event_id', id)
+                    .eq('is_confirmed', true);
+
+                if (tagError) throw tagError;
+
+                // Separate venue and supplier IDs
+                const venueIds = tagData
+                    .filter(tag => tag.tagged_entity_type === 'venue')
+                    .map(tag => tag.tagged_entity_id);
+                
+                const supplierIds = tagData
+                    .filter(tag => tag.tagged_entity_type === 'supplier')
+                    .map(tag => tag.tagged_entity_id);
+
+                // Fetch venue and supplier details
+                const [venueData, supplierData] = await Promise.all([
+                    venueIds.length > 0 
+                        ? supabase.from('venues').select('id, name').in('id', venueIds)
+                        : { data: [], error: null },
+                    supplierIds.length > 0
+                        ? supabase.from('suppliers').select('id, name').in('id', supplierIds)
+                        : { data: [], error: null }
+                ]);
+
+                if (venueData.error) throw venueData.error;
+                if (supplierData.error) throw supplierData.error;
+
+                // Match tags with their corresponding names
+                const processedTags = tagData.map(tag => {
+                    if (tag.tagged_entity_type === 'venue') {
+                        const venue = venueData.data?.find(v => v.id === tag.tagged_entity_id);
+                        return {
+                            id: tag.id,
+                            name: venue?.name || 'Unknown Venue',
+                            type: 'venue'
+                        };
+                    } else {
+                        const supplier = supplierData.data?.find(s => s.id === tag.tagged_entity_id);
+                        return {
+                            id: tag.id,
+                            name: supplier?.name || 'Unknown Supplier',
+                            type: 'supplier'
+                        };
+                    }
+                });
+
+                setEventTags(processedTags);
+
             } catch (error) {
                 console.error('Error fetching event details:', error);
                 setError('Failed to load event details. Please try again later.');
@@ -260,6 +320,35 @@ const EventDetails: React.FC = () => {
                                         <p className='flex justify-center items-center'>
                                             {event.category}
                                         </p>
+                                    </div>
+                                </div>
+                                <div className='flex flex-col justify-center items-center shadow-2xl max-w-max p-4'>
+                                    <div className="flex justify-center items-center w-10 h-10 rounded-full bg-indigo-400/20 p-2">
+                                        <BiTag className="text-indigo-500 text-[2rem]" />
+                                    </div>
+                                    <div className='pb-4 px-8'>
+                                        <p className="text-orange-50 font-bonanova text-2xl font-semibold">
+                                            Tagged Venues
+                                        </p>
+                                        <div className='flex flex-wrap gap-2 mt-2 justify-center'>
+                                            {eventTags.length > 0 ? (
+                                                eventTags.map((tag, index) => (
+                                                    <span
+                                                        key={index}
+                                                        className={`px-3 py-1 rounded-full text-sm ${
+                                                            tag.type === 'venue' 
+                                                                ? 'bg-indigo-400/20 text-indigo-300' 
+                                                                : 'bg-pink-400/20 text-pink-300'
+                                                        }`}
+                                                    >
+                                                        {tag.type === 'venue' ? '🏢 ' : '🛠️ '}
+                                                        {tag.name}
+                                                    </span>
+                                                ))
+                                            ) : (
+                                                <span className="text-gray-400 text-sm">No tags</span>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

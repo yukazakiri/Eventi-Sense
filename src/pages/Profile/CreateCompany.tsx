@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import supabase from "../../api/supabaseClient";
 import Modal from "../../assets/modal/modal";
 import { useNavigate } from "react-router-dom";
+import { createCompany,  getCurrentUser, updateCompany} from "../../api/utiilty/profiles";
 
 interface Company {
     id?: string;
@@ -37,18 +38,11 @@ const CreateCompany: React.FC = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data: session, error } = await supabase.auth.getSession();
-      if (error) {
-        console.error("Supabase Auth Error:", error.message);
-        setError(error.message);
-        return;
-      }
-
-      if (session?.session?.user) {
-        setUser(session.session.user);
+      const user = await getCurrentUser();
+      if (user) {
+        setUser(user);
       }
     };
-
     fetchUser();
   }, []);
 
@@ -108,10 +102,7 @@ const CreateCompany: React.FC = () => {
         throw new Error("Error getting public URL");
       }
 
-      const { error: updateError } = await supabase
-        .from("company_profiles")
-        .update({ company_logo_url: publicUrlData.publicUrl })
-        .eq("id", user.id);
+      const { error: updateError } = await updateCompany(user.id, { company_logo_url: publicUrlData.publicUrl });
 
       if (updateError) {
         console.error("Supabase Database Update Error:", updateError);
@@ -145,9 +136,7 @@ const CreateCompany: React.FC = () => {
     setError(null);
 
     try {
-      const { error } = await supabase
-        .from("company_profiles")
-        .insert([{ ...company, id: user.id }]);
+      const { error } = await createCompany({ ...company, id: user.id });
 
       if (error) {
         console.error("Supabase Create Error:", error.message);

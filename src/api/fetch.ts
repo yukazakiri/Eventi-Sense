@@ -9,6 +9,10 @@ interface Company {
     company_phone: string;
     company_logo_url?: string | null;
   }
+  interface Profile {
+    id: string;
+    role: string;
+  }
   
 export const fetchCompany = async (userId: string): Promise<Company | null> => {
     const { data, error } = await supabase
@@ -22,6 +26,21 @@ export const fetchCompany = async (userId: string): Promise<Company | null> => {
       throw error;
     }
   
+    return data;
+  };
+
+  export const fetchProfile = async (userId: string): Promise<Profile | null> => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", userId)
+      .single();
+
+    if (error) {
+      console.error("Error fetching profile:", error.message);
+      throw error;
+    }
+
     return data;
   };
 

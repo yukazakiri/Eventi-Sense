@@ -17,7 +17,7 @@ const Protection = ({ requiredRole, children }: ProtectionProps) => {
   const checkAuth = async () => {
     console.log("Checking authentication...");
     const { data: session, error } = await supabase.auth.getSession();
-    console.log("Session Data:", session);
+
 
     if (error) {
       console.error("Error fetching session:", error);
@@ -37,7 +37,7 @@ const Protection = ({ requiredRole, children }: ProtectionProps) => {
 
   // Fetch user role from the database
   const fetchUserRole = async (userId: string) => {
-    console.log("Fetching user role for user ID:", userId);
+
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -52,11 +52,10 @@ const Protection = ({ requiredRole, children }: ProtectionProps) => {
         return;
       }
 
-      console.log("Fetched user role:", data?.role);
       setUserRole(data?.role || null);
       setLoading(false); // Set loading to false once the role is fetched
     } catch (err) {
-      console.error('Error fetching user role:', err);
+
       setUserRole(null);
       setLoading(false); // Ensure loading is set to false on error
     }
@@ -66,8 +65,8 @@ const Protection = ({ requiredRole, children }: ProtectionProps) => {
     checkAuth();
 
     // Listen for auth state changes (login/logout)
-    const { data: subscription } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Auth state changed:", event, session);
+    const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+
 
       if (session && session.user) {
         checkAuth();
@@ -87,24 +86,22 @@ const Protection = ({ requiredRole, children }: ProtectionProps) => {
 
   // While authentication state and user role are being loaded
   if (loading) {
-    console.log("Loading state...");
     return <div>Loading...</div>;
   }
 
   // If the user is not authenticated, redirect to login
   if (!isAuthenticated) {
-    console.log("User is not authenticated, redirecting to login...");
+
     return <Navigate to="/login" state={{ from: location }} />;
   }
 
   // If the user does not have the required role, redirect to unauthorized page
   if (userRole !== requiredRole) {
-    console.log("User does not have the required role, redirecting to unauthorized...");
+
     return <Navigate to="/unauthorized" />;
   }
 
   // If everything is good, render the children (protected content)
-  console.log("User is authenticated and has the correct role, rendering children...");
   return <>{children}</>;
 };
 

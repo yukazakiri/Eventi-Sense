@@ -3,8 +3,9 @@ import { Routes, Route } from 'react-router-dom';
 import supabase from '../api/supabaseClient';
 import Sidebar from '../components/Sidebar/Supplier';
 import routes from '../routers/Supplier/Routes';
-
+import { getCurrentUser, fetchProfile } from '../api/utiilty/profiles';
 import UserProfile from '../components/Profile/StockHoldersProfileAvatar'; // Add import for UserProfile component
+import { Profile } from '../types/profile';
 
 function SupplierDashboard() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -15,20 +16,14 @@ function SupplierDashboard() {
 
 
   // Fetch the user's profile
-  const fetchProfile = async (userId: string) => {
+  const fetchUserProfile = async (userId: string): Promise<Profile | null> => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('role, avatar_url')
-        .eq('id', userId)
-        .single();
-
-      if (error) {
-        console.error('Error fetching profile:', error);
+      const profileData = await fetchProfile(userId);
+      if (!profileData) {
+        console.error('Error fetching profile: Profile not found');
         return null;
       }
-
-      return data;
+      return profileData;
     } catch (error) {
       console.error('Error in fetchProfile:', error);
       return null;
@@ -41,15 +36,15 @@ function SupplierDashboard() {
   // Fetch the currently authenticated user
   const fetchUser = async () => {
     try {
-      const { data: userData, error } = await supabase.auth.getUser();
-      if (error || !userData) {
-        console.error('Error fetching user:', error);
+      const user = await getCurrentUser();
+      if (!user) {
+        console.error('No user found');
         setLoading(false);
         return;
       }
 
-      setUser(userData);
-      const profileData = await fetchProfile(userData.user.id);
+      setUser(user);
+      const profileData = await fetchUserProfile(user.id);
   
 
       if (profileData) {
@@ -71,7 +66,7 @@ function SupplierDashboard() {
     const { data: subscription } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session) {
         setUser(session.user);
-        const profileData = await fetchProfile(session.user.id);
+        const profileData = await fetchUserProfile(session.user.id);
 
 
         if (profileData) setProfile(profileData);

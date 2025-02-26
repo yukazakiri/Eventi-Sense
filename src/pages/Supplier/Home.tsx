@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import supabase from '../../api/supabaseClient';
 import CreateCompany from '../Profile/Company';
-
+import TagNotifications from '../../components/TagNotifications/TagNotifications';
 
 
 interface Company {
@@ -120,6 +120,7 @@ const Home: React.FC = () => {
         <h1 className="text-2xl font-semibold text-gray-800">
           Welcome to Your Venue Manager Home Dashboard
         </h1>
+        <TagNotifications />
         <p className="mt-2 text-gray-600">
           Total Bookings Across All Venues: {totalBookings}
         </p>

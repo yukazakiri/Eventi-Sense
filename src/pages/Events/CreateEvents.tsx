@@ -4,6 +4,8 @@ import { createEvent, Event } from '../../types/event';
 import supabase from '../../api/supabaseClient';
 import Breadcrumbs from '../../components/BreadCrumbs/breadCrumbs';
 import { HomeIcon } from '@heroicons/react/20/solid';
+import { tagEntity } from '../../types/tagging';
+import TagSelector from '../../components/TagSelector/TagSelector';
 
 
 
@@ -31,6 +33,10 @@ const CreateEventForm: React.FC = () => {
     const [uploading, setUploading] = useState(false);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [tagInput, setTagInput] = useState<string>(''); // State for the tag input field
+    const [selectedVenues, setSelectedVenues] = useState<string[]>([]);
+    const [selectedSuppliers, setSelectedSuppliers] = useState<string[]>([]);
+    const [isVenueModalOpen, setIsVenueModalOpen] = useState(false);
+    const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -112,54 +118,79 @@ const CreateEventForm: React.FC = () => {
         e.preventDefault();
         console.log('Form submitted');
 
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-            alert('You must be logged in to create an event.');
-            return;
-        }
-
-        let imageUrl = event.image_url;
-        if (file) {
-            console.log('Uploading file...');
-            imageUrl = await uploadFile(file);
-            if (!imageUrl) {
-                alert('Failed to upload image.');
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                alert('You must be logged in to create an event.');
                 return;
             }
-        }
 
-        const updatedEvent = {
-            ...event,
-            organizer_id: user.id,
-            image_url: imageUrl,
-        };
+            let imageUrl = event.image_url;
+            if (file) {
+                console.log('Uploading file...');
+                imageUrl = await uploadFile(file);
+                if (!imageUrl) {
+                    alert('Failed to upload image.');
+                    return;
+                }
+            }
 
-        console.log('Creating event with data:', updatedEvent);
-        const createdEvent = await createEvent(updatedEvent);
-        console.log('Created Event:', createdEvent);
+            const updatedEvent = {
+                ...event,
+                organizer_id: user.id,
+                image_url: imageUrl,
+            };
 
-        if (createdEvent) {
-            alert('Event created successfully!');
-            setEvent({
-                name: '',
-                description: '',
-                date: '',
-                location: '',
-                organizer_id: '',
-                category: '',
-                image_url: '',
-                ticket_price: 0,
-                capacity: 0,
-                tags: [], // Reset tags
-            });
-            setFile(null);
-            setPreviewUrl(null);
-            setTagInput(''); // Reset tag input
+            console.log('Creating event with data:', updatedEvent);
+            const createdEvent = await createEvent(updatedEvent);
+            console.log('Created Event:', createdEvent);
 
-            // Redirect to the event details page
-            navigate(`/events/${createdEvent.id}`);
-        } else {
-            alert('Failed to create event. Please check the console for details.');
+            if (createdEvent && createdEvent.id) {
+                // Tag venues
+                for (const venueId of selectedVenues) {
+                    await tagEntity({
+                        eventId: createdEvent.id,
+                        taggedEntityId: venueId,
+                        taggedEntityType: 'venue',
+                        taggedBy: user.id
+                    });
+                }
+
+                // Tag suppliers
+                for (const supplierId of selectedSuppliers) {
+                    await tagEntity({
+                        eventId: createdEvent.id,
+                        taggedEntityId: supplierId,
+                        taggedEntityType: 'supplier',
+                        taggedBy: user.id
+                    });
+                }
+
+                alert('Event created successfully!');
+                setEvent({
+                    name: '',
+                    description: '',
+                    date: '',
+                    location: '',
+                    organizer_id: '',
+                    category: '',
+                    image_url: '',
+                    ticket_price: 0,
+                    capacity: 0,
+                    tags: [], // Reset tags
+                });
+                setFile(null);
+                setPreviewUrl(null);
+                setTagInput(''); // Reset tag input
+
+                // Redirect to the event details page
+                navigate(`/events/${createdEvent.id}`);
+            } else {
+                alert('Failed to create event. Please check the console for details.');
+            }
+        } catch (error) {
+            console.error('Error creating event:', error);
+            alert('Failed to create event.');
         }
     };
 
@@ -330,6 +361,23 @@ const CreateEventForm: React.FC = () => {
                      className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
             </div>
+
+            <div className="flex space-x-4">
+                <button
+                    type="button"
+                    onClick={() => setIsVenueModalOpen(true)}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                >
+                    Tag Venues ({selectedVenues.length})
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setIsSupplierModalOpen(true)}
+                    className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600"
+                >
+                    Tag Suppliers ({selectedSuppliers.length})
+                </button>
+            </div>
             </div>
             <div>
                 <button
@@ -342,6 +390,22 @@ const CreateEventForm: React.FC = () => {
             </div>
         </form>
     </div>
+    <TagSelector
+        type="venue"
+        selectedIds={selectedVenues}
+        onSelect={(id) => setSelectedVenues([...selectedVenues, id])}
+        onDeselect={(id) => setSelectedVenues(selectedVenues.filter(v => v !== id))}
+        isOpen={isVenueModalOpen}
+        onClose={() => setIsVenueModalOpen(false)}
+    />
+    <TagSelector
+        type="supplier"
+        selectedIds={selectedSuppliers}
+        onSelect={(id) => setSelectedSuppliers([...selectedSuppliers, id])}
+        onDeselect={(id) => setSelectedSuppliers(selectedSuppliers.filter(s => s !== id))}
+        isOpen={isSupplierModalOpen}
+        onClose={() => setIsSupplierModalOpen(false)}
+    />
     </div>
     );
 };

@@ -13,7 +13,8 @@ import { RiHome9Line } from "react-icons/ri";
 import { TbLayoutDashboardFilled } from "react-icons/tb";
 import { LuBookOpenCheck, LuCalendar, LuCalendarCheck, LuGrid2X2Plus } from 'react-icons/lu';
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
-
+import { PiConfetti } from "react-icons/pi";
+import { IoTicketOutline } from "react-icons/io5";
 interface SidebarProps {
     isSidebarOpen: boolean;
     setSidebarOpen: (isOpen: boolean) => void;
@@ -154,8 +155,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setSidebarOpen }) => {
                                  <h2 className={`text-sm uppercase my-2  ml-4 ${isCollapsed ? 'hidden' : 'block'} text-gray-600`}>events</h2>
                                  <nav>
                                     <ul className="space-y-2 text-gray-800">
-                                        <SidebarItem to="/Supplier-Dashboard/EventList" icon={<MdHelpOutline className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Events List" isCollapsed={isCollapsed} />
-                                        <SidebarItem to="/Supplier-Dashboard/TicketList" icon={<MdHelpOutline className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Ticket List" isCollapsed={isCollapsed} />
+                                        <SidebarItem to="/Supplier-Dashboard/EventList" icon={<PiConfetti     className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Events List" isCollapsed={isCollapsed} />
+                                        <SidebarItem to="/Supplier-Dashboard/TicketList" icon={<IoTicketOutline  className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Ticket List" isCollapsed={isCollapsed} />
                                     
                                     </ul>
                                 </nav>

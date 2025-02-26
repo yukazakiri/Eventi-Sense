@@ -1,4 +1,4 @@
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import {  useNavigate, useParams } from 'react-router-dom';
 import supabase from '../api/supabaseClient';
 import { useEffect, useRef, useState } from 'react';
 import { Venue, VenueImage } from '../types/venue';
@@ -17,7 +17,7 @@ import { TiLocation } from "react-icons/ti";
 import { LuAccessibility } from "react-icons/lu";
 import { IoPricetagsOutline } from "react-icons/io5";
 import { BsPeople } from "react-icons/bs";
-
+import PublicSocialLinks from './VenueManager/Social/PublicSocialLinks';
 
 
 interface AvailabilityEvent {
@@ -292,6 +292,13 @@ const PublicVenueDetails: React.FC = () => {
               <p className='text-gray-500 flex items-center'>
                 <TiLocation className="mr-1 mb-1" />{venue?.address_street}, {venue?.address_city}, {venue?.address_state} {venue?.address_zip}
               </p>
+              <div className='mt-2'>
+            {venueId ? (
+                <PublicSocialLinks venueId={venueId} />
+            ) : (
+                <div>Venue ID not found.</div> // Or any other fallback UI
+            )}
+            </div>
             </div>
               <div className="md:mt-20 md:mb-10 my-4 flex justify-center items-center  ">
               <div className="font-bonanova text-2xl lg:text-3xl xl:text-[3rem] text-gray-700 font-medium">

@@ -9,7 +9,7 @@ import CalendarPage from '../../pages/Supplier/Calendar';
 import Booking from '../../pages/Supplier/BookingPage';
 import CreateEventForm from '../../pages/Events/CreateEvents';
 import UpdateEvents from '../../pages/Events/UpdateEvent';
-import EventListing from '../../pages/Supplier/Event-List';
+import EventListing from '../../components/EventsCards/Event-List';
 import TicketList from '../../pages/Events/TicketsList';
 import RequestTicket from '../../pages/Events/RequestTickets';
 

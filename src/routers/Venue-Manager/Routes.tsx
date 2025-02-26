@@ -12,8 +12,11 @@ import VenueGallery from '../../pages/VenueManager/venue/VenueDetails/Availabilt
 import BookingDetails from '../../pages/VenueManager/Booking/BookingDetails';
 import BookingList from '../../pages/VenueManager/BookingList';
 import Profiles from '../../pages/Profile/Profiles';
-
-
+import TicketList from '../../pages/Events/TicketsList';
+import RequestTicket from '../../pages/Events/RequestTickets';
+import EventListing from '../../components/EventsCards/Event-List';
+import CreateEventForm from '../../pages/Events/CreateEvents';
+    
 const routes: RouteObject[] = [ 
  { path: '/', element: <Home /> },
  { path: '/Home', element: <Home /> },
@@ -35,8 +38,11 @@ const routes: RouteObject[] = [
  { path: '/BookingDetail/:venueId', element: <BookingDetails/> },
 
  { path: '/Booking-List', element: <BookingList/> },
-
+ { path: '/CreateEvents', element: <CreateEventForm/>},
  { path: '/Profiles', element: <Profiles /> },
+ { path: '/EventList', element: <EventListing /> },
+ { path: '/TicketList', element: <TicketList  /> },
+ { path: '/tickets', element: <RequestTicket   /> },
  
 
 

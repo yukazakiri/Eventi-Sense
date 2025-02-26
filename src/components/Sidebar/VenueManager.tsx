@@ -2,24 +2,17 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
     MdOutlineManageAccounts,
-    MdSettings,
-    MdHelpOutline,
-    MdInsertChart,
-    MdViewList,
-    MdMail,
-    MdChat,
-    MdReceipt,
-    MdWidgets,
-    MdLock,
     MdPeople,
     MdAttachMoney,
     MdAssignment,
-    MdAnalytics,
 } from 'react-icons/md';
 import { IoIosArrowBack, IoIosMenu } from 'react-icons/io';
 import { RiHome9Line } from 'react-icons/ri';
 import { TbLayoutDashboardFilled } from 'react-icons/tb';
-
+import { HiOutlineDotsHorizontal } from 'react-icons/hi';
+import { PiConfetti } from 'react-icons/pi';
+import { IoTicketOutline } from 'react-icons/io5';
+import { LuCalendarCheck } from 'react-icons/lu';
 
 interface SidebarProps {
     isSidebarOpen: boolean;
@@ -118,48 +111,25 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setSidebarOpen }) => {
                             <SidebarItem to="/Venue-Manager-Dashboard/Create-User" icon={<MdPeople className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Attendee Management" isCollapsed={isCollapsed} />
                             <SidebarItem to="/Venue-Manager-Dashboard/Financial-Overview" icon={<MdAttachMoney className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Financial Overview" isCollapsed={isCollapsed} />
                             <SidebarItem to="/Venue-Manager-Dashboard/Venue-List" icon={<MdAssignment className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Venue" isCollapsed={isCollapsed} />
-                            <SidebarItem to="/Venue-Manager-Dashboard/Booking-List" icon={<MdAnalytics className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Bookings" isCollapsed={isCollapsed} />
-                            <SidebarItem to="/Venue-Manager-Dashboard/Settings" icon={<MdSettings className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Settings" isCollapsed={isCollapsed} />
-                            <SidebarItem to="/Venue-Manager-Dashboard/Support-Help" icon={<MdHelpOutline className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Support & Help" isCollapsed={isCollapsed} />
+                            <SidebarItem to="/Venue-Manager-Dashboard/Booking-List" icon={<LuCalendarCheck  className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Bookings" isCollapsed={isCollapsed} />
                         </ul>
                     </nav>
+                    {isCollapsed &&
+                                <div className='flex justify-center my-4'>
+                                 <HiOutlineDotsHorizontal className='flex justify-center text-[1.6rem] text-gray-400'/>
+                                 </div>
+                     }
 
-                    {!isCollapsed && <hr className="my-4 border-t border-gray-300" />}
-                    <h2 className={`text-xl font-bold mb-4 ${isCollapsed ? 'hidden' : 'block'} text-gray-800`}>Forms</h2>
+           
+                    <h2 className={`text-sm uppercase my-4  ml-4 ${isCollapsed ? 'hidden' : 'block'} text-gray-600`}>events</h2>
                     <nav>
                         <ul className="space-y-2 text-gray-800">
-                            <SidebarItem to="/Venue-Manager-Dashboard/Forms" icon={<MdViewList className={`text-2xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Forms" isCollapsed={isCollapsed} />
+                        <SidebarItem to="/Venue-Manager-Dashboard/EventList" icon={<PiConfetti  className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Events List" isCollapsed={isCollapsed} />
+                        <SidebarItem to="/Venue-Manager-Dashboard/TicketList" icon={<IoTicketOutline     className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Ticket List" isCollapsed={isCollapsed} />
+                                    
                         </ul>
-                    </nav>
+                    </nav>  
 
-                    {!isCollapsed && <hr className="my-4 border-t border-gray-300" />}
-                    <h2 className={`text-xl font-bold mb-4 ${isCollapsed ? 'hidden' : 'block'} text-white`}>Tables</h2>
-                    <nav>
-                        <ul className="space-y-2 text-gray-800">
-                            <SidebarItem to="/Venue-Manager-Dashboard/Tables" icon={<MdViewList className={`text-2xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Tables" isCollapsed={isCollapsed} />
-                        </ul>
-                    </nav>
-
-                    {!isCollapsed && <hr className="my-4 border-t border-gray-300" />}
-                    <h2 className={`text-xl font-bold mb-4 ${isCollapsed ? 'hidden' : 'block'} text-white`}>Pages</h2>
-                    <nav>
-                        <ul className="space-y-2 text-gray-800">
-                            <SidebarItem to="/Venue-Manager-Dashboard/Support" icon={<MdHelpOutline className={`text-2xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Support" isCollapsed={isCollapsed} />
-                            <SidebarItem to="/Venue-Manager-Dashboard/Chat" icon={<MdChat className={`text-2xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Chat" isCollapsed={isCollapsed} />
-                            <SidebarItem to="/Venue-Manager-Dashboard/Email" icon={<MdMail className={`text-2xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Email" isCollapsed={isCollapsed} />
-                            <SidebarItem to="/Venue-Manager-Dashboard/Invoice" icon={<MdReceipt className={`text-2xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Invoice" isCollapsed={isCollapsed} />
-                        </ul>
-                    </nav>
-
-                    {!isCollapsed && <hr className="my-4 border-t border-gray-300" />}
-                    <h2 className={`text-xl font-bold mb-4 ${isCollapsed ? 'hidden' : 'block'} text-white`}>Others</h2>
-                    <nav>
-                        <ul className="space-y-2 text-gray-800">
-                            <SidebarItem to="/Venue-Manager-Dashboard/Charts" icon={<MdInsertChart className={`text-2xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Charts" isCollapsed={isCollapsed} />
-                            <SidebarItem to="/Venue-Manager-Dashboard/UiElements" icon={<MdWidgets className={`text-2xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Ui Elements" isCollapsed={isCollapsed} />
-                            <SidebarItem to="/Venue-Manager-Dashboard/Authentication" icon={<MdLock className={`text-2xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Authentication" isCollapsed={isCollapsed} />
-                        </ul>
-                    </nav>
                 </div>
             </aside>
         </>
