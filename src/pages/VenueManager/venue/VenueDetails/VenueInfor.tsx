@@ -214,207 +214,206 @@ const VenueInfoForm: React.FC<VenueInfoFormProps> = ({ venue, isEditing, setIsEd
         return <div>Error: {error}</div>;
     }
     return ( 
-        <div className={`bg-white p-[2rem]  border-[1px] border-gray-300 rounded-3xl ${isEditing ? 'border-2 rounded-3xl border-indigo-400' : ''}`}>
-                <div className='flex justify-between mb-4'>
-                        <h1 className="text-2xl font-bold font-bonanova text-gray-700 ">Information</h1>
-                        <div>
-                              {!isEditing &&  (
-                            <>
-                                <button
-                                    onClick={() => setIsEditing(true)}
-                                    className="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mr-2"
-                                >
-                                    Edit 
-                                </button>
-                           
-                            </>
-                        )}
-                        {isEditing  && (
-                            <button
-                                onClick={() => {
-                                    setIsEditing(false);
-                                  
-                                }}
-                                className="text-white bg-red-400 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-blue-800"
-                            >
-                                Cancel
-                            </button>
-                        )}</div>
-                           </div>
-
-        <form onSubmit={handleSubmit}>
-        <div className='grid md:grid-cols-2 xl:grid-cols-3 gap-2'>
-            <div className="mb-4">
-                <label htmlFor="name" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Venue Name:</label>
-                <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name || ''}
-                    onChange={handleChange}   
-                    className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"                      
-                    placeholder="Example: The Grand Ballroom"
-                    disabled={!isEditing}
-                />
-            </div>
-            <div className="mb-4">
-                <label htmlFor="capacity" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Capacity:</label>
-                <input
-                    type="text"
-                    id="capacity"
-                    name="capacity"
-                    value={formData.capacity || ''}
-                    onChange={handleChange}
-                    className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"                        
-                    placeholder="Example: 500-600 people, depending on the event"
-                    disabled={!isEditing}
-                />
-            </div>
-            <div className="mb-4">
-                <label htmlFor="email" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Email:</label>
-                <input
-                    type="text"
-                    id="email"
-                    name="email"
-                    value={formData.email || ''}
-                    onChange={handleChange}
-                    className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    disabled={!isEditing}
-                />
-            </div>
-            <div className="mb-4">
-                <label htmlFor="price" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Price:</label>
-                <input
-                    type="text"
-                    id="price"
-                    name="price"
-                    value={formData.price || ''}
-                    onChange={handleChange}                   
-                    className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Example: Ranging from PHP5000-PHP10000"
-                    disabled={!isEditing}
-                />
-            </div>
-            <div className="mb-4">
-                <label htmlFor="phone_number" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Phone Number:</label>
-                <input
-                    type="text"
-                    id="phone_number"
-                    name="phone_number"
-                    value={formData.phone_number || ''}
-                    onChange={handleChange}                   
-                    className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"                       
-                    placeholder="Example: 123-456-7890"
-                    disabled={!isEditing}
-                />
-            </div>
-            <div className="mb-4">
-                <label htmlFor="website" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Website:</label>
-                <input
-                    type="text"
-                    id="website"
-                    name="website"
-                    value={formData.website || ''}
-                    onChange={handleChange}                    
-                    className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Example: https://example.com" 
-                    disabled={!isEditing}
-                />
-            </div>
-            <div className="mb-4 col-span-3">
-                <label htmlFor="description" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Description:</label>
-                <input
-                    type="text"
-                    id="description"
-                    name="description"
-                    value={formData.description || ''}
-                    onChange={handleChange}                    
-                    className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-auto p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    disabled={!isEditing}
-                />
-            </div>
-            
-        </div>
-        <div className={`bg-white p-[2rem] mb-4  border-[1px] border-gray-300 rounded-3xl ${isEditing ? 'border-2 rounded-3xl border-indigo-400' : ''}`}>
-                <label className="block text-gray-700 font-bold mb-2">Venue Type:</label>
-                <div className="grid lg:grid-cols-4 ">
-                {venueTypes.map((type) => (
-                    <label key={type.id} className="flex items-center space-x-2 mb-2 text-gray-700">
-                        <input
-                            type="checkbox"
-                            name="venue_type"
-                            value={type.id.toString()}
-                            checked={selectedVenueTypes.includes(type.id.toString())}
-                            onChange={handleChange}
-                            className="mr-2"
-                            disabled={!isEditing}
-                        />
-                        <span>{type.name}</span>
-                    </label>
-                ))}
-                 </div>
-            </div>
-    <section className='grid grid-cols-2 gap-4 mb-4'>
-    <div className={`bg-white p-[2rem]  border-[1px] border-gray-300 rounded-3xl ${isEditing ? 'border-2 rounded-3xl border-indigo-400' : ''}`}>
-
-                <label className="block text-gray-700 font-bold mb-2">Accessibility:</label>
-                <div className="grid md:grid-cols-2 gap-2">
-                {accessibilities.map((access) => (
-                    <label key={access.id} className="inline-flex items-center mr-4 text-gray-700" >
-                        <input
-                            type="checkbox"
-                            name="accessibility"
-                            value={access.id.toString()}
-                            checked={selectedAccessibilities.includes(access.id.toString())}
-                            onChange={handleChange}
-                            className="mr-2"
-                            disabled={!isEditing}
-                        />
-                        <span>{access.name}</span>
-                    </label>
-                ))}
-            </div>
-            </div>
-    
-            <div className={`bg-white p-[2rem]  border-[1px] border-gray-300 rounded-3xl ${isEditing ? 'border-2 rounded-3xl border-indigo-400' : ''}`}>
-                <label className="block text-gray-700 font-bold mb-2">Pricing Model:</label>
-                <div className="grid md:grid-cols-2 gap-2">
-                {pricingModels.map((model) => (
-                    <label key={model.id} className="inline-flex items-center mr-4 text-gray-700">
-                        <input
-                            type="checkbox"
-                            name="pricing_model"
-                            value={model.id.toString()}
-                            checked={selectedPricingModels.includes(model.id.toString())}
-                            onChange={handleChange}
-                            className="mr-2"
-                            disabled={!isEditing}
-                        />
-                        <span>{model.name}</span>
-                    </label>
-                ))}
+        <div className={`bg-white dark:bg-gray-900 p-[2rem] border-[1px] border-gray-300 dark:border-gray-700 rounded-3xl ${
+            isEditing ? 'border-2 rounded-3xl border-indigo-400 dark:border-indigo-500' : ''
+        }`}>
+            <div className="flex justify-between mb-4">
+                <h1 className="text-3xl font-bold font-bonanova text-gray-700 dark:text-gray-200">Venue Information</h1>
+                <div>
+                    {!isEditing && (
+                        <button
+                            onClick={() => setIsEditing(true)}
+                            className="text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 text-center"
+                        >
+                            Edit
+                        </button>
+                    )}
                 </div>
             </div>
- </section>    
-    
-            {/* Add other form fields here as needed */}
-    
-            <input type="hidden" name="id" value={venue.id} />
-            {isEditing &&
-            <>
-             <button type="submit" className="bg-green-500 hover:bg-green-600 text-white  py-2 px-8 rounded-full focus:outline-none focus:shadow-outline">Save</button>
-             <button
-             className="inline-flex justify-center py-2 px-4 mx-4 border border-transparent shadow-sm text-sm font-medium rounded-full text-white bg-red-500 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-             onClick={() => setIsEditing(false)}
-         >
-             Cancel
-         </button>
-         </>
-            }
 
-        </form>
-        </div>      
-    );
-};
+            <form onSubmit={handleSubmit}>
+                <div className={`bg-white dark:bg-gray-900 p-[2rem] border-[1px] border-gray-300 dark:border-gray-700 rounded-3xl ${
+                    isEditing ? 'border-2 rounded-3xl border-indigo-400 dark:border-indigo-500' : ''
+                }`}>
+                    <div className='grid md:grid-cols-2 xl:grid-cols-3 gap-2'>
+                        <div className="mb-4">
+                            <label htmlFor="name" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Venue Name:</label>
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                value={formData.name || ''}
+                                onChange={handleChange}   
+                                className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"                      
+                                placeholder="Example: The Grand Ballroom"
+                                disabled={!isEditing}
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label htmlFor="capacity" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Capacity:</label>
+                            <input
+                                type="text"
+                                id="capacity"
+                                name="capacity"
+                                value={formData.capacity || ''}
+                                onChange={handleChange}
+                                className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"                        
+                                placeholder="Example: 500-600 people, depending on the event"
+                                disabled={!isEditing}
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label htmlFor="email" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Email:</label>
+                            <input
+                                type="text"
+                                id="email"
+                                name="email"
+                                value={formData.email || ''}
+                                onChange={handleChange}
+                                className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                disabled={!isEditing}
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label htmlFor="price" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Price:</label>
+                            <input
+                                type="text"
+                                id="price"
+                                name="price"
+                                value={formData.price || ''}
+                                onChange={handleChange}                   
+                                className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Example: Ranging from PHP5000-PHP10000"
+                                disabled={!isEditing}
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label htmlFor="phone_number" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Phone Number:</label>
+                            <input
+                                type="text"
+                                id="phone_number"
+                                name="phone_number"
+                                value={formData.phone_number || ''}
+                                onChange={handleChange}                   
+                                className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"                       
+                                placeholder="Example: 123-456-7890"
+                                disabled={!isEditing}
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label htmlFor="website" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Website:</label>
+                            <input
+                                type="text"
+                                id="website"
+                                name="website"
+                                value={formData.website || ''}
+                                onChange={handleChange}                    
+                                className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Example: https://example.com" 
+                                disabled={!isEditing}
+                            />
+                        </div>
+                        <div className="mb-4 col-span-3">
+                            <label htmlFor="description" className="block mb-2 text-md font-medium text-gray-800  dark:text-white">Description:</label>
+                            <input
+                                type="text"
+                                id="description"
+                                name="description"
+                                value={formData.description || ''}
+                                onChange={handleChange}                    
+                                className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-auto p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                disabled={!isEditing}
+                            />
+                        </div>
+                        
+                    </div>
+                    <div className={`bg-white dark:bg-gray-900 p-[2rem] border-[1px] border-gray-300 dark:border-gray-700 rounded-3xl ${
+                        isEditing ? 'border-2 rounded-3xl border-indigo-400 dark:border-indigo-500' : ''
+                    }`}>
+                        <label className="block text-gray-700 dark:text-gray-200 font-bold mb-2">Venue Type:</label>
+                        <div className="grid lg:grid-cols-4">
+                            {venueTypes.map((type) => (
+                                <label key={type.id} className="flex items-center space-x-2 mb-2 text-gray-700 dark:text-gray-300">
+                                    <input
+                                        type="checkbox"
+                                        name="venue_type"
+                                        value={type.id.toString()}
+                                        checked={selectedVenueTypes.includes(type.id.toString())}
+                                        onChange={handleChange}
+                                        className="rounded border-gray-300 dark:border-gray-600 text-indigo-600 dark:text-indigo-400"
+                                        disabled={!isEditing}
+                                    />
+                                    <span>{type.name}</span>
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+                    </div>  
+            <section className='grid grid-cols-2 gap-4 mb-4'>
+            <div className={`bg-white dark:bg-gray-900 p-[2rem] border-[1px] border-gray-300 dark:border-gray-700 rounded-3xl ${
+                isEditing ? 'border-2 rounded-3xl border-indigo-400 dark:border-indigo-500' : ''
+            }`}>
+
+                    <label className="block text-gray-700 dark:text-gray-200 font-bold mb-2">Accessibility:</label>
+                    <div className="grid md:grid-cols-2 gap-2">
+                    {accessibilities.map((access) => (
+                        <label key={access.id} className="inline-flex items-center mr-4 text-gray-700 dark:text-gray-300">
+                            <input
+                                type="checkbox"
+                                name="accessibility"
+                                value={access.id.toString()}
+                                checked={selectedAccessibilities.includes(access.id.toString())}
+                                onChange={handleChange}
+                                className="rounded border-gray-300 dark:border-gray-600 text-indigo-600 dark:text-indigo-400"
+                                disabled={!isEditing}
+                            />
+                            <span>{access.name}</span>
+                        </label>
+                    ))}
+                </div>
+                </div>
+        
+                <div className={`bg-white dark:bg-gray-900 p-[2rem] border-[1px] border-gray-300 dark:border-gray-700 rounded-3xl ${
+                    isEditing ? 'border-2 rounded-3xl border-indigo-400 dark:border-indigo-500' : ''
+                }`}>
+                    <label className="block text-gray-700 dark:text-gray-200 font-bold mb-2">Pricing Model:</label>
+                    <div className="grid md:grid-cols-2 gap-2">
+                    {pricingModels.map((model) => (
+                        <label key={model.id} className="inline-flex items-center mr-4 text-gray-700 dark:text-gray-300">
+                            <input
+                                type="checkbox"
+                                name="pricing_model"
+                                value={model.id.toString()}
+                                checked={selectedPricingModels.includes(model.id.toString())}
+                                onChange={handleChange}
+                                className="rounded border-gray-300 dark:border-gray-600 text-indigo-600 dark:text-indigo-400"
+                                disabled={!isEditing}
+                            />
+                            <span>{model.name}</span>
+                        </label>
+                    ))}
+                    </div>
+                </div>
+     </section>    
+    
+                {/* Add other form fields here as needed */}
+        
+                <input type="hidden" name="id" value={venue.id} />
+                {isEditing &&
+                <>
+                 <button type="submit" className="bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white py-2 px-8 rounded-full focus:outline-none focus:shadow-outline">Save</button>
+                 <button
+                 className="inline-flex justify-center py-2 px-4 mx-4 border border-transparent shadow-sm text-sm font-medium rounded-full text-white bg-red-500 hover:bg-red-600 dark:bg-red-500 dark:hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                 onClick={() => setIsEditing(false)}
+             >
+                 Cancel
+             </button>
+             </>
+                }
+
+            </form>
+            </div>      
+        );
+    };
 
     export default VenueInfoForm;

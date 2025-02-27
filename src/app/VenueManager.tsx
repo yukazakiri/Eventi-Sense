@@ -7,15 +7,31 @@ import { getCurrentUser, fetchProfile } from '../api/utiilty/profiles';
 import { Profile } from '../types/profile';
 
 import UserProfile from '../components/Profile/StockHoldersProfileAvatar'; // Add import for UserProfile component
+import NotificationBadge from '../components/Notifications/NotificationBadge';
+import { FiMoon } from 'react-icons/fi';
+import { FiSun } from 'react-icons/fi';
 
 function VenueManagerDashboard() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
-
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [loading, setLoading] = useState(true);
 
-
+  // Initialize dark mode from localStorage
+  useEffect(() => {
+    const darkMode = localStorage.getItem('darkMode') === 'true';
+    setIsDarkMode(darkMode);
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
+  const toggleDarkMode = () => {
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
+    localStorage.setItem('darkMode', String(newDarkMode));
+    document.documentElement.classList.toggle('dark');
+  };
   // Fetch the user's profile
   const fetchUserProfile = async (userId: string): Promise<Profile | null> => {
     try {
@@ -59,6 +75,7 @@ function VenueManagerDashboard() {
       setLoading(false);
     }
   };
+ // Toggle dark mode
 
   useEffect(() => {
     // Initial user fetch when the component mounts
@@ -96,18 +113,42 @@ function VenueManagerDashboard() {
 
 
   return (
-    <div className="flex h-screen bg-blue-light-1  ">
+    <div className="flex h-screen bg-blue-light-1 dark:bg-gray-950 ">
       <Sidebar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex justify-end p-4 bg-white shadow-md z-0 font-sofia text-gray-800">
-         
-                <UserProfile user={user} profile={profile} /> 
-         
- 
-   
+        <div className="flex justify-end items-center p-4 bg-white dark:border-b-[1px] border-gray-500 dark:bg-gray-950 shadow-md z-0 font-sofia text-gray-800">
+          <div className="flex items-center gap-2">
+            <div className="dark:bg-gray-950 dark:hover:bg-gray-700 hover:bg-gray-100 bg-white border-[1px] dark:border-gray-700  rounded-full transition-colors ">
+              <NotificationBadge />
+            </div>
+            <div>
+            <button
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleDarkMode();
+            }}
+            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 border-[1px]  dark:border-gray-700 transition-colors"
+            aria-label="Toggle theme"
+          >
+            <div className="relative w-5 h-5">
+              <span className={`absolute inset-0 transform transition-transform duration-500 text-gray-700  dark:text-gray-200 ${
+                isDarkMode ? 'rotate-0 opacity-100' : 'rotate-90 opacity-0'
+              }`}>
+                <FiMoon className="w-full h-full " />
+              </span>
+              <span className={`absolute inset-0 transform transition-transform duration-500 text-gray-700 dark:text-gray-200 ${
+                !isDarkMode ? 'rotate-0 opacity-100' : '-rotate-90 opacity-0'
+              }`}>
+                <FiSun className="w-full h-full " />
+              </span>
+            </div>
+          </button>
+            </div>
+            <UserProfile user={user} profile={profile} />
+          </div>
         </div>
 
-        <main className="flex-1 overflow-y-auto bg-blue-light-1 mx-4 ">
+        <main className="flex-1 overflow-y-auto bg-blue-light-1 dark:bg-gray-950 mx-4">
           <Routes>
             {routes.map((route, index) => (
               <Route key={index} path={route.path} element={route.element} />

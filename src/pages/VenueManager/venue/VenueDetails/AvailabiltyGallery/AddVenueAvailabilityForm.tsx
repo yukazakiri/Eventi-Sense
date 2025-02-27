@@ -241,79 +241,88 @@ const handleDateClick = (info: any) => {
       }
     };
   return (
-    <div className=' py-4 my-[2rem] font-sofia bg-white mx-4 p-8 rounded-3xl border-[1px] border-gray-300'>
+    <div className='py-4 my-[2rem] font-sofia bg-white dark:bg-gray-900 mx-4 p-8 rounded-3xl border-[1px] border-gray-300 dark:border-gray-700'>
     
       {selectedDate && (
-        <p className="mb-4">Selected date: {selectedDate.toDateString()}</p>
+        <p className="mb-4 text-gray-700 dark:text-gray-300">Selected date: {selectedDate.toDateString()}</p>
       )}
       <div className='flex justify-between my-4'>
         <div>
-        <h2 className="text-3xl font-semibold text-gray-700 mb-4 font-bonanova">Existing Events</h2>
+        <h2 className="text-3xl font-semibold text-gray-700 dark:text-gray-200 mb-4 font-bonanova">Existing Events</h2>
       
         </div>
         {isCreating ? (
-          <div className="border rounded-xl mb-8 overflow-hidden max-w-max bg-white p-4 shadow-lg">
-            <h3 className="text-xl font-bold mb-2">Create New Availability</h3>
-            <label htmlFor="start">Start Time:</label><br />
+          <div className="border dark:border-gray-700 rounded-xl mb-8 overflow-hidden max-w-max bg-white dark:bg-gray-800 p-4 shadow-lg">
+            <h3 className="text-xl font-bold mb-2 text-gray-700 dark:text-gray-200">Create New Availability</h3>
+            <label htmlFor="start" className="text-gray-700 dark:text-gray-300">Start Time:</label><br />
             <DatePicker
               selected={newAvailability.start}
               onChange={(date) => handleNewAvailabilityChange('start', date)}
               showTimeSelect
               dateFormat="Pp"
+              className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg p-2"
             /><br /><br />
 
-            <label htmlFor="end">End Time:</label><br />
+            <label htmlFor="end" className="text-gray-700 dark:text-gray-300">End Time:</label><br />
             <DatePicker
               selected={newAvailability.end}
               onChange={(date) => handleNewAvailabilityChange('end', date)}
               showTimeSelect
               dateFormat="Pp"
+              className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg p-2"
             /><br /><br />
 
-            <label htmlFor="title">Title:</label><br />
+            <label htmlFor="title" className="text-gray-700 dark:text-gray-300">Title:</label><br />
             <textarea
               value={newAvailability.title}
               onChange={(e) => handleNewAvailabilityChange('title', e.target.value)}
-              className="border rounded w-full p-2"
+              className="border dark:border-gray-600 rounded w-full p-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
             /><br /><br />
 
-            <button onClick={handleSaveAvailability} className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mr-2">
+            <button onClick={handleSaveAvailability} 
+              className="bg-indigo-500 hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mr-2">
               Save
             </button>
-            <button onClick={handleCancelCreate} className="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">
+            <button onClick={handleCancelCreate} 
+              className="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded">
               Cancel
             </button>
           </div>
         ) : (
-          <button onClick={handleCreateClick} className="bg-indigo-500 hover:bg-indigo-700 text-white  py-4 px-4 rounded-2xl">
+          <button onClick={handleCreateClick} 
+            className="bg-indigo-500 hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white py-4 px-4 rounded-2xl">
            Add Event+
           </button>
         )}
       </div>
-      <div className='text-gray-500 my-4 ml-4'>
-        <div className='flex gap-2 mb-2' > <p style={{backgroundColor: '#E2D6FF'}} className='w-4 h-4 rounded'></p>
+      <div className='text-gray-500 dark:text-gray-400 my-4 ml-4'>
+        <div className='flex gap-2 mb-2'> <p style={{backgroundColor: '#E2D6FF'}} className='w-4 h-4 rounded'></p>
           <h2 className='flex justify-center'>
-           <span className='text-indigo-500'>Scheduled: </span> This indicates an event or task that is planned for a future date and time.
+           <span className='text-indigo-500 dark:text-indigo-400'>Scheduled: </span> 
+           <span className="dark:text-gray-300">This indicates an event or task that is planned for a future date and time.</span>
           </h2>
         </div>
-        <div className='flex gap-2 mb-2' > <p style={{backgroundColor: '#FCD9D9'}} className='w-4 h-4 rounded'></p>
+        <div className='flex gap-2 mb-2'> <p style={{backgroundColor: '#FCD9D9'}} className='w-4 h-4 rounded'></p>
           <h2 className='flex justify-center'>
-            <span className='text-red-500'>Cancelled: </span> This indicates that an event or task has been canceled or postponed.
+            <span className='text-red-500 dark:text-red-400'>Cancelled: </span>
+            <span className="dark:text-gray-300">This indicates that an event or task has been canceled or postponed.</span>
           </h2>
         </div>
-        <div className='flex gap-2 mb-2' > <p style={{backgroundColor: '#D6FFE7'}} className='w-4 h-4 rounded'></p>
+        <div className='flex gap-2 mb-2'> <p style={{backgroundColor: '#D6FFE7'}} className='w-4 h-4 rounded'></p>
           <h2 className='flex justify-center'>
-           <span className='text-green-500'>Completed: </span> This indicates that an event or task has been completed.
+           <span className='text-green-500 dark:text-green-400'>Completed: </span>
+           <span className="dark:text-gray-300">This indicates that an event or task has been completed.</span>
           </h2>
         </div>
-        <div className='flex gap-2 mb-2' > <p style={{backgroundColor: '#FFE9D6'}} className='w-4 h-4 rounded'></p>
+        <div className='flex gap-2 mb-2'> <p style={{backgroundColor: '#FFE9D6'}} className='w-4 h-4 rounded'></p>
           <h2 className='flex justify-center'>
-            <span className=' text-orange-500'>On Progress: </span> This indicates that an event or task is currently in progress.
+            <span className='text-orange-500 dark:text-orange-400'>On Progress: </span>
+            <span className="dark:text-gray-300">This indicates that an event or task is currently in progress.</span>
           </h2>
         </div>
       
       </div>
-      <div className="border rounded-3xl mb-8 overflow-hidden bg-white p-8 shadow-lg">
+      <div className="border dark:border-gray-700 rounded-3xl mb-8 overflow-hidden bg-white dark:bg-gray-800 p-8 shadow-lg">
       <FullCalendar
         ref={calendarRef}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -340,7 +349,7 @@ const handleDateClick = (info: any) => {
     {/* Event Details */}
     <div className="flex flex-col xl:flex-row items-center justify-start md:justify-between md:space-x-4 w-full">
       {/* Event Title */}
-      <div className="fc-event-time text-center md:text-left mb-2 md:mb-0">
+      <div className="fc-event-time text-center md:text-left mb-2 md:mb-0 dark:text-gray-200">
         {arg.event.title}
       </div>
   

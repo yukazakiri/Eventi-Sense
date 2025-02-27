@@ -16,6 +16,7 @@ import TicketList from '../../pages/Events/TicketsList';
 import RequestTicket from '../../pages/Events/RequestTickets';
 import EventListing from '../../components/EventsCards/Event-List';
 import CreateEventForm from '../../pages/Events/CreateEvents';
+import AllNotifications from '../../pages/Notifications/AllNotifications';
     
 const routes: RouteObject[] = [ 
  { path: '/', element: <Home /> },
@@ -43,7 +44,7 @@ const routes: RouteObject[] = [
  { path: '/EventList', element: <EventListing /> },
  { path: '/TicketList', element: <TicketList  /> },
  { path: '/tickets', element: <RequestTicket   /> },
- 
+ { path: '/notifications', element: <AllNotifications /> },
 
 
 

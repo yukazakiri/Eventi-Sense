@@ -111,11 +111,13 @@ function VenueSocialMediaLinks({ venues_id, isEditing, setIsEditing }: VenueSoci
     }
 
     return (
-          <div className={`bg-white p-[2rem]  border-[1px] border-gray-300 rounded-3xl ${isEditing ? 'border-2 rounded-3xl border-indigo-400' : ''}`}>
+          <div className={`bg-white dark:bg-gray-900 p-[2rem] border-[1px] border-gray-300 dark:border-gray-700 rounded-3xl ${
+            isEditing ? 'border-2 rounded-3xl border-indigo-400 dark:border-indigo-500' : ''
+          }`}>
                 
       
                   <div className='flex justify-between md:flex-row flex-col md:space-x-4 space-y-4 md:space-y-0'>
-                      <h3 className="text-2xl font-bold font-bonanova text-gray-700 ">Social Media Links</h3>
+                      <h3 className="text-2xl font-bold font-bonanova text-gray-700 dark:text-gray-200">Social Media Links</h3>
                       {successMessage && <p className="text-green-500 mb-4">{successMessage}</p>}
           
                       {/* Social Media Icons */}
@@ -164,7 +166,7 @@ function VenueSocialMediaLinks({ venues_id, isEditing, setIsEditing }: VenueSoci
                             <>
                                 <button
                                     onClick={() => setIsEditing(true)}
-                                    className="text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mr-2"
+                                    className="text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 text-center"
                                 >
                                    Add Link +
                                 </button>
@@ -200,7 +202,7 @@ function VenueSocialMediaLinks({ venues_id, isEditing, setIsEditing }: VenueSoci
                                           id="platform"
                                           value={newSocialMedia.platform}
                                           onChange={handleInputChange}
-                                          className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                          className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                                           required
                                           disabled // Disabled because the platform is selected via icons
                                       />
@@ -216,14 +218,14 @@ function VenueSocialMediaLinks({ venues_id, isEditing, setIsEditing }: VenueSoci
                                           placeholder={`Enter ${selectedPlatform} link`}
                                           value={newSocialMedia.link}
                                           onChange={handleInputChange}
-                                          className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                          className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                                           required
                                       />
                                   </div>
                                   <div className='flex '>
                                       <button
                                           type="submit"
-                                          className="w-auto flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                          className="w-auto flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                       >
                                           Add Link
                                       </button>

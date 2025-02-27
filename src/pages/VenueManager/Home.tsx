@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import supabase from '../../api/supabaseClient';
-import TagNotifications from '../../components/TagNotifications/TagNotifications';
+
+
 interface DashboardStats {
   totalVenues: number;
   totalBookings: number;
@@ -146,9 +147,9 @@ const Home: React.FC = () => {
     color: string,
     error?: string
   ) => (
-    <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-md p-6 border border-gray-100 dark:border-gray-700">
       {error ? (
-        <div className="text-red-500 flex items-center gap-2">
+        <div className="text-red-500 dark:text-red-400 flex items-center gap-2">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -157,17 +158,17 @@ const Home: React.FC = () => {
       ) : (
         <>
           <div className="flex items-center justify-between mb-4">
-            <div className={`p-2 bg-${color}-100 rounded-lg`}>
-              <div className={`w-6 h-6 text-${color}-600`}>
+            <div className={`p-2 bg-${color}-100 dark:bg-${color}-900/20 rounded-lg`}>
+              <div className={`w-6 h-6 text-${color}-600 dark:text-${color}-400`}>
                 {icon}
               </div>
             </div>
-            <span className="text-sm font-medium text-gray-400">{title}</span>
+            <span className="text-sm font-medium text-gray-400 dark:text-gray-500">{title}</span>
           </div>
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-2xl font-bold text-gray-900">{value}</h3>
-              <p className="text-sm text-gray-500">Total {title.toLowerCase()}</p>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{value}</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Total {title.toLowerCase()}</p>
             </div>
           </div>
         </>
@@ -177,9 +178,9 @@ const Home: React.FC = () => {
 
   if (isLoading) {
     return (
-      <main className="flex-1 p-8">
+      <main className="flex-1 p-8 dark:bg-gray-950">
         <div className="flex justify-center items-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 dark:border-blue-400"></div>
         </div>
       </main>
     );
@@ -187,9 +188,9 @@ const Home: React.FC = () => {
 
   if (!company && errors.company) {
     return (
-      <main className="flex-1 p-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <div className="flex items-center gap-2 text-red-600">
+      <main className="flex-1 p-8 dark:bg-gray-950">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
+          <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -201,15 +202,16 @@ const Home: React.FC = () => {
   }
 
   return (
-    <main className="flex-1 p-8">
+    <main className="flex-1 p-8 dark:bg-gray-950">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-800">
+        <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
           Welcome to Your Dashboard
         </h1>
-        <TagNotifications />
-        <p className="text-gray-600">Here's an overview of your business metrics</p>
+        <p className="text-gray-600 dark:text-gray-400">
+          Here's an overview of your business metrics
+        </p>
       </div>
-
+  
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {renderStatCard(
           "Venues",

@@ -43,6 +43,7 @@ module.exports = {
   			'blue-2': '#0362DD',
   			'blue-3': '#035969',
   			'blue-4': ' #126180',
+			'blue-400': '#465FFF',
 			'blue-500': '#3641f5',
 			'blue-600': '#1e2af4',
   			'navy-blue-1': '#043677	',
@@ -51,6 +52,21 @@ module.exports = {
   			'navy-blue-4': '#021B3C',
   			'navy-blue-5': '#011228',
   			'dark-blue': '#060b18',
+		
+				gray: {
+				  50: '#F9FAFB',
+				  100: '#F3F4F6',
+				  200: '#E5E7EB',
+				  300: '#D1D5DB',
+				  400: '#9CA3AF',
+				  500: '#6B7280',
+				  600: '#4B5563',
+				  700: '#374151',
+				  800: '#1F2937',
+				  900: '#171F2F',  // Custom dark background
+				  950: '#101828',  // Darker custom background
+				},
+			
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

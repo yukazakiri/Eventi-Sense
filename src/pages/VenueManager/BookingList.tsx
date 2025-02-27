@@ -48,9 +48,9 @@ const Home: React.FC = () => {
 
   if (isLoading) {
     return (
-      <main className="flex-1 p-8">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <p>Loading company data...</p> {/* Loading message */}
+      <main className="flex-1 p-8 dark:bg-gray-950">
+        <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow dark:border dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-400">Loading company data...</p>
         </div>
       </main>
     );
@@ -58,22 +58,25 @@ const Home: React.FC = () => {
 
   if (!company) {
     return (
-      <main className="flex-1 p-8">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <p>No company found. Please create a company profile.</p> {/* No company message */}
+      <main className="flex-1 p-8 dark:bg-gray-950">
+        <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow dark:border dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-400">No company found. Please create a company profile.</p>
         </div>
       </main>
     );
   }
 
   return (
-    <main className='mx-auto md:mx-[6rem]' >
-      <div className=" font-sofia my-8">
-        <h1 className="text-3xl font-bonanova font-semibold  text-gray-600">List Of Bookings</h1>
-        <p className="mt-2 text-gray-600">Here is a list of all bookings associated with your company.</p>
-        
+    <main className="mx-auto md:mx-[6rem] dark:bg-gray-950">
+      <div className="font-sofia my-8">
+        <h1 className="text-3xl font-bonanova font-semibold text-gray-600 dark:text-gray-200">
+          List Of Bookings
+        </h1>
+        <p className="mt-2 text-gray-600 dark:text-gray-400">
+          Here is a list of all bookings associated with your company.
+        </p>
       </div>
-    <CompanyProfile company={company} />
+      <CompanyProfile company={company} />
     </main>
   );
 };
