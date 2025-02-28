@@ -11,8 +11,8 @@ interface PhotoCoverProps {
 
 const CreatePhotoCover: React.FC<PhotoCoverProps> = ({ imageUrl, handleFileChange, uploading, uploadError, isEditing }) => {
   return (
-    <div className={`shadow-lg bg-white p-[2rem] ${isEditing ? 'border-indigo-400 border-2 rounded-lg' : ''}`}>
-      <label htmlFor="coverImage" className="block mb-2 text-md font-medium text-gray-800">
+    <div className={`shadow-lg bg-white p-[2rem] dark:bg-gray-900 border-[1px] border-gray-300 dark:border-gray-700 rounded-3xl mb-4 ${isEditing ? 'border-indigo-400 border-[1px] rounded-lg dark:border-indigo-400' : ''}`}>
+      <label htmlFor="coverImage" className="block mb-2 text-md font-medium text-gray-800 dark:text-gray-200">
         Cover Photo
       </label>
       <section>

@@ -137,12 +137,12 @@ function Booking({ company }: CompanyProfileProps) {
                 <div className="font-medium text-lg hover:text-indigo-600 transition duration-500 ease-in-out inline-block mb-2">
                   {venue.name}
                 </div>
-                <p className="text-gray-500 text-sm">
+                <p className="text-gray-500 dark:text-gray-200 text-sm">
                   {venue.description || "No description available"}
                 </p>
               </div>
-              <div className="px-6 py-3 flex flex-row items-center justify-between bg-gray-100">
-                <span className="py-1 text-xs font-regular text-gray-900 mr-1 flex flex-row items-center">
+              <div className="px-6 py-3 flex flex-row items-center justify-between bg-gray-100 dark:bg-gray-950">
+                <span className="py-1 text-xs font-regular text-gray-900 dark:text-gray-200 mr-1 flex flex-row items-center">
                   <span className="ml-1">{}</span>
                 </span>
               </div>

@@ -8,7 +8,7 @@ import UserProfile from '../components/Profile/StockHoldersProfileAvatar'; // Ad
 import { Profile } from '../types/profile';
 import { FiMoon } from 'react-icons/fi';
 import { FiSun } from 'react-icons/fi';
-import NotificationBadge from '../components/Notifications/NotificationBadge';
+
 
 function SupplierDashboard() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -113,9 +113,7 @@ function SupplierDashboard() {
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex justify-end items-center p-4 bg-white dark:border-b-[1px] border-gray-500 dark:bg-gray-950 shadow-md z-0 font-sofia text-gray-800">
           <div className="flex items-center gap-2">
-            <div className="dark:bg-gray-950 dark:hover:bg-gray-700 hover:bg-gray-100 bg-white border-[1px] dark:border-gray-700  rounded-full transition-colors ">
-              <NotificationBadge />
-            </div>
+   
             <div>
             <button
             onClick={(e) => {

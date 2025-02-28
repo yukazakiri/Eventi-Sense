@@ -3,6 +3,7 @@ import Modal from '../../assets/modal/modal';
 import { LuPencil } from 'react-icons/lu';
 import { MdOutlineMailOutline } from 'react-icons/md';
 import { fetchProfile, updateProfile, getCurrentUser, uploadAvatar } from '../../api/utiilty/profiles';
+import { PulseLoader } from 'react-spinners';
 
 interface ModalData {
   isOpen: boolean;
@@ -142,7 +143,7 @@ export default function Profile() {
 
   return (
     <div className="py-b px-2">
-      <div className="m-4 bg-white p-6 border border-gray-300 rounded-2xl font-sofia">
+      <div className="m-4 bg-white p-6 border border-gray-300 rounded-2xl font-sofia dark:bg-gray-900 dark:border-gray-700">
         <div className="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-6">
           <div className="flex-shrink-0">
             <div className="w-20 h-20 rounded-full bg-gray-300 overflow-hidden">
@@ -150,33 +151,33 @@ export default function Profile() {
             </div>
           </div>
           <div className="capitalize tracking-wide">
-            <p className="font-semibold text-gray-700 text-lg mt-2">
+            <p className="font-semibold text-gray-700 text-lg mt-2 dark:text-gray-200 ">
               {formData.first_name} {formData.last_name}
             </p>
             <div className="flex flex-col sm:flex-row gap-2">
-              <p className="text-sm text-gray-500 mt-2 pr-4 border-r border-gray-300">{formData.role}</p>
-              <p className="text-sm text-gray-500 mt-2 sm:px-3 normal-case">{formData.email}</p>
+              <p className="text-sm text-gray-500 mt-2 pr-4 border-r border-gray-300 dark:text-gray-400 dark:border-gray-700">{formData.role}</p>
+              <p className="text-sm text-gray-500 mt-2 sm:px-3 normal-case dark:text-gray-400">{formData.email}</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className={`m-4 bg-white p-6 border border-gray-300 rounded-2xl font-sofia ${isEditing ? 'border-2 border-indigo-300' : ''}`}>
+      <div className={`m-4 bg-white p-6 border border-gray-300 rounded-2xl font-sofia dark:bg-gray-900 dark:border-gray-700 ${isEditing ? 'border-[1px] border-indigo-300 dark:border-indigo-300' : ''}`}>
         {profile ? (
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-              <h1 className="text-[16px] font-semibold tracking-wider text-gray-800 font-sofia">Edit Personal Information</h1>
+              <h1 className="text-[16px] font-semibold tracking-wider text-gray-800 dark:text-gray-200 font-sofia">Edit Personal Information</h1>
               {isEditing ? (
                 <div className="flex space-x-4">
                   <button type="submit" className="text-white bg-green-400 hover:bg-green-600 px-5 py-2 rounded-2xl">
                     Save Changes
                   </button>
-                  <button type="button" onClick={() => setIsEditing(false)} className="text-gray-700 bg-gray-200 hover:bg-gray-300 px-5 py-2 rounded-2xl">
+                  <button type="button" onClick={() => setIsEditing(false)} className="text-gray-700 bg-gray-200 hover:bg-gray-300 px-5 py-2 rounded-2xl dark:text-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600">
                     Cancel
                   </button>
                 </div>
               ) : (
-                <button type="button" onClick={() => setIsEditing(true)} className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-3 rounded-full flex items-center">
+                <button type="button" onClick={() => setIsEditing(true)} className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-3 rounded-full flex items-center dark:bg-blue-600 dark:hover:bg-blue-700">
                   <LuPencil className="mr-2" />
                   Edit
                 </button>
@@ -184,7 +185,7 @@ export default function Profile() {
             </div>
             <div className="grid gap-6 mb-6 md:grid-cols-2">
               <div>
-                <label htmlFor="first_name" className="block mb-2 text-sm font-medium text-gray-700">
+                <label htmlFor="first_name" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                   First name
                 </label>
                 <input
@@ -193,13 +194,13 @@ export default function Profile() {
                   name="first_name"
                   value={formData.first_name}
                   onChange={handleChange}
-                  className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   disabled={!isEditing}
                   required
                 />
               </div>
               <div>
-                <label htmlFor="last_name" className="block mb-2 text-sm font-medium text-gray-700">
+                <label htmlFor="last_name" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                   Last name
                 </label>
                 <input
@@ -208,14 +209,14 @@ export default function Profile() {
                   name="last_name"
                   value={formData.last_name}
                   onChange={handleChange}
-                  className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   disabled={!isEditing}
                   required
                 />
               </div>
             </div>
             <div className="mb-6">
-              <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-700">Email address</label>
+              <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">Email address</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center px-3 pointer-events-none border-r-[1px] border-gray-200">
                   <MdOutlineMailOutline className="w-5 h-5 text-gray-500" />
@@ -225,7 +226,7 @@ export default function Profile() {
                   id="email"
                   name="email"
                   value={formData.email}
-                  className="bg-white pl-14 border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  className="bg-white pl-14 border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   disabled
                   required
                 />
@@ -237,7 +238,7 @@ export default function Profile() {
                 type="file"
                 onChange={handleFileUpload}
                 disabled={!isEditing || uploading}
-                className="mt-2 block w-full text-sm text-gray-600"
+                className="mt-2 block w-full text-sm text-gray-600 dark:text-gray-200"
               />
               {formData.avatar_url && (
                 <img
@@ -250,7 +251,7 @@ export default function Profile() {
             </div>
           </form>
         ) : (
-          <p>Loading profile...</p>
+          <PulseLoader color="#0000ff" />
         )}
       </div>
       <Modal 

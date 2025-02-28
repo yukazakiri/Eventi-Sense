@@ -38,7 +38,7 @@ const handleLogout = async () => {
         <img
           src={profile?.avatar_url || 'https://www.gravatar.com/avatar/?d=mp'} // Use profile picture or placeholder
           alt="Profile"
-          className="w-10 h-10 rounded-full"
+          className="w-10 h-10 rounded-full"  
         />
       </button> 
     <h1 className='text-[14px] cursor-pointer text-white'>My Profile</h1>

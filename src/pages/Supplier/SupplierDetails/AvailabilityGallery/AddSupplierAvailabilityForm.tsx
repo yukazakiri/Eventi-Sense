@@ -237,36 +237,36 @@ const AddsupplierAvailabilityForm: React.FC<CalendarProps> = ({ supplierId }) =>
 
 
     return (
-        <div className=' py-4  font-sofia bg-white  p-8 rounded-3xl border-[1px] border-gray-300'>
+        <div className=' py-4  font-sofia bg-white  p-8 rounded-3xl border-[1px] border-gray-300 dark:bg-gray-900 dark:border-gray-700'>
             {selectedDate && (
                 <p className="mb-4">Selected date: {selectedDate.toDateString()}</p>
             )}
             <div className='flex justify-between my-4'>       
-            <div className='text-gray-500 my-4 ml-4'>
-                <div className='flex gap-2 mb-2' > <p style={{ backgroundColor: '#E2D6FF' }} className='w-4 h-4 rounded'></p>
+            <div className='text-gray-500 my-4 ml-4 dark:text-white'>
+                <div className='flex gap-2 mb-2' > <p className='w-4 h-4 rounded bg-indigo-500 dark:bg-indigo-500 dark:text-white'></p>
                     <h2 className='flex justify-center'>
-                        <span className='text-indigo-500'>Scheduled: </span> This indicates an event or task that is planned for a future date and time.
+                        <span className='text-indigo-500 dark:text-white'>Scheduled: </span> This indicates an event or task that is planned for a future date and time.
                     </h2>
                 </div>
-                <div className='flex gap-2 mb-2' > <p style={{ backgroundColor: '#FCD9D9' }} className='w-4 h-4 rounded'></p>
+                <div className='flex gap-2 mb-2' > <p className='w-4 h-4 rounded bg-red-500 dark:bg-red-500 dark:text-white'></p>
                     <h2 className='flex justify-center'>
-                        <span className='text-red-500'>Cancelled: </span> This indicates that an event or task has been canceled or postponed.
+                        <span className='text-red-500 dark:text-white'>Cancelled: </span> This indicates that an event or task has been canceled or postponed.
                     </h2>
                 </div>
-                <div className='flex gap-2 mb-2' > <p style={{ backgroundColor: '#D6FFE7' }} className='w-4 h-4 rounded'></p>
+                <div className='flex gap-2 mb-2' > <p className='w-4 h-4 rounded bg-green-500 dark:bg-green-500 dark:text-white'></p>
                     <h2 className='flex justify-center'>
-                        <span className='text-green-500'>Completed: </span> This indicates that an event or task has been completed.
+                        <span className='text-green-500 dark:text-white'>Completed: </span> This indicates that an event or task has been completed.
                     </h2>
                 </div>
-                <div className='flex gap-2 mb-2' > <p style={{ backgroundColor: '#FFE9D6' }} className='w-4 h-4 rounded'></p>
+                <div className='flex gap-2 mb-2' > <p className='w-4 h-4 rounded bg-orange-500 dark:bg-orange-500 dark:text-white'></p>
                     <h2 className='flex justify-center'>
-                        <span className=' text-orange-500'>On Progress: </span> This indicates that an event or task is currently in progress.
+                        <span className=' text-orange-500 dark:text-white'>On Progress: </span> This indicates that an event or task is currently in progress.
                     </h2>
                 </div>
 
             </div>
             {isCreating ? (
-                    <div className="border rounded-xl mb-8 overflow-hidden max-w-max bg-white p-4 shadow-lg">
+                    <div className="border rounded-xl mb-8 overflow-hidden max-w-max bg-white p-4 shadow-lg dark:bg-gray-900 dark:border-gray-700">
                         <h3 className="text-xl font-bold mb-2">Create New Availability</h3>
                         <label htmlFor="start">Start Time:</label><br />
                         <DatePicker
@@ -291,20 +291,20 @@ const AddsupplierAvailabilityForm: React.FC<CalendarProps> = ({ supplierId }) =>
                             className="border rounded w-full p-2"
                         /><br /><br />
 
-                        <button onClick={handleSaveAvailability} className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mr-2">
+                        <button onClick={handleSaveAvailability} className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mr-2 dark:bg-indigo-500 dark:hover:bg-indigo-700">
                             Save
                         </button>
-                        <button onClick={handleCancelCreate} className="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">
+                        <button onClick={handleCancelCreate} className="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded dark:bg-gray-300 dark:hover:bg-gray-400">
                             Cancel
                         </button>
                     </div>
                 ) : (
-                    <button onClick={handleCreateClick} className="h-16 bg-blue-500 hover:bg-blue-600   text-white  py-4 px-4 rounded-2xl">
+                    <button onClick={handleCreateClick} className="h-16 bg-blue-500 hover:bg-blue-600   text-white  py-4 px-4 rounded-2xl dark:bg-blue-500 dark:hover:bg-blue-600">
                         Add Event+
                     </button>
                 )}
          </div>
-            <div className="border rounded-3xl mb-8 overflow-hidden bg-white p-8 shadow-lg">
+            <div className="border rounded-3xl mb-8 overflow-hidden bg-white p-8 shadow-lg dark:bg-gray-950 dark:border-gray-700">
                 <FullCalendar
                     ref={calendarRef}
                     plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -325,7 +325,7 @@ const AddsupplierAvailabilityForm: React.FC<CalendarProps> = ({ supplierId }) =>
                             >
                                 <div className="fc-daygrid-event-line w-2  h-2 rounded-full mb-2 md:mb-0 py-4" style={{ backgroundColor: arg.event.backgroundColor, color: arg.event.textColor, filter: 'brightness(0.8)' }}></div>
                                 <div className="flex flex-col xl:flex-row items-center justify-start md:justify-between md:space-x-4 w-full">
-                                    <div className="fc-event-time text-center md:text-left mb-2 md:mb-0">
+                                    <div className="fc-event-time text-center md:text-left mb-2 md:mb-0 dark:text-black">
                                         {arg.event.title}
                                     </div>
                                 </div>

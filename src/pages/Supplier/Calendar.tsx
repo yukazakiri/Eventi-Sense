@@ -44,7 +44,7 @@ function CalendarPage() {
   return (
     <div>
         <div className='flex justify-between mx-6'>
-        <h1 className="text-3xl font-bold flex items-center font-bonanova text-gray-700">Calendar</h1>
+        <h1 className="text-3xl font-bold flex items-center font-bonanova text-gray-700 dark:text-white">Calendar</h1>
         <div className="flex items-end  ">
                 <Breadcrumbs items={breadcrumbItems} />
             </div>

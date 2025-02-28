@@ -13,7 +13,7 @@ import Gallery from './AvailabilityGallery/Gallery';
 import Calendar from './AvailabilityGallery/AddSupplierAvailabilityForm'
 import Services from '../Services/services'
 import SocialMediaLinks from '../Social Media/SocialLinks';
-
+import { PulseLoader } from 'react-spinners';
 const breadcrumbItems = [
     { label: 'Home', href: '/Supplier-Dashboard/Home', icon: <HomeIcon className="h-4 w-4 mr-1" /> },
     { label: 'Supplier Informations', href: '' }
@@ -95,7 +95,9 @@ const SupplierDetailPage: React.FC = () => {
     };
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div className='flex justify-center items-center h-screen'>
+            <PulseLoader color="#0000ff" />
+        </div>;
     }
 
     if (error) {
@@ -110,9 +112,9 @@ const SupplierDetailPage: React.FC = () => {
         <div className="px-2 ">
              
         <div className=' px-[2rem] '>
-         <div className='flex justify-between items-center h-full '>
+         <div className='flex justify-between items-center h-full dark:bg-gray-950 dark:border-gray-700'>
 
-            <h1 className="text-3xl font-semibold tracking-wide text-gray-700 font-bonanova ">Supplier</h1>
+            <h1 className="text-3xl font-semibold tracking-wide text-gray-700 dark:text-white font-bonanova ">Supplier</h1>
             {/* Buttons Section */}
             <section className=" flex justify-end items-end h-full flex-grow">
             <div className="flex items-end  ">
@@ -120,7 +122,7 @@ const SupplierDetailPage: React.FC = () => {
             </div>
             </section>
             </div>
-            <div className="mx-auto font-sofia   px-2 grid lg:grid-cols-2 gap-8 mb-8">
+            <div className="mx-auto font-sofia   px-2 grid lg:grid-cols-2 gap-8 mb-8 dark:bg-gray-950 dark:border-gray-700">
                 <div className='col-span-2'>
                     <SocialMediaLinks/>
                 </div>

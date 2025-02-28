@@ -15,17 +15,17 @@ function Profiles() {
   return (
     <div  className='md:mx-10'>
       <div className='flex justify-between'>
-            <h1 className="text-[24px] flex items-center font-meduim tracking-tight text-gray-700 my-4 font-sofia ">Profiles</h1>
+            <h1 className="text-[24px] flex items-center font-meduim tracking-tight text-gray-700 my-4 font-sofia dark:text-gray-200">Profiles</h1>
             <div className="flex items-end  ">
                 <Breadcrumbs items={breadcrumbItems} />
             </div>
         </div>
-        <div className='bg-white p-4 border-[1px] border-gray-300 rounded-3xl   mb-8 '>
-        <h1 className="text-[16px] font-semibold tracking-wider text-gray-800 my-4 ml-4 font-sofia  ">Personal Profile</h1>
+        <div className='bg-white p-4 border-[1px] border-gray-300 rounded-3xl   mb-8 dark:bg-gray-900 dark:border-gray-700'>
+        <h1 className="text-[16px] font-semibold tracking-wider text-gray-800 my-4 ml-4 font-sofia dark:text-gray-200">Personal Profile</h1>
             <Profile />
         </div>
-        <div className='bg-white p-4 border-[1px] border-gray-300 rounded-3xl  my-4 '>
-        <h1 className="text-[16px] font-semibold tracking-wider text-gray-800 my-4 ml-4 font-sofia  ">Business Profile</h1>
+        <div className='bg-white p-4 border-[1px] border-gray-300 rounded-3xl  my-4 dark:bg-gray-900 dark:border-gray-700'>
+        <h1 className="text-[16px] font-semibold tracking-wider text-gray-800 my-4 ml-4 font-sofia dark:text-gray-200">Business Profile</h1>
             <Company />
         </div>
         

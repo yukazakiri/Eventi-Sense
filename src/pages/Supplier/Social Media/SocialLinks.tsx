@@ -133,44 +133,44 @@ function SocialMediaLinks() {
         setSelectedPlatform(null);
     };
     return (
-        <div className={`bg-white p-[2rem]  border-[1px] border-gray-300 rounded-3xl ${isEditing ? 'border-2 rounded-3xl border-indigo-400' : ''}`}>
+        <div className={`bg-white p-[2rem]  border-[1px] border-gray-300 rounded-3xl dark:bg-gray-900 dark:border-gray-700 ${isEditing ? 'border-[1px] rounded-3xl border-indigo-400 dark:border-indigo-400' : ''}`}>
           
 
             <div className='flex justify-between md:flex-row flex-col md:space-x-4 space-y-4 md:space-y-0'>
-                <h3 className="text-xl font-bold font-bonanova text-gray-700 ">Social Media Links</h3>
+                <h3 className="text-xl font-bold font-bonanova text-gray-700 dark:text-white ">Social Media Links</h3>
                 {successMessage && <p className="text-green-500 mb-4">{successMessage}</p>}
     
                 {/* Social Media Icons */}
                 <div className="flex space-x-4 mb-4">
-                    <div className="rounded-full border-[1px] border-gray-200 p-4">
+                    <div className="rounded-full border-[1px] border-gray-200 p-4 dark:border-gray-700">
                     <FaFacebook
                         className="text-blue-1 cursor-pointer hover:text-blue-2"
                         size={24}
                         onClick={() => handleIconClick('Facebook')}
                     />
                     </div>
-                    <div className="rounded-full border-[1px] border-gray-200 p-4">
+                    <div className="rounded-full border-[1px] border-gray-200 p-4 dark:border-gray-700">
                     <FaTwitter
                         className="text-blue-1 cursor-pointer hover:text-blue-2"
                         size={24}
                         onClick={() => handleIconClick('Twitter')}
                     />
                     </div>
-                    <div className="rounded-full border-[1px] border-gray-200 p-4">
+                    <div className="rounded-full border-[1px] border-gray-200 p-4 dark:border-gray-700">
                     <FaInstagram
                         className="text-pink-600 cursor-pointer hover:text-pink-700"
                         size={24}
                         onClick={() => handleIconClick('Instagram')}
                     />
                     </div>
-                    <div className="rounded-full border-[1px] border-gray-200 p-4">
+                    <div className="rounded-full border-[1px] border-gray-200 p-4 dark:border-gray-700">
                     <FaLinkedin
                         className="text-blue-1 cursor-pointer hover:text-blue-2"
                         size={24}
                         onClick={() => handleIconClick('LinkedIn')}
                     />
                     </div>
-                    <div className="rounded-full border-[1px] border-gray-200 p-4">
+                    <div className="rounded-full border-[1px] border-gray-200 p-4 dark:border-gray-700">
                     <FaTiktok
                         className="text-black cursor-pointer hover:text-gray-700"
                         size={24}
@@ -186,7 +186,7 @@ function SocialMediaLinks() {
                       <>
                           <button
                               onClick={() => setIsEditing(true)}
-                              className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-6 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mr-2"
+                              className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-6 py-2.5 text-center dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800 mr-2"
                           >
                              Add Link +
                           </button>
@@ -261,17 +261,17 @@ function SocialMediaLinks() {
       
                 <ul className="space-y-2">
                     {socialMedia.map((link) => (
-                        <li key={link.id} className="flex items-center space-x-2">
+                        <li key={link.id} className="flex items-center space-x-2 dark:text-white">
                             {link.platform === 'Facebook' && <FaFacebook className="text-blue-1" size={20} />}
                             {link.platform === 'Twitter' && <FaTwitter className="text-blue-1" size={20} />}
                             {link.platform === 'Instagram' && <FaInstagram className="text-pink-600" size={20} />}
                             {link.platform === 'LinkedIn' && <FaLinkedin className="text-blue-1" size={20} />}
-                            {link.platform === 'TikTok' && <FaTiktok className="text-blue-800" size={20} />}
+                            {link.platform === 'TikTok' && <FaTiktok className="text-black dark:text-white" size={20} />}
                             <a
                                 href={link.link}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-600 hover:underline"
+                                className="text-blue-600 hover:underline dark:text-white"
                             >
                                 {link.platform}
                             </a>

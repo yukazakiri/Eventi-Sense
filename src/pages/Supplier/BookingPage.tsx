@@ -71,22 +71,22 @@ function BookingPage() {
   return (
     <>
       <div className='flex justify-between mx-8'>
-        <h1 className="text-3xl font-bold flex items-center font-bonanova text-gray-700">Bookings</h1>
+        <h1 className="text-3xl font-bold flex items-center font-bonanova text-gray-700 dark:text-white">Bookings</h1>
         <div className="flex items-end  ">
                 <Breadcrumbs items={breadcrumbItems} />
             </div>
         </div>
     <div className='md:mx-10'>
 
-      <div className='bg-white rounded-2xl border-[1px] border-gray-300 mb-6'>
-      <div className='border-b-[1px] border-gray-300  '>
-                 <h2 className="text-[16px] font-semibold tracking-wider text-gray-800 my-4 ml-4 font-sofia  ">User Booking Requests</h2>
+      <div className='bg-white rounded-2xl border-[1px] border-gray-300 mb-6 dark:bg-gray-900 dark:border-gray-700'>
+      <div className='border-b-[1px] border-gray-300 dark:border-gray-700 '>
+                 <h2 className="text-[16px] font-semibold tracking-wider text-gray-800 my-4 ml-4 font-sofia  dark:text-white">User Booking Requests</h2>
             </div>
          <UserBookings supplierId={supplierId} />
       </div>
-      <div className='bg-white rounded-2xl border-[1px] border-gray-300 mb-6'>
-      <div className='border-b-[1px] border-gray-300  '>
-                 <h2 className="text-[16px] font-semibold tracking-wider text-gray-800 my-4 ml-4 font-sofia  ">Existing Availabilities</h2>
+      <div className='bg-white rounded-2xl border-[1px] border-gray-300 mb-6 dark:bg-gray-900 dark:border-gray-700'>
+      <div className='border-b-[1px] border-gray-300 dark:border-gray-700 '>
+                 <h2 className="text-[16px] font-semibold tracking-wider text-gray-800 my-4 ml-4 font-sofia  dark:text-white">Existing Availabilities</h2>
             </div>
           <div className='p-6'>
             <AddVenueAvailabilityForm  supplierId={supplierId} />

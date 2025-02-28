@@ -21,7 +21,7 @@ const Card: React.FC<CardProps> = ({ id, title, description, image, tags, role }
 
   return (
     <div
-      className="overflow-hidden h-auto group cursor-pointer w-full hover:bg-navy-blue-5 rounded-xl transition-all duration-300 shadow-2xl"
+      className="overflow-hidden h-auto group cursor-pointer w-full hover:bg-navy-blue-5 rounded-xl transition-all duration-300 shadow-2xl border-[1px] border-gray-300 dark:border-gray-700"
       onClick={handleClick}
     >
       {/* Image */}
@@ -46,7 +46,7 @@ const Card: React.FC<CardProps> = ({ id, title, description, image, tags, role }
               key={index}
               className="bg-blue-100 text-blue-800 text-sm font-medium px-2 py-1 rounded"
             >
-              {tag}
+              #{tag}
             </span>
           ))}
         </div>

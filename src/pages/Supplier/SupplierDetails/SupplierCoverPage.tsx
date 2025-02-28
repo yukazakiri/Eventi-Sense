@@ -98,15 +98,15 @@ const ImageUploadForm: React.FC<ImageUploadFormProps> = ({ supplierId, isEditing
     };
 
     return (
-        <div className={`bg-white  border-[1px] border-gray-300 rounded-3xl ${isEditing ? 'border-2 rounded-3xl border-indigo-400' : ''}`}>
-             <div className='flex justify-between p-4 md:px-12 border-b-[1px] border-gray-300'>
-                        <h1 className="text-xl md:mt-2 font-bold font-bonanova text-gray-700  justify-center">Cover Photo</h1>
+        <div className={`bg-white  border-[1px] border-gray-300 rounded-3xl dark:bg-gray-900 dark:border-gray-700 ${isEditing ? 'border-[1px] rounded-3xl border-indigo-400 dark:border-indigo-400' : ''}`}>
+             <div className='flex justify-between p-4 md:px-12 border-b-[1px] border-gray-300 dark:border-gray-700'>
+                        <h1 className="text-xl md:mt-2 font-bold font-bonanova text-gray-700 dark:text-white justify-center">Cover Photo</h1>
                         <div>
                               {!isEditing &&  (
                             <>
                                 <button
                                     onClick={() => setIsEditingImage(true)}
-                                    className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-full flex items-center">
+                                    className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-full flex items-center dark:bg-blue-500 dark:hover:bg-blue-600">
                                 <LuPencil className="mr-2" />
                                     Edit 
                                 </button>
@@ -130,7 +130,7 @@ const ImageUploadForm: React.FC<ImageUploadFormProps> = ({ supplierId, isEditing
                 <img
                     src={currentImageUrl}
                     alt="Current Logo"
-                    className="mb-4 h-[500px] w-full flex justify-center"
+                    className="mb-4 h-[500px] w-full flex justify-center dark:bg-gray-950 dark:border-gray-700"
                 />
             )}
 
@@ -144,10 +144,10 @@ const ImageUploadForm: React.FC<ImageUploadFormProps> = ({ supplierId, isEditing
                                 file:rounded-full file:border-0 file:p-2
                                 file:text-sm file:font-semibold
                                 file:bg-violet-50 file:text-indigo-600
-                                hover:file:bg-violet-100"
+                                hover:file:bg-violet-100 dark:bg-gray-950 dark:border-gray-700"
                     />
                 ) : (
-                    <p className="bg-gray-100 border border-gray-300 text-gray-600 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <p className="bg-gray-100 border border-gray-300 text-gray-600 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-900 dark:border-gray-600 dark:text-white">
                         {currentImageUrl ? "Image uploaded" : "No image uploaded yet"}
                     </p>
                 )}
@@ -157,15 +157,15 @@ const ImageUploadForm: React.FC<ImageUploadFormProps> = ({ supplierId, isEditing
                 <button
                     onClick={handleUpload}
                     disabled={uploading || !image}
-                    className="bg-indigo-600 text-white px-8 py-2 rounded-full hover:bg-blue-600 disabled:bg-blue-300"
+                    className="bg-indigo-600 text-white px-8 py-2 rounded-full hover:bg-blue-600 disabled:bg-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600"
                 >
                     {uploading ? 'Uploading...' : 'Upload Logo'}
                 </button>
             )}
             </div>
 
-            {error && <p className="text-red-500 mt-2">{error}</p>}
-            {success && <p className="text-green-500 mt-2">Logo uploaded successfully!</p>}
+            {error && <p className="text-red-500 mt-2 dark:text-red-500">{error}</p>}
+            {success && <p className="text-green-500 mt-2 dark:text-green-500">Logo uploaded successfully!</p>}
         </div>
     );
 };

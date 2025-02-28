@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import supabase from '../api/supabaseClient';
-import Sidebar from '../components/Sidebar/VenueManager';
-import routes from '../routers/Venue-Manager/Routes';
+import Sidebar from '../components/Sidebar/EventPlanner';
+import routes from '../routers/EventPlanner/Routes';
 import { getCurrentUser, fetchProfile } from '../api/utiilty/profiles';
-import { Profile } from '../types/profile';
-
 import UserProfile from '../components/Profile/StockHoldersProfileAvatar'; // Add import for UserProfile component
+import { Profile } from '../types/profile';
 import { FiMoon } from 'react-icons/fi';
 import { FiSun } from 'react-icons/fi';
 
-function VenueManagerDashboard() {
+
+function EventPlannerDashboard() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
@@ -46,9 +46,8 @@ function VenueManagerDashboard() {
     }
   };
 
-   
- 
-  
+  // Fetch the company profile
+
 
   // Fetch the currently authenticated user
   const fetchUser = async () => {
@@ -62,11 +61,11 @@ function VenueManagerDashboard() {
 
       setUser(user);
       const profileData = await fetchUserProfile(user.id);
-      
+  
+
       if (profileData) {
         setProfile(profileData);
       }
-
 
     } catch (error) {
       console.error('Error in fetchUser:', error);
@@ -74,7 +73,6 @@ function VenueManagerDashboard() {
       setLoading(false);
     }
   };
- // Toggle dark mode
 
   useEffect(() => {
     // Initial user fetch when the component mounts
@@ -88,7 +86,7 @@ function VenueManagerDashboard() {
 
 
         if (profileData) setProfile(profileData);
-    
+
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
         setProfile(null);
@@ -109,15 +107,13 @@ function VenueManagerDashboard() {
   </div>;
   }
 
-
-
   return (
     <div className="flex h-screen bg-blue-light-1 dark:bg-gray-950 ">
       <Sidebar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex justify-end items-center p-4 bg-white dark:border-b-[1px] border-gray-700 dark:bg-gray-950 shadow-md  font-sofia text-gray-800">
+        <div className="flex justify-end items-center p-4 bg-white dark:border-b-[1px] border-gray-500 dark:bg-gray-950 shadow-md z-0 font-sofia text-gray-800">
           <div className="flex items-center gap-2">
-       
+   
             <div>
             <button
             onClick={(e) => {
@@ -158,4 +154,4 @@ function VenueManagerDashboard() {
   );
 }
 
-export default VenueManagerDashboard;
+export default EventPlannerDashboard;

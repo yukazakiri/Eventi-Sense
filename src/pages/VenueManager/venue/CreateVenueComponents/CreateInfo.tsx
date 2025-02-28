@@ -26,7 +26,7 @@ const CreateInfoVenueForm: React.FC<InfoVenueFormProps> = ({
   };
 
   return (
-    <section className={`shadow-lg bg-white p-8 ${isEditing ? 'border-indigo-400 border-2 rounded-lg bg-indigo-50' : ''}`}>
+    <section className={`shadow-lg bg-white p-8 dark:bg-gray-900 border-[1px] border-gray-300 dark:border-gray-700 rounded-3xl ${isEditing ? 'border-indigo-400  border-2 rounded-lg dark:border-indigo-400' : ''}`}>
       {/* Pricing Model Section */}
       <div className='grid md:grid-cols-2 gap-4'>
       <div className="mb-4">
@@ -37,7 +37,7 @@ const CreateInfoVenueForm: React.FC<InfoVenueFormProps> = ({
         name="name"
         value={formData.name}
         onChange={handleInputChange}
-        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         required
         readOnly={!isEditing}
         placeholder="Example: The Grand Ballroom"
@@ -51,7 +51,7 @@ const CreateInfoVenueForm: React.FC<InfoVenueFormProps> = ({
         name="phone_number" 
         value={formData.phone_number} 
         onChange={handleInputChange} 
-        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
+        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
         required 
         readOnly={!isEditing}
         placeholder="Example: 123-456-7890"
@@ -65,7 +65,7 @@ const CreateInfoVenueForm: React.FC<InfoVenueFormProps> = ({
         name="email" 
         value={formData.email} 
         onChange={handleInputChange} 
-        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
+        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
         required 
         readOnly={!isEditing}
         placeholder="Example: venue@example.com"
@@ -81,13 +81,13 @@ const CreateInfoVenueForm: React.FC<InfoVenueFormProps> = ({
         name="capacity" 
         value={formData.capacity} 
         onChange={handleInputChange} 
-        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
+        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
         required 
         readOnly={!isEditing}
         placeholder="Example: 500-600 people, depending on the event"
       />
     </div>
-    <div className="mb-4 col-span-2">
+    <div className="mb-4 ">
       <label htmlFor="website" className="block mb-2 text-md font-medium text-gray-800 dark:text-white">Website:</label>
       <input 
         type="text" 
@@ -95,13 +95,13 @@ const CreateInfoVenueForm: React.FC<InfoVenueFormProps> = ({
         name="website" 
         value={formData.website} 
         onChange={handleInputChange} 
-        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
+        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
         required 
         readOnly={!isEditing}
         placeholder="Example: https://example.com"
       />
     </div>
-    <div className="mb-4 col-span-2">
+    <div className="mb-4 ">
       <label htmlFor="price" className="block mb-2 text-md font-medium text-gray-800 dark:text-white">Price:</label>
       <input 
         type="price" 
@@ -109,7 +109,7 @@ const CreateInfoVenueForm: React.FC<InfoVenueFormProps> = ({
         name="price" 
         value={formData.price} 
         onChange={handleInputChange} 
-        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
+        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
         required 
         readOnly={!isEditing}
         placeholder="Example: Ranging from PHP5000-PHP10000"
@@ -125,17 +125,17 @@ const CreateInfoVenueForm: React.FC<InfoVenueFormProps> = ({
         id="description"
         value={formData.description} 
         onChange={handleInputChange} 
-        className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-48 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-48 p-2.5 dark:bg-gray-950 dark:border-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         required 
         readOnly={!isEditing}
         placeholder="Example: The Grand Ballroom is a luxurious event space located in the heart of downtown. It features a grand staircase, high ceilings, and a large dance floor. The venue is perfect for weddings, corporate events, and other special occasions."
                   
       />
     </div>
-
-    <div className="mb-4">
-                <label className="block mb-2 text-md font-medium text-gray-800">Accessibility:</label>
-                <div className="grid grid-cols-2 gap-2">
+<div className='grid md:grid-cols-2 gap-4'>
+    <div className="mb-4 border-[1px] border-gray-300 dark:border-gray-700 rounded-lg p-4 dark:bg-gray-950">
+                <label className="block mb-2 text-md font-medium text-gray-800 dark:text-white">Accessibility:</label>
+                <div className="grid md:grid-cols-2 gap-2">
                     {accessibilities.map((option) => { // Map over accessibilities
                         const id = `accessibility_${option.name.replace(/\s+/g, '_')}`;
                         return (
@@ -150,7 +150,7 @@ const CreateInfoVenueForm: React.FC<InfoVenueFormProps> = ({
                                     className="h-4 w-4 border-gray-300 rounded"
                                     disabled={!isEditing}
                                 />
-                                <label htmlFor={id} className="ml-2 text-sm font-medium text-gray-800">
+                                <label htmlFor={id} className="ml-2 text-sm  text-gray-800 dark:text-gray-400">
                                     {option.name}  {/* Display option.name */}
                                 </label>
                             </div>
@@ -160,9 +160,9 @@ const CreateInfoVenueForm: React.FC<InfoVenueFormProps> = ({
             </div>
 
             {/* Similar changes for pricingModels and venueTypes */}
-            <div className="mb-4">
-                <label className="block mb-2 text-md font-medium text-gray-800">Pricing Model:</label>
-                <div className="grid grid-cols-2 gap-2">
+              <div className="mb-4 border-[1px] border-gray-300 dark:border-gray-700 rounded-lg p-4 dark:bg-gray-950">
+                <label className="block mb-2 text-md font-medium text-gray-800 dark:text-white">Pricing Model:</label>
+                <div className="grid md:grid-cols-2 gap-2">
                     {pricingModels.map((option) => { // Map over pricingModels
                         const id = `pricing_${option.name.replace(/\s+/g, '_')}`;
                         return (
@@ -177,7 +177,7 @@ const CreateInfoVenueForm: React.FC<InfoVenueFormProps> = ({
                                     className="h-4 w-4 border-gray-300 rounded"
                                     disabled={!isEditing}
                                 />
-                                <label htmlFor={id} className="ml-2 text-sm font-medium text-gray-800">
+                                <label htmlFor={id} className="ml-2 text-sm  text-gray-800 dark:text-gray-400">
                                     {option.name}  {/* Display option.name */}
                                 </label>
                             </div>
@@ -185,10 +185,10 @@ const CreateInfoVenueForm: React.FC<InfoVenueFormProps> = ({
                     })}
                 </div>
             </div>
-
-            <div className="mb-4">
-                <label className="block mb-2 text-md font-medium text-gray-800">Venue Type:</label>
-                <div className="grid grid-cols-2 gap-2">
+    </div>
+            <div className="mb-4 border-[1px] border-gray-300 dark:border-gray-700 rounded-lg p-4 dark:bg-gray-950">
+                <label className="block mb-2 text-md font-medium text-gray-800 dark:text-white">Venue Type:</label>
+                  <div className="grid md:grid-cols-3 gap-2">
                     {venueTypes.map((option) => { // Map over venueTypes
                         const id = `venue_type_${option.name.replace(/\s+/g, '_')}`;
                         return (
@@ -203,7 +203,7 @@ const CreateInfoVenueForm: React.FC<InfoVenueFormProps> = ({
                                     className="h-4 w-4 border-gray-300 rounded"
                                     disabled={!isEditing}
                                 />
-                                <label htmlFor={id} className="ml-2 text-sm font-medium text-gray-800">
+                                <label htmlFor={id} className="ml-2 text-sm  text-gray-800 dark:text-gray-400">
                                     {option.name}  {/* Display option.name */}
                                 </label>
                             </div>

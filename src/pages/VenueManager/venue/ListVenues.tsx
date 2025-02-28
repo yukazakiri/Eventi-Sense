@@ -154,7 +154,7 @@ const CompanyVenuesPage: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
                     {venuesWithTypes.map((venue) => (
                         <NavLink key={venue.id} to={`/Venue-Manager-Dashboard/VenueDetails/${venue.id}`}>
-                            <div className="overflow-hidden h-auto group cursor-pointer w-full hover:bg-navy-blue-5 rounded-xl transition-all duration-300 shadow-2xl">
+                            <div className="overflow-hidden h-auto group cursor-pointer w-full hover:bg-navy-blue-5 dark:hover:bg-navy-blue-5 border-[1px] border-gray-300 dark:border-gray-700 rounded-xl transition-all duration-300 shadow-2xl">
                                 <div className="venue-container">
                                     <div className="overflow-hidden rounded-t-xl" onClick={() => handleVenueClick(venue.id)}>
                                         <img

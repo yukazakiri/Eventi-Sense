@@ -52,11 +52,11 @@ function EventListing() {
             <Breadcrumbs items={breadcrumbItems} />
           </div>
         </div>
-        <div className='bg-white p-4 border-[1px] border-gray-300 rounded-3xl mb-8'>
+        <div className='bg-white p-4 border-[1px] border-gray-300 rounded-3xl mb-8 dark:bg-gray-950 dark:border-gray-700'>
           <div className='flex justify-between'>
-            <h1 className="text-[16px] font-semibold tracking-wider text-gray-800 my-4 ml-4 font-sofia">Event Lists</h1>
+            <h1 className="text-[16px] font-semibold tracking-wider text-gray-800 my-4 ml-4 font-sofia dark:text-white">Event Lists</h1>
             <div className='p-4'>
-              <Link to="/Supplier-Dashboard/CreateEvents" className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-2xl">Create Event</Link>
+              <Link to="/Supplier-Dashboard/CreateEvents" className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-2xl dark:bg-blue-500 dark:hover:bg-blue-600">Create Event</Link>
             </div>
           </div>
           <EventList />
@@ -72,11 +72,11 @@ function EventListing() {
             <Breadcrumbs items={breadcrumbItems} />
           </div>
         </div>
-        <div className='bg-white p-4 border-[1px] border-gray-300 rounded-3xl mb-8'>
+        <div className='bg-white p-4 border-[1px] border-gray-300 rounded-3xl mb-8 dark:bg-gray-950 dark:border-gray-700'>
           <div className='flex justify-between'>
-            <h1 className="text-[16px] font-semibold tracking-wider text-gray-800 my-4 ml-4 font-sofia">Venue Manager Event Lists</h1>
+            <h1 className="text-[16px] font-semibold tracking-wider text-gray-800 my-4 ml-4 font-sofia dark:text-white">Venue Manager Event Lists</h1>
             <div className='p-4'>
-              <Link to="/Venue-Manager-Dashboard/CreateEvents" className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-2xl">Create Event</Link>
+              <Link to="/Venue-Manager-Dashboard/CreateEvents" className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-2xl dark:bg-blue-500 dark:hover:bg-blue-600">Create Event</Link>
             </div>
           </div>
           <EventList />
@@ -86,7 +86,7 @@ function EventListing() {
   } else {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <p className="text-xl text-gray-700">You do not have access to this dashboard.</p>
+        <p className="text-xl text-gray-700 dark:text-white">You do not have access to this dashboard.</p>
       </div>
     );
   }

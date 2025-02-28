@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { createEvent, Event } from '../../types/event';
 import supabase from '../../api/supabaseClient';
@@ -6,14 +6,11 @@ import Breadcrumbs from '../../components/BreadCrumbs/breadCrumbs';
 import { HomeIcon } from '@heroicons/react/20/solid';
 import { tagEntity } from '../../types/tagging';
 import TagSelector from '../../components/TagSelector/TagSelector';
+import { useRef } from 'react';
+import { MoonLoader } from 'react-spinners';
 
 
 
-const breadcrumbItems = [
-  { label: 'Home', href: '/Supplier-Dashboard/Home', icon: <HomeIcon className="h-4 w-4 mr-1" /> },
-  { label: 'CreateEvents', href: '' },
-
-];
 const CreateEventForm: React.FC = () => {
     const navigate = useNavigate(); // Initialize useNavigate
     const [event, setEvent] = useState<Event>({
@@ -37,6 +34,43 @@ const CreateEventForm: React.FC = () => {
     const [selectedSuppliers, setSelectedSuppliers] = useState<string[]>([]);
     const [isVenueModalOpen, setIsVenueModalOpen] = useState(false);
     const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
+    const dateInputRef = useRef<HTMLInputElement>(null);
+    const [userRole, setUserRole] = useState<string>('');
+    useEffect(() => {
+        const fetchUserRole = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', user.id)
+                    .single();
+
+                if (error) {
+                    console.error('Error fetching user role:', error);
+                } else if (data) {
+                    setUserRole(data.role);
+                }
+            }
+        };
+
+        fetchUserRole();
+    }, []);
+
+    // Define breadcrumb items based on user role
+    const breadcrumbItems = userRole === 'supplier'
+        ? [
+            { label: 'Home', href: '/Supplier-Dashboard/Home', icon: <HomeIcon className="h-4 w-4 mr-1" /> },
+            { label: 'Venues', href: '/Supplier-Dashboard/Venue-List' },
+            { label: 'Venue Details', href: `/Supplier-Dashboard/VenueDetails/${selectedVenues[0]}` },
+            { label: 'Add Availability', href: '' }
+        ]
+        : [
+            { label: 'Home', href: '/Venue-Manager-Dashboard/Home', icon: <HomeIcon className="h-4 w-4 mr-1" /> },
+            { label: 'Venues', href: '/Venue-Manager-Dashboard/Venue-List' },
+            { label: 'Venue Details', href: `/Venue-Manager-Dashboard/VenueDetails/${selectedVenues[0]}` },
+            { label: 'Add Availability', href: '' }
+        ];
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -193,20 +227,42 @@ const CreateEventForm: React.FC = () => {
             alert('Failed to create event.');
         }
     };
+      // Function to trigger the date picker
+      const handleDateInputClick = () => {
+        if (dateInputRef.current) {
+            dateInputRef.current.showPicker();
+        }
+    };
 
     return (
         <div  className='md:mx-10'>
               <div className='flex justify-between'>
-            <h1 className="text-3xl flex items-center font-semibold tracking-tight text-gray-700 my-4 font-bonanova ">Create Events</h1>
+            <h1 className="text-3xl flex items-center font-semibold tracking-tight text-gray-700 my-4 font-bonanova dark:text-gray-200">Create Events</h1>
             <div className="flex items-end  ">
                 <Breadcrumbs items={breadcrumbItems} />
             </div>
         </div>
-        <div className='m-4 bg-white p-6 border border-gray-300 rounded-2xl font-sofia'>
+        <div className='m-4 bg-white p-6 border border-gray-300 rounded-2xl font-sofia dark:bg-gray-900 dark:border-gray-700'>
         <form onSubmit={handleSubmit} className="space-y-4 ">
+        <div className="flex space-x-4 justify-end">
+                <button
+                    type="button"
+                    onClick={() => setIsVenueModalOpen(true)}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-600"
+                >
+                    Tag Venues ({selectedVenues.length})
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setIsSupplierModalOpen(true)}
+                    className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 dark:bg-purple-500 dark:hover:bg-purple-600"
+                >
+                    Tag Suppliers ({selectedSuppliers.length})
+                </button>
+            </div>
         <div className="grid gap-6 mb-6 md:grid-cols-2">
             <div>
-                <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-700">
+                <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                     Event Name
                 </label>
                 <input
@@ -216,12 +272,12 @@ const CreateEventForm: React.FC = () => {
                     value={event.name}
                     onChange={handleInputChange}
                     required
-                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
             </div>
 
             <div>
-                <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-700">
+                <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                     Description
                 </label>
                 <textarea
@@ -230,27 +286,29 @@ const CreateEventForm: React.FC = () => {
                     value={event.description}
                     onChange={handleInputChange}
                     required
-                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
             </div>
 
             <div>
-                <label htmlFor="date" className="block mb-2 text-sm font-medium text-gray-700">
-                    Date and Time
-                </label>
-                <input
-                    type="datetime-local"
-                    id="date"
-                    name="date"
-                    value={event.date}
-                    onChange={handleInputChange}
-                    required
-                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                />
-            </div>
+                            <label htmlFor="date" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                Date and Time
+                            </label>
+                            <input
+                                type="datetime-local"
+                                id="date"
+                                name="date"
+                                value={event.date}
+                                onChange={handleInputChange}
+                                onClick={handleDateInputClick} // Trigger date picker on click
+                                ref={dateInputRef} // Attach the ref
+                                required
+                                className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            />
+                        </div>
 
             <div>
-                <label htmlFor="location" className="block mb-2 text-sm font-medium text-gray-700">
+                <label htmlFor="location" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                     Location
                 </label>
                 <input
@@ -260,12 +318,12 @@ const CreateEventForm: React.FC = () => {
                     value={event.location}
                     onChange={handleInputChange}
                     required
-                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
             </div>
 
             <div>
-                <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-700">
+                <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                     Category
                 </label>
                 <input
@@ -274,12 +332,12 @@ const CreateEventForm: React.FC = () => {
                     name="category"
                     value={event.category}
                     onChange={handleInputChange}
-                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
             </div>
 
             <div>
-                <label htmlFor="tags" className="block mb-2 text-sm font-medium text-gray-700">
+                <label htmlFor="tags" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                     Tags
                 </label>
                 <div className="flex gap-2">
@@ -289,12 +347,12 @@ const CreateEventForm: React.FC = () => {
                         value={tagInput}
                         onChange={handleTagInputChange}
                         placeholder="Add a tag"
-                         className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                         className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     />
                     <button
                         type="button"
                         onClick={handleAddTag}
-                        className="mt-1 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        className="mt-1 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-blue-600 dark:hover:bg-blue-700"
                     >
                         Add
                     </button>
@@ -309,7 +367,7 @@ const CreateEventForm: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={() => handleRemoveTag(tag)}
-                                className="ml-2 text-blue-800 hover:text-blue-900"
+                                className="ml-2 text-blue-00 hover:text-blue-900"
                             >
                                 ×
                             </button>
@@ -319,7 +377,7 @@ const CreateEventForm: React.FC = () => {
             </div>
 
             <div>
-                <label htmlFor="image" className="block mb-2 text-sm font-medium text-gray-700">
+                <label htmlFor="image" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                     Event Image
                 </label>
                 <input
@@ -328,14 +386,14 @@ const CreateEventForm: React.FC = () => {
                     name="image"
                     onChange={handleFileChange}
                     accept="image/*"
-                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
                 {previewUrl && <img src={previewUrl} alt="Preview" className="mt-2 max-h-40" />}
-                {uploading && <p className="text-sm text-gray-500">Uploading image...</p>}
+                {uploading &&<MoonLoader color="#0000ff" />}
             </div>
 
             <div>
-                <label htmlFor="ticket_price" className="block mb-2 text-sm font-medium text-gray-700">
+                <label htmlFor="ticket_price" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                     Ticket Price
                 </label>
                 <input
@@ -344,12 +402,12 @@ const CreateEventForm: React.FC = () => {
                     name="ticket_price"
                     value={event.ticket_price}
                     onChange={handleInputChange}
-                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
             </div>
 
             <div>
-                <label htmlFor="capacity" className="block mb-2 text-sm font-medium text-gray-700">
+                <label htmlFor="capacity" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                     Capacity
                 </label>
                 <input
@@ -358,34 +416,19 @@ const CreateEventForm: React.FC = () => {
                     name="capacity"
                     value={event.capacity}
                     onChange={handleInputChange}
-                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
             </div>
 
-            <div className="flex space-x-4">
-                <button
-                    type="button"
-                    onClick={() => setIsVenueModalOpen(true)}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                >
-                    Tag Venues ({selectedVenues.length})
-                </button>
-                <button
-                    type="button"
-                    onClick={() => setIsSupplierModalOpen(true)}
-                    className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600"
-                >
-                    Tag Suppliers ({selectedSuppliers.length})
-                </button>
-            </div>
+         
             </div>
             <div>
                 <button
                     type="submit"
                     disabled={uploading}
-                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
                 >
-                    {uploading ? 'Uploading...' : 'Create Event'}
+                    {uploading ? <MoonLoader color="#0000ff" /> : 'Create Event'}
                 </button>
             </div>
         </form>

@@ -189,8 +189,9 @@ function MainNavbar() {
               Contact
             </NavLink>
 
-            {profile?.role === 'venue_manager' && <NavLink to="/venue-manager-dashboard" className="uppercase">Dashboard</NavLink>}
-            {profile?.role === 'supplier' && <NavLink to="/supplier-dashboard" className="uppercase">Dashboard</NavLink>}
+            {profile?.role === 'venue_manager' && <NavLink to="/Venue-Manager-Dashboard/Home" className="uppercase">Dashboard</NavLink>}
+            {profile?.role === 'supplier' && <NavLink to="/Supplier-Dashboard/Home" className="uppercase">Dashboard</NavLink>}
+            {profile?.role === 'event_planner' && <NavLink to="/Event-Planner-Dashboard/Home" className="uppercase">Dashboard</NavLink>}
           </div>
 
           <div id="menu" className="hidden lg:flex space-x-4">

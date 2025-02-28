@@ -72,62 +72,65 @@ function ProfileAvatar({ user, profile }: ProfileAvatarProps) {
         </div>
       </div>
 
-      {/* Dropdown Menu */}
       {isDropdownOpen && (
-        <>
-          <div 
-            className="fixed inset-0 z-10"
+  <>
+    {/* Overlay to capture clicks */}
+    <div
+      className="fixed inset-0 z-40"
+      onClick={() => setDropdownOpen(false)}
+    />
+    
+    <div className="absolute right-0 mt-2 w-auto rounded-lg bg-white dark:bg-gray-900 shadow-lg dark:ring-gray-700 z-50">
+      <div className="py-2">
+        <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700 cursor-pointer">
+          <p className="text-sm text-gray-500 dark:text-gray-400">{profile.first_name} {profile.last_name}</p>
+          <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+            {user.email}
+          </p>
+        </div>
+
+        {profile.role === 'venue_manager' ? (
+          <NavLink 
+            to="/Venue-Manager-Dashboard/profiles" 
+            className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
             onClick={() => setDropdownOpen(false)}
-          />
-          <div className="absolute right-0 mt-2 w-56 rounded-lg bg-white dark:bg-gray-900 shadow-lg ring-1 ring-black ring-opacity-5 dark:ring-gray-700 z-20">
-            <div className="py-2">
-              <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-                <p className="text-sm text-gray-500 dark:text-gray-400">{profile.first_name} {profile.last_name}</p>
-                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                  {user.email}
-                </p>
-              </div>
+          >
+            <FiUser className="mr-3 h-4 w-4" />
+            View Profile
+          </NavLink>
+        ) : profile.role === 'supplier' ? (
+          <NavLink 
+            to="/Supplier-Dashboard/profiles" 
+            className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+            onClick={() => setDropdownOpen(false)}
+          >
+            <FiUser className="mr-3 h-4 w-4" />
+            View Profile
+          </NavLink>
+        ) : null}
 
-              {profile.role === 'venue_manager' ? (
-                <NavLink 
-                  to="/Venue-Manager-Dashboard/profiles" 
-                  className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                  onClick={() => setDropdownOpen(false)}
-                >
-                  <FiUser className="mr-3 h-4 w-4" />
-                  View Profile
-                </NavLink>
-              ) : profile.role === 'supplier' ? (
-                <NavLink 
-                  to="/Supplier-Dashboard/profiles" 
-                  className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                  onClick={() => setDropdownOpen(false)}
-                >
-                  <FiUser className="mr-3 h-4 w-4" />
-                  View Profile
-                </NavLink>
-              ) : null}
+            <NavLink 
+          to="/settings" 
+          className="flex w-full items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+          onClick={() => setDropdownOpen(false)}
+        >
+          <FiSettings className="mr-3 h-4 w-4" />
+          Settings
+        </NavLink>
 
-              <NavLink 
-                to="/settings" 
-                className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                onClick={() => setDropdownOpen(false)}
-              >
-                <FiSettings className="mr-3 h-4 w-4" />
-                Settings
-              </NavLink>
 
-              <button
-                onClick={handleLogout}
-                className="flex w-full items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer"
-              >
-                <FiLogOut className="mr-3 h-4 w-4" />
-                Sign out
-              </button>
-            </div>
-          </div>
-        </>
-      )}
+        <button
+          onClick={handleLogout}
+          className="flex w-full items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer"
+        >
+          <FiLogOut className="mr-3 h-4 w-4" />
+          Sign out
+        </button>
+      </div>
+    </div>
+  </>
+)}
+
     </div>
   );
 }

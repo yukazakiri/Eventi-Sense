@@ -24,54 +24,54 @@ const BookingModal: React.FC<{
 
     return (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity flex items-center justify-center p-4 z-50 font-sofia">
-            <div className="bg-white rounded-2xl p-6 w-full max-w-lg">
-                <h2 className="text-xl font-bold mb-4 tracking-wider text-gray-800">Booking Details</h2>
-                <div className="space-y-4 text-gray-700">
+            <div className="bg-white rounded-2xl p-6 w-full max-w-lg dark:bg-gray-900 dark:border-gray-700">
+                <h2 className="text-xl font-bold mb-4 tracking-wider text-gray-800 dark:text-white">Booking Details</h2>
+                <div className="space-y-4 text-gray-700 dark:text-white">
                     <div>
-                        <label className="font-semibold tracking-wider text-[16px]">Name:</label>
+                        <label className="font-semibold tracking-wider text-[16px] dark:text-gray-200">Name:</label>
                         <p>{booking.name}</p>
                     </div>
                     <div>
-                        <label className="font-semibold tracking-wider">Email:</label>
+                        <label className="font-semibold tracking-wider text-[16px] dark:text-gray-200">Email:</label>
                         <p>{booking.email}</p>
                     </div>
                     <div>
-                        <label className="font-semibold tracking-wider">Phone:</label>
+                        <label className="font-semibold tracking-wider text-[16px] dark:text-gray-200">Phone:</label>
                         <p>{booking.phone}</p>
                     </div>
                     <div>
-                        <label className="font-semibold tracking-wider">Service:</label>
+                        <label className="font-semibold tracking-wider text-[16px] dark:text-gray-200">Service:</label>
                         <p>{booking.suppliers_services?.service_name || 'Service Name Not Found'}</p>
                     </div>
                     <div>
-                        <label className="font-semibold tracking-wider">Message:</label>
+                        <label className="font-semibold tracking-wider text-[16px] dark:text-gray-200">Message:</label>
                         <p>{booking.message || 'No message'}</p>
                     </div>
                     <div>
-                        <label className="font-semibold tracking-wider">Start Date:</label>
+                        <label className="font-semibold tracking-wider text-[16px] dark:text-gray-200">Start Date:</label>
                         <p>{format(new Date(booking.start_date), 'yyyy-MM-dd hh:mm a')}</p>
                     </div>
                     <div>
-                        <label className="font-semibold tracking-wider">End Date:</label>
+                        <label className="font-semibold tracking-wider text-[16px] dark:text-gray-200">End Date:</label>
                         <p>{format(new Date(booking.end_date), 'yyyy-MM-dd hh:mm a')}</p>
                     </div>
                 </div>
                 <div className="flex justify-end space-x-4 mt-6">
                     <button
                         onClick={onDecline}
-                        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 dark:bg-red-500 dark:hover:bg-red-600"
                     >
                         Decline
                     </button>
                     <button
                         onClick={onConfirm}
-                        className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+                        className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 dark:bg-green-500 dark:hover:bg-green-600"
                     >
                         Confirm
                     </button>
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+                        className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 dark:bg-gray-500 dark:hover:bg-gray-600"
                     >
                         Close
                     </button>
@@ -151,46 +151,46 @@ const UserBookings: React.FC<UserBookingsProps> = ({ supplierId }) => {
     };
 
     if (loading) {
-        return <p>Loading bookings...</p>;
+        return <p className='text-gray-600 dark:text-white p-4'>Loading bookings...</p>;
     }
 
     if (error) {
-        return <p>Error: {error}</p>;
+        return <p className='text-gray-600 dark:text-white'>Error: {error}</p>;
     }
 
     return (
         <div className="p-6 font-sofia">
             {bookings.length > 0 ? (
-                <div className="overflow-x-auto shadow border-[1px] border-gray-300 rounded-2xl">
-                    <table className="min-w-full divide-y divide-gray-200 p-4">
-                        <thead className="border-b-[1px] border-gray-200">
+                <div className="overflow-x-auto shadow border-[1px] border-gray-300 rounded-2xl dark:bg-gray-900 dark:border-gray-700">
+                    <table className="min-w-full divide-y divide-gray-200 p-4 dark:text-white">
+                        <thead className="border-b-[1px] border-gray-200 dark:border-gray-700">
                             <tr>  
                               
-                                <th className="px-6 py-3 text-left  text-sm font-medium text-gray-400  tracking-wider">
+                                <th className="px-6 py-3 text-left  text-sm font-medium text-gray-400  tracking-wider dark:text-gray-200">
                                     User
                                 </th>
                                 
-                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400  tracking-wider">
+                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400  tracking-wider dark:text-gray-200">
                                     Service
                                 </th>
-                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400  tracking-wider">
+                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400  tracking-wider dark:text-gray-200">
                                     Start Date
                                 </th>
-                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400  tracking-wider">
+                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400  tracking-wider dark:text-gray-200">
                                     End Date
                                 </th>
-                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400  tracking-wider">
+                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400  tracking-wider dark:text-gray-200">
                                     Status
                                 </th>
-                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400  tracking-wider">
+                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400  tracking-wider dark:text-gray-200">
                                     Actions
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:border-gray-700">
     {bookings.map((booking) => (
-        <tr key={booking.id} className="hover:bg-gray-50 transition-colors">
-           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 flex items-center">
+        <tr key={booking.id} className="hover:bg-gray-50 transition-colors dark:hover:bg-gray-800">
+           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white flex items-center">
                                     
                                             <img
                                                 src={booking.avatar_url}
@@ -204,33 +204,33 @@ const UserBookings: React.FC<UserBookingsProps> = ({ supplierId }) => {
                                     </td>
         
            
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                 {booking.suppliers_services?.service_name || 'Service Name Not Found'}
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                 {format(
                     toZonedTime(new Date(booking.start_date), phTimeZone),
                     'yyyy-MM-dd hh:mm a'
                 )}
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                 {format(
                     toZonedTime(new Date(booking.end_date), phTimeZone),
                     'yyyy-MM-dd hh:mm a'
                 )}
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                 <span
                     className={`px-4 py-2 text-xs font-semibold rounded-full ${booking.status === 'confirmed' ? 'bg-green-100 text-green-800' : booking.status === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}
                 >
                     {booking.status}
                 </span>
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                 <div className="flex space-x-2">
                     <button
                         onClick={() => setSelectedBooking(booking)}
-                        className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600"
+                        className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-600"
                     >
                         View
                     </button>
@@ -243,7 +243,7 @@ const UserBookings: React.FC<UserBookingsProps> = ({ supplierId }) => {
                     </table>
                 </div>
             ) : (
-                <p className="p-4 text-gray-600">No bookings found for this supplier.</p>
+                <p className="p-4 text-gray-600 dark:text-white">No bookings found for this supplier.</p>
             )}
 
             {/* Modal */}

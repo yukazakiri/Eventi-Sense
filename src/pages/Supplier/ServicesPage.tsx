@@ -196,19 +196,19 @@ function SupplierServiceForm() {
   return (
   <>
     <div className='flex justify-between mx-6'>
-        <h1 className="text-3xl font-bold flex items-center font-bonanova text-gray-700">Services</h1>
+        <h1 className="text-3xl font-bold flex items-center font-bonanova text-gray-700 dark:text-white">Services</h1>
         <div className="flex items-end  ">
                 <Breadcrumbs items={breadcrumbItems} />
             </div>
         </div>
-    <div className={`bg-white p-[2rem] border-[1px] mb-8 mx-10 border-gray-300 rounded-3xl ${isEditing ? 'border-2 rounded-3xl border-indigo-400' : ''}`}>
+    <div className={`bg-white p-[2rem] border-[1px] mb-8 mx-10 border-gray-300 rounded-3xl dark:bg-gray-900 dark:border-gray-700 ${isEditing ? 'border-[1px] rounded-3xl border-indigo-400 dark:border-indigo-400' : ''}`}>
       <div className="flex justify-end mb-4">
       
         <div>
           {!isEditing && (
             <button
               onClick={() => setIsEditing(true)}
-              className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-full flex items-center">
+              className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-full flex items-center dark:bg-blue-500 dark:hover:bg-blue-600">
                                             <LuPencil className="mr-2" />
               Edit
             </button>
@@ -233,11 +233,11 @@ function SupplierServiceForm() {
         </div>
       </div>
     
-        <form onSubmit={handleSubmit} className={`bg-white p-[2rem] border-[1px] border-gray-300 rounded-3xl font-sofia ${isEditing ? 'border-2 rounded-3xl border-indigo-400' : ''}`}>
+        <form onSubmit={handleSubmit} className={`bg-white p-[2rem] border-[1px] border-gray-300 rounded-3xl font-sofia dark:bg-gray-900 dark:border-gray-700 ${isEditing ? 'border-2 rounded-3xl border-indigo-400 dark:border-indigo-400' : ''}`}>
           <h2 className="text-xl tracking-wide mb-4">
             {editingService ? 'Edit Service' : 'Add New Service'}
           </h2>
-          {successMessage && <p className="text-green-500 mb-4">{successMessage}</p>}
+          {successMessage && <p className="text-green-500 mb-4 dark:text-green-500">{successMessage}</p>}
           <div className="mb-4">
             <label htmlFor="service_name" className="block mb-2 text-md font-medium text-gray-800 dark:text-white">
               Service Name
@@ -248,7 +248,7 @@ function SupplierServiceForm() {
               id="service_name"
               value={service.service_name}
               onChange={handleChange}
-              className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               required
               disabled={!isEditing}
             />
@@ -264,7 +264,7 @@ function SupplierServiceForm() {
               value={service.description}
               onChange={handleChange}
               disabled={!isEditing}
-              className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             />
           </div>
           <div className="mb-4">
@@ -278,7 +278,7 @@ function SupplierServiceForm() {
               value={service.price || ''}
               onChange={handleChange}
               disabled={!isEditing}
-              className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             />
           </div>
           {isEditing && (
@@ -294,25 +294,25 @@ function SupplierServiceForm() {
         </form>
 
         <div className=" my-8">
-        <h1 className="text-xl font-bold font-bonanova text-gray-700 p-4">List of Services</h1>
+        <h1 className="text-xl font-bold font-bonanova text-gray-700 dark:text-white p-4">List of Services</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 font-sofia ">
             <div className='transition duration-300 ease-in-out hover:scale-105'>
           {services.map((s) => (
-            <div key={s.id} className="border p-4 rounded-lg shadow-sm">
+            <div key={s.id} className="border p-4 rounded-lg shadow-sm dark:bg-gray-900 dark:border-gray-700">
               <h3 className="text-lg  font-medium tracking-wide">{s.service_name}</h3>
-              <p className="text-gray-600">{s.description}</p>
+              <p className="text-gray-600 dark:text-white">{s.description}</p>
               <p className="text-indigo-600 font-medium">${s.price}</p>
               {isEditing && (
                 <div className="mt-4 flex space-x-2">
                   <button
                     onClick={() => handleEdit(s)}
-                    className="text-sm text-indigo-600 hover:text-indigo-900"
+                    className="text-sm text-indigo-600 hover:text-indigo-900 dark:text-indigo-500 dark:hover:text-indigo-900"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(s.id!)}
-                    className="text-sm text-red-600 hover:text-red-900"
+                    className="text-sm text-red-600 hover:text-red-900 dark:text-red-500 dark:hover:text-red-900"
                   >
                     Delete
                   </button>

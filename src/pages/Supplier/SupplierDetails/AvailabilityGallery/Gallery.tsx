@@ -99,15 +99,15 @@ const supplierGallery: React.FC<SupplierGalleryProps> = ({ supplierId, isEditing
     };
 
     return (
-      <div className={`bg-white  border-[1px] border-gray-300 rounded-3xl ${isEditing ? 'border-2 rounded-3xl border-indigo-400' : ''}`}>
-             <div className='flex justify-between p-4 md:px-6 border-b-[1px] border-gray-300'>
-                        <h1 className="text-xl md:mt-2 font-bold font-bonanova text-gray-700  justify-center">Gallery</h1>
+      <div className={`bg-white  border-[1px] border-gray-300 rounded-3xl dark:bg-gray-900 dark:border-gray-700 ${isEditing ? 'border-[1px] rounded-3xl border-indigo-400 dark:border-indigo-400' : ''}`}>
+             <div className='flex justify-between p-4 md:px-6 border-b-[1px] border-gray-300 dark:border-gray-700'>
+                        <h1 className="text-xl md:mt-2 font-bold font-bonanova text-gray-700 dark:text-white  justify-center">Gallery</h1>
                         <div>
                               {!isEditing &&  (
                             <>      
                                 <button
                                     onClick={() => setIsEditingGallery(true)}
-                                    className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-full flex items-center"> 
+                                    className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-full flex items-center dark:bg-blue-500 dark:hover:bg-blue-600"> 
                                     Add+
                                 </button>
                            
@@ -133,7 +133,7 @@ const supplierGallery: React.FC<SupplierGalleryProps> = ({ supplierId, isEditing
                         onChange={handleUpload}
                         disabled={uploading}
                         accept="image/*"
-                        className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-600 hover:file:bg-indigo-300"
+                        className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-600 hover:file:bg-indigo-300 dark:bg-gray-900 dark:border-gray-700"
                     />
                 </div>
             )}
@@ -144,7 +144,7 @@ const supplierGallery: React.FC<SupplierGalleryProps> = ({ supplierId, isEditing
             <div className="masonry columns-2 md:columns-4">
                 {images.length > 0 ? (
                     images.map(image => (
-                        <div key={image.id} className="relative group break-inside-avoid mb-8">
+                        <div key={image.id} className="relative group break-inside-avoid mb-8 dark:bg-gray-900 dark:border-gray-700">
                             <img
                                 className="w-full h-auto rounded-lg"
                                 src={image.image_url}
@@ -155,7 +155,7 @@ const supplierGallery: React.FC<SupplierGalleryProps> = ({ supplierId, isEditing
                                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/50">
                                     <button
                                         onClick={() => handleDelete(image.id)}
-                                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded hover:opacity-75"
+                                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded hover:opacity-75 dark:bg-red-500 dark:hover:bg-red-700"
                                     >
                                         Delete
                                     </button>
@@ -180,10 +180,10 @@ const supplierGallery: React.FC<SupplierGalleryProps> = ({ supplierId, isEditing
             >
                 {modalType === "error" && imageToDelete && (
                     <div className="mt-4">
-                        <button onClick={confirmDelete} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2">
+                        <button onClick={confirmDelete} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2 dark:bg-red-500 dark:hover:bg-red-700">
                             Yes, Delete
                         </button>
-                        <button onClick={closeModal} className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                        <button onClick={closeModal} className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded dark:bg-gray-500 dark:hover:bg-gray-700">
                             Cancel
                         </button>
                     </div>

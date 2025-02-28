@@ -157,15 +157,15 @@ function SupplierServiceForm({ supplier_id, isEditing, setIsEditingServices }: S
   }
 
   return (
-    <div className={`bg-white   border-[1px] border-gray-300 rounded-3xl ${isEditing ? 'border-2 rounded-3xl border-indigo-400' : ''}`}>
-            <div className='flex justify-between p-4 md:px-6 border-b-[1px] border-gray-300'>
-                        <h1 className="text-xl md:mt-2 font-bold font-bonanova text-gray-700  justify-center">Services</h1>
+    <div className={`bg-white   border-[1px] border-gray-300 rounded-3xl dark:bg-gray-900 dark:border-gray-700 ${isEditing ? 'border-[1px] rounded-3xl border-indigo-400 dark:border-indigo-400' : ''}`}>
+            <div className='flex justify-between p-4 md:px-6 border-b-[1px] border-gray-300 dark:border-gray-700'>
+                        <h1 className="text-xl md:mt-2 font-bold font-bonanova text-gray-700 dark:text-white justify-center">Services</h1>
                         <div>
                               {!isEditing &&  (
                             <>
                                 <button
                                     onClick={() => setIsEditingServices(true)}
-                                     className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-full flex items-center">
+                                     className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-full flex items-center dark:bg-blue-500 dark:hover:bg-blue-600">
                                      <LuPencil className="mr-2" />
                                     Edit
                                 </button>
@@ -185,11 +185,11 @@ function SupplierServiceForm({ supplier_id, isEditing, setIsEditingServices }: S
                         )}</div>
                            </div>
     <section className='grid md:grid-cols-2 gap-4 p-8'>
-      <form onSubmit={handleSubmit} className={`bg-white p-[2rem]   border-[1px] border-gray-300 rounded-3xl ${isEditing ? 'border-2 rounded-3xl border-indigo-400' : ''}`}>
-        <h2 className="text-[16px] font-semibold tracking-wider text-gray-800 mb-4 font-sofia  ">
+      <form onSubmit={handleSubmit} className={`bg-white p-[2rem]   border-[1px] border-gray-300 rounded-3xl dark:bg-gray-900 dark:border-gray-700 ${isEditing ? 'border-2 rounded-3xl border-indigo-400' : ''}`}>
+        <h2 className="text-[16px] font-semibold tracking-wider text-gray-800 dark:text-white mb-4 font-sofia  ">
           {editingService ? 'Edit Service' : 'Add New Service'}
         </h2>
-        {successMessage && <p className="text-green-500 mb-4">{successMessage}</p>}
+        {successMessage && <p className="text-green-500 mb-4 dark:text-green-500">{successMessage}</p>}
         
         <div className="mb-4">
           <label htmlFor="service_name" className="block mb-2 text-md font-medium text-gray-800 dark:text-white">
@@ -201,7 +201,7 @@ function SupplierServiceForm({ supplier_id, isEditing, setIsEditingServices }: S
             id="service_name"
             value={service.service_name}
             onChange={handleChange}
-            className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                            
             required
           />
@@ -217,7 +217,7 @@ function SupplierServiceForm({ supplier_id, isEditing, setIsEditingServices }: S
             id="price"
             value={service.price || ''}
             onChange={handleChange}
-            className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                            
           />
         </div>
@@ -230,7 +230,7 @@ function SupplierServiceForm({ supplier_id, isEditing, setIsEditingServices }: S
             id="description"
             value={service.description}
             onChange={handleChange}
-            className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                            
           />
         </div>
@@ -248,21 +248,21 @@ function SupplierServiceForm({ supplier_id, isEditing, setIsEditingServices }: S
 
       <div className="grid grid-rows-1 md:grid-rows-2 lg:grid-rows-3 lg:grid-cols-2 gap-4">
         {services.map((s) => (
-          <div key={s.id} className="border p-4 rounded-lg shadow-sm">
+          <div key={s.id} className="border p-4 rounded-lg shadow-sm dark:bg-gray-950 dark:border-gray-700">
             <h3 className="text-lg font-semibold">{s.service_name}</h3>
-            <p className="text-gray-600">{s.description}</p>
+            <p className="text-gray-600 dark:text-white">{s.description}</p>
             <p className="text-blue-500 font-medium">${s.price}</p>
             {isEditing && (
               <div className="mt-4 flex space-x-2">
                 <button
                   onClick={() => handleEdit(s)}
-                    className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-full flex items-center">
+                    className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-full flex items-center dark:bg-blue-500 dark:hover:bg-blue-600">
                    <LuPencil className="mr-2" />
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(s.id!)}
-                  className="text-sm text-red-600 hover:text-red-900"
+                  className="text-sm text-red-600 hover:text-red-900 dark:text-red-500 dark:hover:text-red-900"
                 >
                   Delete
                 </button>

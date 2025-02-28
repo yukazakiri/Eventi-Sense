@@ -8,7 +8,7 @@ interface AddressVenueFormProps {
 }
 
 const CreateAddressVenueForm = ({ formData, handleInputChange, isEditing }: AddressVenueFormProps) => (
-  <section className={`shadow-lg bg-white p-[2rem] ${isEditing ? 'border-indigo-400 border-2 rounded-lg' : ''}`}>
+  <section className={`shadow-lg bg-white p-[2rem] dark:bg-gray-900 border-[1px] border-gray-300 dark:border-gray-700 rounded-3xl mb-4 grid md:grid-cols-2 gap-4 ${isEditing ? 'border-indigo-400 border-[1px] rounded-lg dark:border-indigo-400' : ''}`}>
     <div className="mb-4">
       <label htmlFor="address_street" className="block mb-2 text-md font-medium text-gray-800 dark:text-white">Street Address:</label>
       <input
@@ -17,7 +17,7 @@ const CreateAddressVenueForm = ({ formData, handleInputChange, isEditing }: Addr
         name="address_street"
         value={formData.address_street}
         onChange={handleInputChange}
-        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         required
         readOnly={!isEditing}
         placeholder="Example: 123 Main Street"
@@ -31,7 +31,7 @@ const CreateAddressVenueForm = ({ formData, handleInputChange, isEditing }: Addr
         name="address_city"
         value={formData.address_city}
         onChange={handleInputChange}
-        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         required
         readOnly={!isEditing}
         placeholder="Example: New York"
@@ -45,7 +45,7 @@ const CreateAddressVenueForm = ({ formData, handleInputChange, isEditing }: Addr
         name="address_state"
         value={formData.address_state}
         onChange={handleInputChange}
-        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         required
         readOnly={!isEditing}
         placeholder="Example: NY"
@@ -59,7 +59,7 @@ const CreateAddressVenueForm = ({ formData, handleInputChange, isEditing }: Addr
         name="address_zip"
         value={formData.address_zip}
         onChange={handleInputChange}
-        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         required
         readOnly={!isEditing}
         placeholder="Example: 10001"
@@ -73,7 +73,7 @@ const CreateAddressVenueForm = ({ formData, handleInputChange, isEditing }: Addr
         name="location"
         value={formData.location}
         onChange={handleInputChange}
-        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         required
         readOnly={!isEditing}
         placeholder="Example: Manila"

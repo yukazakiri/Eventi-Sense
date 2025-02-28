@@ -34,16 +34,16 @@ const AddressForm: React.FC<AddressFormProps> = ({ supplier, onSave, isEditing, 
 
 
     return (
-        <div className={`bg-white   border-[1px] border-gray-300 rounded-3xl ${isEditing ? 'border-2 rounded-3xl border-indigo-400' : ''}`}>
-                   <div className='flex justify-between p-4 md:px-6 border-b-[1px] border-gray-300'>
-                        <h1  className="text-xl md:mt-2 font-bold font-bonanova text-gray-700  justify-center">Address</h1>
+        <div className={`bg-white   border-[1px] border-gray-300 rounded-3xl dark:bg-gray-900 dark:border-gray-700 ${isEditing ? 'border-[1px] rounded-3xl border-indigo-400 dark:border-indigo-400' : ''}`}>
+                   <div className='flex justify-between p-4 md:px-6 border-b-[1px] border-gray-300 dark:border-gray-700'>
+                        <h1  className="text-xl md:mt-2 font-bold font-bonanova text-gray-700 dark:text-white justify-center">Address</h1>
                         <div>
                         {!isEditing && (
                             <>
                             
                                 <button
                                     onClick={() => setIsEditing(true)}
-                                    className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-full flex items-center">
+                                    className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-full flex items-center dark:bg-blue-500 dark:hover:bg-blue-600">
                                      <LuPencil className="mr-2" />
                                      Edit
                                 </button>
@@ -68,7 +68,7 @@ const AddressForm: React.FC<AddressFormProps> = ({ supplier, onSave, isEditing, 
                         type="text"
                         value={street}
                         onChange={(e) => setStreet(e.target.value)}
-                        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         disabled={!isEditing}
                     />
                 </div>
@@ -78,7 +78,7 @@ const AddressForm: React.FC<AddressFormProps> = ({ supplier, onSave, isEditing, 
                         type="text"
                         value={city}
                         onChange={(e) => setCity(e.target.value)}
-                        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         disabled={!isEditing}
                     />
                 </div>
@@ -88,7 +88,7 @@ const AddressForm: React.FC<AddressFormProps> = ({ supplier, onSave, isEditing, 
                         type="text"
                         value={state}
                         onChange={(e) => setState(e.target.value)}
-                        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         disabled={!isEditing}
                     />
                 </div>
@@ -98,7 +98,7 @@ const AddressForm: React.FC<AddressFormProps> = ({ supplier, onSave, isEditing, 
                         type="text"
                         value={zip}
                         onChange={(e) => setZip(e.target.value)}
-                        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         disabled={!isEditing}
                     />
                 </div>

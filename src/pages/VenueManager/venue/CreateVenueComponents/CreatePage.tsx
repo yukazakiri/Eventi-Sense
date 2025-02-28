@@ -432,15 +432,15 @@ if (pricingModelsError) {
   console.error('Error fetching pricing models:', pricingModelsError);
 }
   return (
-    <div className="max-w-screen-xl mx-auto my-[6rem] font-sofia">
+    <div className="mx-10  font-sofia">
   
-      <form onSubmit={handleSubmit} className='grid lg:grid-cols-2 gap-8'>
+      <form onSubmit={handleSubmit} className='gap-8'>
         <div className='col-span-2 '>
-          <section className='flex justify-between items-center my-4'>
+          <section className='flex justify-between items-center my-4 sticky top-0'>
             <div className='flex items-center'>
               <Breadcrumbs items={breadcrumbItems} />
             </div>
-            <div className='flex items-center'>
+            <div className='flex items-center sticky top-0'>
               <button
                 onClick={() => setIsEditing(!isEditing)}
                 className={`text-white mx-4 ${isEditing ? 'bg-red-600 hover:bg-red-700' : 'bg-indigo-600 hover:bg-indigo-700'} focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800`}
@@ -451,7 +451,7 @@ if (pricingModelsError) {
           <button
           type="submit" // Add this line
           disabled={isSubmitting} // Disable while submitting
-          className="text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          className="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
         >
           {isSubmitting ? 'Submitting...' : 'Submit Venue'}
         </button>
@@ -459,7 +459,8 @@ if (pricingModelsError) {
             </div>
           </section>
         </div>
-          <section>
+        <div className='grid md:grid-cols-2 gap-4'>
+          <section >
           <div className='mb-8'>
           <CreateInfoVenueForm
             formData={formData}
@@ -471,6 +472,9 @@ if (pricingModelsError) {
             venueTypes={venueTypes}
           />
           </div>
+       
+          </section>
+          <section >
           <div>
           <CreatePhotoCover
             isEditing={isEditing}
@@ -481,8 +485,6 @@ if (pricingModelsError) {
             selectedFile={selectedFile}
           />
           </div>
-          </section>
-          <section >
             <div className='mb-8'>
                 <CreateAddressVenueForm
                   formData={formData}
@@ -490,8 +492,8 @@ if (pricingModelsError) {
                   isEditing={isEditing}
                 />
             </div>
-                 <div className={`shadow-lg bg-white p-[2rem]  ${isEditing ? 'border-indigo-400 border-2 rounded-lg ' : ''}`}>
-      <label className="block mb-2 text-md font-medium text-gray-800">Amenities:</label>
+                 <div className={`shadow-lg bg-white p-[2rem] dark:bg-gray-900 border-[1px] border-gray-300 dark:border-gray-700 rounded-3xl mb-4 ${isEditing ? 'border-indigo-400 border-[1px] rounded-lg dark:border-indigo-400' : ''}`}>
+      <label className="block mb-2 text-md font-medium text-gray-800 dark:text-gray-200">Amenities:</label>
 
       {/*formErrors.amenities && <p className="text-red-500">{formErrors.amenities}</p>*/}
 
@@ -503,7 +505,7 @@ if (pricingModelsError) {
         amenities.map((amenity) => {
         const venueAmenity = formData.amenities.find(a => a.id === amenity.id);
         return (
-          <div key={amenity.id} className="mb-3 p-2 border rounded">
+          <div key={amenity.id} className="mb-3 p-2 border rounded-lg dark:bg-gray-950 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500">
           <label className="flex items-center gap-2">
             <input
             type="checkbox"
@@ -517,7 +519,7 @@ if (pricingModelsError) {
           {venueAmenity && (
             <div className="ml-6 mt-2 space-y-2">
             <div>
-              <label className="block text-sm text-gray-600">Quantity:</label>
+              <label className="block text-sm text-gray-600 dark:text-gray-200">Quantity:</label>
               <input
               type="number"
               min="0"
@@ -529,19 +531,19 @@ if (pricingModelsError) {
                 e.target.value ? parseInt(e.target.value) : null
                 )
               }
-              className="border rounded p-1"
+              className="border rounded p-1 dark:bg-gray-950 dark:border-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               readOnly={!isEditing}
               />
             </div>
 
             <div>
-              <label className="block text-sm text-gray-600">Description:</label>
+              <label className="block text-sm text-gray-600 dark:text-gray-200">Description:</label>
               <textarea
               value={venueAmenity.description ?? ''}
               onChange={(e) => 
                 handleAmenityChange(amenity.id, 'description', e.target.value)
               }
-              className="border rounded p-1 w-full"
+              className="border rounded p-1 w-full dark:bg-gray-950 dark:border-gray-700 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               rows={3}
               readOnly={!isEditing}
               />
@@ -556,7 +558,7 @@ if (pricingModelsError) {
       )}
                 </div>
           </section>
-      
+      </div>
   
       </form>
     </div>

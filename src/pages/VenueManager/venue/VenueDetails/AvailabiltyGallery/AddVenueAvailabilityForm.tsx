@@ -290,7 +290,7 @@ const handleDateClick = (info: any) => {
           </div>
         ) : (
           <button onClick={handleCreateClick} 
-            className="bg-indigo-500 hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white py-4 px-4 rounded-2xl">
+            className="bg-blue-400 hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-600 text-white py-4 px-4 rounded-2xl">
            Add Event+
           </button>
         )}
@@ -322,7 +322,7 @@ const handleDateClick = (info: any) => {
         </div>
       
       </div>
-      <div className="border dark:border-gray-700 rounded-3xl mb-8 overflow-hidden bg-white dark:bg-gray-800 p-8 shadow-lg">
+      <div className="border dark:border-gray-700 rounded-3xl mb-8 overflow-hidden bg-white dark:bg-gray-950 p-8 shadow-lg">
       <FullCalendar
         ref={calendarRef}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}

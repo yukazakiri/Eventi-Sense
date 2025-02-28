@@ -89,7 +89,7 @@ const CardList: React.FC<CardListProps> = ({ limit }) => {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6 dark:bg-gray-950 dark:border-gray-700 ">
       {displayedCardData.map((event, index) => (
         <div key={event.id} className={index >= 3 ? "hidden sm:block" : ""}>
           <Card

@@ -16,26 +16,26 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, ticket, onSave }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-96">
+      <div className="bg-white rounded-lg p-6 w-96 dark:bg-gray-950">
         <h2 className="text-xl font-bold mb-4">Update Ticket Status</h2>
         <div className="space-y-4">
           <div className="flex flex-col gap-2">
             <button
               onClick={() => onSave(ticket.id, 'approved')}
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
             >
               Approve Ticket
             </button>
             <button
               onClick={() => onSave(ticket.id, 'cancelled')}
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700"
             >
               Cancel Ticket
             </button>
           </div>
           <button
             onClick={onClose}
-            className="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+            className="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
           >
             Close
           </button>
@@ -276,8 +276,8 @@ const TicketsList: React.FC = () => {
             onClick={() => setViewMode('organizer')}
             className={`px-4 py-2 rounded-lg transition-colors ${
               viewMode === 'organizer'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-blue-500 text-white dark:bg-blue-500 dark:hover:bg-blue-600'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700'
             }`}
           >
             My Events' Tickets
@@ -286,8 +286,8 @@ const TicketsList: React.FC = () => {
             onClick={() => setViewMode('attendee')}
             className={`px-4 py-2 rounded-lg transition-colors ${
               viewMode === 'attendee'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-blue-500 text-white dark:bg-blue-500 dark:hover:bg-blue-600'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700'
             }`}
           >
             My Reserved Tickets
@@ -295,13 +295,13 @@ const TicketsList: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white p-6 overflow-hidden rounded-2xl border-[1px] border-gray-300">
+      <div className="bg-white p-6 overflow-hidden rounded-2xl border-[1px] border-gray-300 dark:bg-gray-950 dark:border-gray-700">
         {/* Filter Controls */}
         <div className="mb-6 flex gap-4 flex-wrap">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="p-2 border border-gray-300 rounded"
+            className="p-2 border border-gray-300 rounded dark:bg-gray-950 dark:text-white dark:border-gray-700"
           >
             <option value="">All Statuses</option>
             <option value="reserved">Reserved</option>
@@ -313,7 +313,7 @@ const TicketsList: React.FC = () => {
           <select
             value={eventFilter}
             onChange={(e) => setEventFilter(e.target.value)}
-            className="p-2 border border-gray-300 rounded"
+            className="p-2 border border-gray-300 rounded dark:bg-gray-950 dark:text-white dark:border-gray-700"
           >
             <option value="">All Events</option>
             {Object.values(events).map((event) => (
@@ -328,7 +328,7 @@ const TicketsList: React.FC = () => {
             placeholder="Filter by user..."
             value={userFilter}
             onChange={(e) => setUserFilter(e.target.value)}
-            className="p-2 border border-gray-300 rounded"
+            className="p-2 border border-gray-300 rounded dark:bg-gray-950 dark:text-white dark:border-gray-700"
           />
 
           {/* Search Bar */}
@@ -337,107 +337,107 @@ const TicketsList: React.FC = () => {
             placeholder="Search tickets..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="p-2 border border-gray-300 rounded flex-grow"
+            className="p-2 border border-gray-300 rounded dark:bg-gray-950 dark:text-white dark:border-gray-700"
           />
         </div>
 
         {/* Tickets Table */}
-        <div className="overflow-x-auto shadow border-[1px] border-gray-300 rounded-2xl p-6">
+        <div className="overflow-x-auto shadow border-[1px] border-gray-300 rounded-2xl p-6 dark:bg-gray-950 dark:border-gray-700">
           {filteredTickets.length > 0 ? (
-            <table className="min-w-full divide-y divide-gray-200 p-4">
-              <thead className="border-b-[1px] border-gray-200">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-800">
                 <tr>
                   {viewMode === 'organizer' ? (
                     <>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-400 tracking-wider">User Name</th>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-400 tracking-wider">Ticket ID</th>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-400 tracking-wider">Event Title</th>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-400 tracking-wider">Quantity</th>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-400 tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-400 tracking-wider">Purchase Date</th>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-400 tracking-wider">Actions</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-48">User</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ticket ID</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Event Title</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-24">Quantity</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-32">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Purchase Date</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-40">Actions</th>
                     </>
                   ) : (
                     <>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-400 tracking-wider">Event Title</th>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-400 tracking-wider">Ticket ID</th>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-400 tracking-wider">Quantity</th>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-400 tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-400 tracking-wider">Purchase Date</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Event Title</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ticket ID</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-24">Quantity</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-32">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Purchase Date</th>
                     </>
                   )}
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
                 {filteredTickets.map((ticket) => (
-                  <tr key={ticket.id} className="hover:bg-gray-50 transition-colors border-b-[1px] border-gray-200">
+                  <tr key={ticket.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                     {viewMode === 'organizer' ? (
                       <>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 flex items-center">
-                          <img
-                            src={profiles[ticket.user_id]?.avatar_url || fallbackAvatarUrl}
-                            alt="User Avatar"
-                            className="w-10 h-10 rounded-full mr-2"
-                          />
-                          <div>{profiles[ticket.user_id]?.first_name}</div>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <img
+                              src={profiles[ticket.user_id]?.avatar_url || fallbackAvatarUrl}
+                              alt="User Avatar"
+                              className="w-10 h-10 rounded-full"
+                            />
+                            <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-200">
+                              {profiles[ticket.user_id]?.first_name}
+                            </span>
+                          </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{ticket.id}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">{ticket.id}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
                           {events[ticket.event_id]?.name || 'Event not found'}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{ticket.quantity}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          <span
-                            className={`px-2 py-1 rounded-full text-sm ${
-                              ticket.status === 'reserved'
-                                ? 'bg-yellow-100 text-yellow-800'
-                                : ticket.status === 'purchased'
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-red-100 text-red-800'
-                            }`}
-                          >
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200 text-center">
+                          {ticket.quantity}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex items-center px-3 py-2 rounded-full text-xs font-medium
+                            ${ticket.status === 'reserved' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200' : 
+                              ticket.status === 'purchased' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200' : 
+                              'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200'}`}>
                             {ticket.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
                           {ticket.purchase_date ? new Date(ticket.purchase_date).toLocaleString() : 'N/A'}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 flex gap-2">
-                          <button
-                            onClick={() => handleEditTicket(ticket.id)}
-                            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDeleteTicket(ticket.id)}
-                            className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                          >
-                            Delete
-                          </button>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => handleEditTicket(ticket.id)}
+                              className="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteTicket(ticket.id)}
+                              className="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 transition-colors"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </td>
                       </>
                     ) : (
                       <>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
                           {events[ticket.event_id]?.name || 'Event not found'}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{ticket.id}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{ticket.quantity}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          <span
-                            className={`px-2 py-1 rounded-full text-sm ${
-                              ticket.status === 'reserved'
-                                ? 'bg-yellow-100 text-yellow-800'
-                                : ticket.status === 'purchased'
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-red-100 text-red-800'
-                            }`}
-                          >
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">{ticket.id}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200 text-center">
+                          {ticket.quantity}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                            ${ticket.status === 'reserved' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200' : 
+                              ticket.status === 'purchased' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200' : 
+                              'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200'}`}>
                             {ticket.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
                           {ticket.purchase_date ? new Date(ticket.purchase_date).toLocaleString() : 'N/A'}
                         </td>
                       </>
@@ -447,7 +447,7 @@ const TicketsList: React.FC = () => {
               </tbody>
             </table>
           ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+            <div className="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-white">
               <svg 
                 className="w-16 h-16 mb-4" 
                 fill="none" 
@@ -462,7 +462,7 @@ const TicketsList: React.FC = () => {
                 />
               </svg>
               <p className="text-xl font-semibold mb-2">No tickets found</p>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-400 dark:text-white">
                 {viewMode === 'organizer' 
                   ? "No tickets have been created for your events yet"
                   : "You haven't reserved any tickets yet"}

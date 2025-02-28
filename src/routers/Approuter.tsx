@@ -32,6 +32,8 @@ import BookSupplier from '../pages/Booking/SupplierBooking';
 import EventDetails from '../pages/Events/Event';
 import EventUpdate from '../pages/Events/UpdateEvent';
 
+import EventPlannerDashboard from '../app/EventPlanner';
+
 
 const AppRouter = () => {
   return (
@@ -69,7 +71,7 @@ const AppRouter = () => {
           <ProtectedRoute requiredRole="venue_manager">
           <VenueManagerDashboard />
         </ProtectedRoute>
-          } /> {/* Regular user dashboard */}
+          } /> 
 
           
 
@@ -79,7 +81,13 @@ const AppRouter = () => {
           <ProtectedRoute requiredRole="supplier">
           <SupplierDashboard />
           </ProtectedRoute>
-          } /> {/* Regular user dashboard */}
+          } />
+          
+        <Route path="/Event-Planner-Dashboard/*" element={
+          <ProtectedRoute requiredRole="event_planner">
+          <EventPlannerDashboard />
+          </ProtectedRoute>
+          } />
 
 
 
