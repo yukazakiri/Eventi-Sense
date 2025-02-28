@@ -55,7 +55,7 @@ export const createProfile = async (profileData: Profile) => {
 }
 export const uploadAvatar = async (userId: string, file: File): Promise<string | null> => {
   try {
-    const fileName = `avatars/${userId}_${file.name}`;
+    const fileName = `avatars/${userId}_${Date.now()}_${file.name}`; // Unique file name
     const { data, error } = await supabase.storage
       .from('profile')
       .upload(fileName, file);

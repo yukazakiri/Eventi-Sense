@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import supabase from '../../api/supabaseClient';
 import { FiUser, FiSettings, FiLogOut } from 'react-icons/fi'; // Import icons
@@ -20,17 +20,36 @@ function ProfileAvatar({ user, profile }: ProfileAvatarProps) {
       </div>
     );
   }
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const dropdown = document.querySelector('.dropdown-container');
+      if (dropdown && !dropdown.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
 
-  // Handle logout
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Error signing out:', error);
-    } else {
-      window.location.href = "/"; // Redirect to home page
-      setTimeout(() => {
-        window.location.reload(); // Reload after redirection
-      }, 100); // Small delay to ensure redirection happens smoothly
+    console.log('Logout button clicked');
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Error signing out:', error);
+      } else {
+        console.log('Logged out successfully');
+        window.location.href = "/";
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+      }
+    } catch (error) {
+      console.error('Unexpected error during logout:', error);
     }
   };
 
@@ -43,15 +62,15 @@ function ProfileAvatar({ user, profile }: ProfileAvatarProps) {
         <div className="flex items-center gap-3 bg-gray-50 dark:bg-gray-900 px-3 py-2 rounded-full shadow-sm">
           {/* Profile Avatar and Name */}
           <button
-            type="button"
-            className="flex items-center focus:outline-none cursor-pointer"
-          >
-            <img
+          type="button"
+          className="flex items-center focus:outline-none cursor-pointer"
+      >
+          <img
               src={profile?.avatar_url || fallbackAvatarUrl}
               alt="Profile"
-              className="w-9 h-9 rounded-full border-2 border-white dark:border-gray-700 shadow-sm"
-            />
-          </button>
+              className="w-12 h-12 rounded-full border-2 border-white dark:border-gray-700 shadow-sm object-cover"
+          />
+      </button>
           <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
             {profile.first_name}
           </span>
@@ -120,12 +139,12 @@ function ProfileAvatar({ user, profile }: ProfileAvatarProps) {
 
 
         <button
-          onClick={handleLogout}
-          className="flex w-full items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer"
-        >
-          <FiLogOut className="mr-3 h-4 w-4" />
-          Sign out
-        </button>
+                onClick={handleLogout}
+                className="flex w-full items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer"
+              >
+                <FiLogOut className="mr-3 h-4 w-4" />
+                Sign out
+              </button>
       </div>
     </div>
   </>

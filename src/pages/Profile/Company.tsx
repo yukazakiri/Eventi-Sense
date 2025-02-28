@@ -19,7 +19,7 @@ interface User {
   id: string;
 }
 
-const CreateCompany: React.FC = () => {
+const CompanyProfile: React.FC = () => {
   const [company, setCompany] = useState<Company>({
     company_name: "", // Initialize with empty string
     company_address: "",
@@ -94,7 +94,7 @@ const CreateCompany: React.FC = () => {
     }
   };
 
-
+  const fallbackAvatarUrl = '/images/istockphoto-1207942331-612x612.jpg';
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof Company) => {
         setCompany({ ...company, [field]: e.target.value });
     };
@@ -242,7 +242,7 @@ const handleSave = async () => {
   if (initialLoad) {
     return <div><PulseLoader color="#0000ff" /></div>;
   }
-  const fallbackAvatarUrl = '/images/istockphoto-1207942331-612x612.jpg';
+
   return (
     <div className="pb-4  px-2">
       <div className="m-4 bg-white p-6 border border-gray-300 rounded-2xl font-sofia dark:bg-gray-900 dark:border-gray-700">
@@ -265,7 +265,7 @@ const handleSave = async () => {
           </div>
         </div>
       </div>
-      <div className={`m-4 bg-white p-6 border border-gray-300 rounded-2xl font-sofia dark:bg-gray-900 dark:border-gray-700 ${editing ? 'border-[1px] border-indigo-300 dark:border-indigo-300' : ''}`}>
+<div className={`m-4 bg-white p-6 border border-gray-300 rounded-2xl font-sofia dark:bg-gray-900 dark:border-gray-700 ${editing ? 'border-[1px] border-indigo-300 dark:border-indigo-300' : ''}`}>
      
    <form className="space-y-6 ">
    <div className=" flex items-center justify-between">
@@ -411,4 +411,4 @@ const handleSave = async () => {
   );
 };
 
-export default CreateCompany;
+export default CompanyProfile;

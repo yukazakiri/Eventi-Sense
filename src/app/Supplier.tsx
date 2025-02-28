@@ -111,7 +111,7 @@ function SupplierDashboard() {
     <div className="flex h-screen bg-blue-light-1 dark:bg-gray-950 ">
       <Sidebar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex justify-end items-center p-4 bg-white dark:border-b-[1px] border-gray-500 dark:bg-gray-950 shadow-md z-0 font-sofia text-gray-800">
+        <div className="flex justify-end items-center p-4 bg-white dark:border-b-[1px] border-gray-500 dark:bg-gray-950 dark:border-gray-700 shadow-md z-0 font-sofia text-gray-800">
           <div className="flex items-center gap-2">
    
             <div>
@@ -120,10 +120,10 @@ function SupplierDashboard() {
               e.stopPropagation();
               toggleDarkMode();
             }}
-            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 border-[1px]  dark:border-gray-700 transition-colors"
+            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 border-[1px] border-gray-300 dark:border-gray-700 transition-colors"
             aria-label="Toggle theme"
           >
-            <div className="relative w-5 h-5">
+            <div className="relative w-7 h-7">
               <span className={`absolute inset-0 transform transition-transform duration-500 text-gray-700  dark:text-gray-200 ${
                 isDarkMode ? 'rotate-0 opacity-100' : 'rotate-90 opacity-0'
               }`}>

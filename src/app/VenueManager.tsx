@@ -5,7 +5,7 @@ import Sidebar from '../components/Sidebar/VenueManager';
 import routes from '../routers/Venue-Manager/Routes';
 import { getCurrentUser, fetchProfile } from '../api/utiilty/profiles';
 import { Profile } from '../types/profile';
-
+import NotificationBadge from '../components/Notifications/NotificationBadge';
 import UserProfile from '../components/Profile/StockHoldersProfileAvatar'; // Add import for UserProfile component
 import { FiMoon } from 'react-icons/fi';
 import { FiSun } from 'react-icons/fi';
@@ -115,25 +115,27 @@ function VenueManagerDashboard() {
     <div className="flex h-screen bg-blue-light-1 dark:bg-gray-950 ">
       <Sidebar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex justify-end items-center p-4 bg-white dark:border-b-[1px] border-gray-700 dark:bg-gray-950 shadow-md  font-sofia text-gray-800">
+        <div className="flex justify-end items-center p-4 bg-white dark:border-b-[1px] border-gray-700 dark:bg-gray-950 shadow-md dark:border-gray-700 font-sofia text-gray-800">
           <div className="flex items-center gap-2">
-       
+       <div >
+        <NotificationBadge />
+       </div>
             <div>
             <button
             onClick={(e) => {
               e.stopPropagation();
               toggleDarkMode();
             }}
-            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 border-[1px]  dark:border-gray-700 transition-colors"
+            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 border-[1px] border-gray-300  dark:border-gray-700 transition-colors"
             aria-label="Toggle theme"
           >
-            <div className="relative w-5 h-5">
-              <span className={`absolute inset-0 transform transition-transform duration-500 text-gray-700  dark:text-gray-200 ${
+            <div className="relative w-7 h-7">
+              <span className={`absolute inset-0 transform transition-transform duration-500 text-gray-700  dark:text-gray-400 ${
                 isDarkMode ? 'rotate-0 opacity-100' : 'rotate-90 opacity-0'
               }`}>
                 <FiMoon className="w-full h-full " />
               </span>
-              <span className={`absolute inset-0 transform transition-transform duration-500 text-gray-700 dark:text-gray-200 ${
+              <span className={`absolute inset-0 transform transition-transform duration-500 text-gray-700 dark:text-gray-400 ${
                 !isDarkMode ? 'rotate-0 opacity-100' : '-rotate-90 opacity-0'
               }`}>
                 <FiSun className="w-full h-full " />

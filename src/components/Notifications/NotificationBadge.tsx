@@ -13,11 +13,11 @@ const NotificationBadge = () => {
       {/* Notification Icon with Badge */}
       <button 
         onClick={() => setShowNotifications(!showNotifications)}
-        className="relative p-2 text-gray-600 hover:text-gray-800 focus:outline-none dark:text-gray-200"
+       className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 border-[1px] border-gray-300  dark:border-gray-700 transition-colors"
         aria-label="Notifications"
         aria-expanded={showNotifications}
       >
-        <IoNotificationsOutline className="w-5 h-5" />
+        <IoNotificationsOutline className="w-7 h-7 text-gray-700  dark:text-gray-400" />
         {notificationCount > 0 && (
           <span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
             {notificationCount}
@@ -47,7 +47,7 @@ const NotificationBadge = () => {
 
           <Link 
             to="/Venue-Manager-Dashboard/notifications"
-            className="block p-4 text-sm dark:text-gray-200 text-gray-600 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 border-t border-gray-100 dark:border-gray-600 transition-colors"
+            className="block p-4 text-sm dark:text-gray-200 text-gray-600  hover:bg-gray-50 dark:hover:bg-gray-800 border-t border-gray-100 dark:border-gray-600 transition-colors"
             onClick={() => setShowNotifications(false)}
           >
             <div className="flex items-center justify-between">

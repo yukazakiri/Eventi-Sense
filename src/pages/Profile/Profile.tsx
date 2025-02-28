@@ -41,31 +41,56 @@ export default function Profile() {
   });
 
   const fallbackAvatarUrl = '/images/istockphoto-1207942331-612x612.jpg';
-
   useEffect(() => {
+    let isMounted = true; // Track component mount status
+    const controller = new AbortController(); 
+  
     const loadProfile = async () => {
-      const user = await getCurrentUser();
-      if (user) {
-        const profileData = await fetchProfile(user.id);
-        if (profileData) {
-          setProfile(profileData);
-          setFormData({
-            first_name: profileData.first_name,
-            last_name: profileData.last_name,
-            email: user.email || '',
-            role: profileData.role,
-            avatar_url: profileData.avatar_url || '',
-          });
-          setAvatarUrl(profileData.avatar_url || fallbackAvatarUrl);
-          setEmail(user.email || '');
-        } else {
-          console.error('Error fetching profile: Profile not found');
+      try {
+        const user = await getCurrentUser();
+        
+        if (!isMounted) return; // Exit if component unmounted
+        
+        if (user) {
+          const profileData = await fetchProfile(user.id);
+          
+          if (!isMounted) return; // Check again after async operation
+          
+          if (profileData) {
+            setProfile(profileData);
+            setFormData({
+              first_name: profileData.first_name,
+              last_name: profileData.last_name,
+              email: user.email || '',
+              role: profileData.role,
+              avatar_url: profileData.avatar_url || '',
+            });
+            setAvatarUrl(profileData.avatar_url || fallbackAvatarUrl);
+            setEmail(user.email || '');
+          } else {
+            console.error('Error fetching profile: Profile not found');
+          }
+        }
+      } catch (error: any) {
+        // Don't log errors if request was aborted or component unmounted
+        if (error.name === 'AbortError') {
+          console.log('Fetch aborted');
+          return;
+        }
+        
+        if (isMounted) {
+          console.error('Error loading profile:', error);
         }
       }
     };
+    
     loadProfile();
+  
+    return () => {
+      isMounted = false;
+      controller.abort(); // Abort any pending requests
+    };
   }, []);
-
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -80,26 +105,68 @@ export default function Profile() {
   const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+      if (!allowedTypes.includes(file.type)) {
+        setModalData({
+          isOpen: true,
+          title: 'Upload Failed',
+          description: 'Please upload a valid image file (JPEG, JPG, or PNG).',
+          type: 'error',
+        });
+        return;
+      }
+  
+      // Validate file size (e.g., 5MB limit)
+      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+      if (file.size > maxSize) {
+        setModalData({
+          isOpen: true,
+          title: 'Upload Failed',
+          description: 'Image size exceeds the limit (5MB).',
+          type: 'error',
+        });
+        return;
+      }
+  
       setUploading(true);
       const user = await getCurrentUser();
       if (user) {
-        const publicUrl = await uploadAvatar(user.id, file);
-        if (publicUrl) {
-          setFormData((prevFormData) => ({ ...prevFormData, avatar_url: publicUrl }));
-          setAvatarUrl(publicUrl);
-          setModalData({
-            isOpen: true,
-            title: 'Upload Successful',
-            description: 'Your file has been uploaded successfully.',
-            type: 'success',
-          });
-        } else {
-          setModalData({
-            isOpen: true,
-            title: 'Upload Failed',
-            description: 'There was an error uploading your file.',
-            type: 'error',
-          });
+        try {
+          const publicUrl = await uploadAvatar(user.id, file);
+          if (publicUrl) {
+            setFormData((prevFormData) => ({ ...prevFormData, avatar_url: publicUrl }));
+            setAvatarUrl(publicUrl);
+            setModalData({
+              isOpen: true,
+              title: 'Upload Successful',
+              description: 'Your file has been uploaded successfully.',
+              type: 'success',
+            });
+          } else {
+            setModalData({
+              isOpen: true,
+              title: 'Upload Failed',
+              description: 'There was an error uploading your file.',
+              type: 'error',
+            });
+          }
+        } catch (error: any) {
+          if (error.statusCode === 409) {
+            setModalData({
+              isOpen: true,
+              title: 'Upload Failed',
+              description: 'A file with the same name already exists. Please try again.',
+              type: 'error',
+            });
+          } else {
+            setModalData({
+              isOpen: true,
+              title: 'Upload Failed',
+              description: error.message || 'There was an error uploading your file.',
+              type: 'error',
+            });
+          }
         }
       } else {
         setModalData({
@@ -218,7 +285,7 @@ export default function Profile() {
             <div className="mb-6">
               <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">Email address</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center px-3 pointer-events-none border-r-[1px] border-gray-200">
+                <div className="absolute inset-y-0 left-0 flex items-center px-3 pointer-events-none border-r-[1px] border-gray-200 dark:border-gray-700">
                   <MdOutlineMailOutline className="w-5 h-5 text-gray-500" />
                 </div>
                 <input
@@ -233,22 +300,23 @@ export default function Profile() {
               </div>
             </div>
             <div className="col-span-2">
-              <label className="block mb-2 text-sm font-medium text-gray-800 dark:text-white">Profile Avatar</label>
-              <input
-                type="file"
-                onChange={handleFileUpload}
-                disabled={!isEditing || uploading}
-                className="mt-2 block w-full text-sm text-gray-600 dark:text-gray-200"
+            <label className="block mb-2 text-sm font-medium text-gray-800 dark:text-white">Profile Avatar</label>
+            <input
+              type="file"
+              onChange={handleFileUpload}
+              disabled={!isEditing || uploading}
+              accept=".jpg, .jpeg, .png" // Restrict file types
+              className="mt-2 block w-full text-sm text-gray-600 dark:text-gray-200"
+            />
+            {formData.avatar_url && (
+              <img
+                src={formData.avatar_url}
+                alt="Profile Avatar"
+                className="mt-4 w-48 h-48 rounded-md"
+                onError={(e) => console.error("Image load error", e)}
               />
-              {formData.avatar_url && (
-                <img
-                  src={formData.avatar_url}
-                  alt="Profile Avatar"
-                  className="mt-4 w-48 h-48 rounded-md"
-                  onError={(e) => console.error("Image load error", e)}
-                />
-              )}
-            </div>
+            )}
+          </div>
           </form>
         ) : (
           <PulseLoader color="#0000ff" />

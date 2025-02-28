@@ -19,7 +19,7 @@ const routes: RouteObject[] = [
   { path: '/Home', element: <Home /> },
   { path: '/Profiles', element: <Profiles /> },
   { path: '/Supplier', element: <SupplierInfo /> },
-  { path: '/CreateCompanyProfile', element: <CreateCompany /> },
+  { path: '/CreateCompany/:userId', element: <CreateCompany /> },
   { path: '/Services', element: <Services/>},
   { path: '/Calendar', element: <CalendarPage /> },
   { path: '/Booking', element: <Booking/> },

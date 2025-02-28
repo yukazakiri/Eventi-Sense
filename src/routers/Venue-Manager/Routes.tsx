@@ -17,14 +17,14 @@ import RequestTicket from '../../pages/Events/RequestTickets';
 import EventListing from '../../components/EventsCards/Event-List';
 import CreateEventForm from '../../pages/Events/CreateEvents';
 import AllNotifications from '../../pages/Notifications/AllNotifications';
-    
+import CreateCompany from '../../pages/Profile/CreateCompany';
 const routes: RouteObject[] = [ 
  { path: '/', element: <Home /> },
  { path: '/Home', element: <Home /> },
 
  { path: '/Profile', element: <Profile /> },
  { path: '/CompanyProfile', element: <Company /> },
-
+ { path: '/CreateCompany/:userId', element: <CreateCompany /> },
  { path: '/Financial-Overview', element: <Testimage /> },
 
  { path: '/CreateVenue', element: <CreateVenue/> },
