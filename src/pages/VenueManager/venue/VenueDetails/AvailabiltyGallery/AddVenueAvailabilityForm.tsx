@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css";
 import supabase from '../../../../../api/supabaseClient';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import CustomModal from '../../../../../assets/modal/customcalendar';
-
+import CreateEventModal from '../../../../../assets/modal/CreateEventModal';
 
 interface AvailabilityEvent {
   id: string;
@@ -196,195 +194,112 @@ const handleDateClick = (info: any) => {
     setSuccessMessage('');
   };
 
-  const handleDeleteAvailability = async (id: string) => {
-    setError('');
-    setSuccessMessage('');
-
-    try {
-      const { error } = await supabase
-        .from("venue_availability")
-        .delete()
-        .eq("id", id);
-
-      if (error) throw error;
-
-      fetchEvents();
-      closeModal();
-      setSuccessMessage("Availability deleted successfully!");
-    } catch (error) {
-      console.error("Error deleting availability:", error);
-      setError("Error deleting availability. Please try again.");
-    }
-  };
-    // Add update function
-    const handleUpdateAvailability = async () => {
-      if (!selectedEvent || !editedStart || !editedEnd) return;
-    
-      try {
-        const { error } = await supabase
-          .from("venue_availability")
-          .update({
-            available_start: editedStart.toISOString(),
-            available_end: editedEnd.toISOString(),
-            color: selectedColor, // Ensure this line is present
-          })
-          .eq("id", selectedEvent.id);
-    
-        if (error) throw error;
-    
-        fetchEvents();
-        setIsEditing(false);
-        setSuccessMessage("Availability updated successfully!");
-      } catch (error) {
-        console.error("Error updating availability:", error);
-        setError("Error updating availability. Please try again.");
-      }
-    };
   return (
-    <div className='py-4 my-[2rem] font-sofia bg-white dark:bg-gray-900 mx-4 p-8 rounded-3xl border-[1px] border-gray-300 dark:border-gray-700'>
-    
-      {selectedDate && (
-        <p className="mb-4 text-gray-700 dark:text-gray-300">Selected date: {selectedDate.toDateString()}</p>
-      )}
-      <div className='flex justify-between my-4'>
-        <div>
-        <h2 className="text-3xl font-semibold text-gray-700 dark:text-gray-200 mb-4 font-bonanova">Existing Events</h2>
-      
-        </div>
-        {isCreating ? (
-          <div className="border dark:border-gray-700 rounded-xl mb-8 overflow-hidden max-w-max bg-white dark:bg-gray-800 p-4 shadow-lg">
-            <h3 className="text-xl font-bold mb-2 text-gray-700 dark:text-gray-200">Create New Availability</h3>
-            <label htmlFor="start" className="text-gray-700 dark:text-gray-300">Start Time:</label><br />
-            <DatePicker
-              selected={newAvailability.start}
-              onChange={(date) => handleNewAvailabilityChange('start', date)}
-              showTimeSelect
-              dateFormat="Pp"
-              className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg p-2"
-            /><br /><br />
+    <div className="py-4 font-sofia bg-white p-8 rounded-3xl border-[1px] border-gray-300 dark:bg-gray-900 dark:border-gray-700">
+    <div className='flex justify-between'>
+     <div className='text-gray-500 dark:text-gray-400 my-4 ml-4'>
+    <div className='flex gap-2 mb-2'> <p style={{backgroundColor: '#E2D6FF'}} className='w-4 h-4 rounded'></p>
+      <h2 className='flex justify-center'>
+       <span className='text-indigo-500 dark:text-indigo-400'>Scheduled: </span> 
+       <span className="dark:text-gray-300">This indicates an event or task that is planned for a future date and time.</span>
+      </h2>
+    </div>
+    <div className='flex gap-2 mb-2'> <p style={{backgroundColor: '#FCD9D9'}} className='w-4 h-4 rounded'></p>
+      <h2 className='flex justify-center'>
+        <span className='text-red-500 dark:text-red-400'>Cancelled: </span>
+        <span className="dark:text-gray-300">This indicates that an event or task has been canceled or postponed.</span>
+      </h2>
+    </div>
+    <div className='flex gap-2 mb-2'> <p style={{backgroundColor: '#D6FFE7'}} className='w-4 h-4 rounded'></p>
+      <h2 className='flex justify-center'>
+       <span className='text-green-500 dark:text-green-400'>Completed: </span>
+       <span className="dark:text-gray-300">This indicates that an event or task has been completed.</span>
+      </h2>
+    </div>
+    <div className='flex gap-2 mb-2'> <p style={{backgroundColor: '#FFE9D6'}} className='w-4 h-4 rounded'></p>
+      <h2 className='flex justify-center'>
+        <span className='text-orange-500 dark:text-orange-400'>On Progress: </span>
+        <span className="dark:text-gray-300">This indicates that an event or task is currently in progress.</span>
+      </h2>
+    </div>
+  
+  </div>
+  {/* Add Event Button */}
+  <button
+    onClick={handleCreateClick}
+    className="h-16 bg-blue-500 hover:bg-blue-600 text-white py-4 px-4 rounded-2xl dark:bg-blue-500 dark:hover:bg-blue-600 dark:text-white"
+  >
+    Add Event+
+  </button>
+</div>
+  {/* Create Event Modal */}
+  <CreateEventModal
+    isOpen={isCreating}
+    onClose={handleCancelCreate}
+    newAvailability={newAvailability}
+    onSave={handleSaveAvailability}
+    onCancel={handleCancelCreate}
+    onFieldChange={handleNewAvailabilityChange}
+    error={error}
+  />
 
-            <label htmlFor="end" className="text-gray-700 dark:text-gray-300">End Time:</label><br />
-            <DatePicker
-              selected={newAvailability.end}
-              onChange={(date) => handleNewAvailabilityChange('end', date)}
-              showTimeSelect
-              dateFormat="Pp"
-              className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg p-2"
-            /><br /><br />
-
-            <label htmlFor="title" className="text-gray-700 dark:text-gray-300">Title:</label><br />
-            <textarea
-              value={newAvailability.title}
-              onChange={(e) => handleNewAvailabilityChange('title', e.target.value)}
-              className="border dark:border-gray-600 rounded w-full p-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
-            /><br /><br />
-
-            <button onClick={handleSaveAvailability} 
-              className="bg-indigo-500 hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mr-2">
-              Save
-            </button>
-            <button onClick={handleCancelCreate} 
-              className="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded">
-              Cancel
-            </button>
-          </div>
-        ) : (
-          <button onClick={handleCreateClick} 
-            className="bg-blue-400 hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-600 text-white py-4 px-4 rounded-2xl">
-           Add Event+
-          </button>
-        )}
-      </div>
-      <div className='text-gray-500 dark:text-gray-400 my-4 ml-4'>
-        <div className='flex gap-2 mb-2'> <p style={{backgroundColor: '#E2D6FF'}} className='w-4 h-4 rounded'></p>
-          <h2 className='flex justify-center'>
-           <span className='text-indigo-500 dark:text-indigo-400'>Scheduled: </span> 
-           <span className="dark:text-gray-300">This indicates an event or task that is planned for a future date and time.</span>
-          </h2>
-        </div>
-        <div className='flex gap-2 mb-2'> <p style={{backgroundColor: '#FCD9D9'}} className='w-4 h-4 rounded'></p>
-          <h2 className='flex justify-center'>
-            <span className='text-red-500 dark:text-red-400'>Cancelled: </span>
-            <span className="dark:text-gray-300">This indicates that an event or task has been canceled or postponed.</span>
-          </h2>
-        </div>
-        <div className='flex gap-2 mb-2'> <p style={{backgroundColor: '#D6FFE7'}} className='w-4 h-4 rounded'></p>
-          <h2 className='flex justify-center'>
-           <span className='text-green-500 dark:text-green-400'>Completed: </span>
-           <span className="dark:text-gray-300">This indicates that an event or task has been completed.</span>
-          </h2>
-        </div>
-        <div className='flex gap-2 mb-2'> <p style={{backgroundColor: '#FFE9D6'}} className='w-4 h-4 rounded'></p>
-          <h2 className='flex justify-center'>
-            <span className='text-orange-500 dark:text-orange-400'>On Progress: </span>
-            <span className="dark:text-gray-300">This indicates that an event or task is currently in progress.</span>
-          </h2>
-        </div>
-      
-      </div>
-      <div className="border dark:border-gray-700 rounded-3xl mb-8 overflow-hidden bg-white dark:bg-gray-950 p-8 shadow-lg">
-      <FullCalendar
-        ref={calendarRef}
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        headerToolbar={{
-          left: 'prev,next today',
-          center: 'title',  
-          right: 'dayGridMonth,timeGridWeek,timeGridDay',
-        }}
-        events={events} // Pass the events array with color properties
-
-        eventClick={handleEventClick}
-        dateClick={handleDateClick}
-        // Add eventContent for more customization if needed
-        eventContent={(arg) => {
-        return (
-          <div
+  {/* Calendar and other components */}
+  <div className="border rounded-3xl mb-8 overflow-hidden bg-white p-8 shadow-lg dark:bg-gray-950 dark:border-gray-700">
+    <FullCalendar
+      ref={calendarRef}
+      plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+      initialView="dayGridMonth"
+      headerToolbar={{
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay',
+      }}
+      events={events}
+      eventClick={handleEventClick}
+      dateClick={handleDateClick}
+      eventContent={(arg) => (
+        <div
           className="fc-event-content flex flex-col py-4 xl:flex-row items-center justify-start md:justify-between md:space-x-4 rounded-lg px-4 w-full"
           style={{ backgroundColor: arg.event.backgroundColor, color: arg.event.textColor }}
         >
-    {/* Event Dot */}
-    <div className="fc-daygrid-event-line w-2  h-2 rounded-full mb-2 md:mb-0 py-4" style={{ backgroundColor: arg.event.backgroundColor,color: arg.event.textColor, filter: 'brightness(0.8)' }}></div>
-  
-    {/* Event Details */}
-    <div className="flex flex-col xl:flex-row items-center justify-start md:justify-between md:space-x-4 w-full">
-      {/* Event Title */}
-      <div className="fc-event-time text-center md:text-left mb-2 md:mb-0 dark:text-gray-200">
-        {arg.event.title}
-      </div>
-  
-    </div>
+          <div
+            className="fc-daygrid-event-line w-2 h-2 rounded-full mb-2 md:mb-0 py-4"
+            style={{ backgroundColor: arg.event.backgroundColor, filter: 'brightness(0.8)' }}
+          ></div>
+          <div className="flex flex-col xl:flex-row items-center justify-start md:justify-between md:space-x-4 w-full">
+            <div className="fc-event-time text-center md:text-left mb-2 md:mb-0 dark:text-black">
+              {arg.event.title}
+            </div>
+          </div>
+        </div>
+      )}
+    />
   </div>
- )
-  }}
-/>
-      </div>
 
-  
-
-      <CustomModal
-  isOpen={isModalOpen}
-  onClose={closeModal}
-  title="Availability Details"
-  selectedEvent={selectedEvent}
-  selectedDate={selectedDate}
-  error={error}
-  setError={setError}
-  successMessage={successMessage}
-  setSuccessMessage={setSuccessMessage}
-  modalContent={modalContent}
-  onDelete={handleDeleteAvailability}
-  onUpdate={handleUpdateAvailability}
-  isEditing={isEditing}
-  setIsEditing={setIsEditing}
-  editedStart={editedStart}
-  editedEnd={editedEnd}
-  setEditedStart={setEditedStart}
-  setEditedEnd={setEditedEnd}
-  selectedColor={selectedColor} // Add this line
-  setSelectedColor={setSelectedColor} // Add this line
-/>
-    </div>
+  {/* Custom Modal for Event Details */}
+  <CustomModal
+    isOpen={isModalOpen}
+    onClose={closeModal}
+    title="Availability Details"
+    selectedEvent={selectedEvent}
+    selectedDate={selectedDate}
+    error={error}
+    setError={setError}
+    successMessage={successMessage}
+    setSuccessMessage={setSuccessMessage}
+    modalContent={modalContent}
+    onDelete={() => {}}
+    onUpdate={() => {}}
+    isEditing={isEditing}
+    setIsEditing={setIsEditing}
+    editedStart={editedStart}
+    editedEnd={editedEnd}
+    setEditedStart={setEditedStart}
+    setEditedEnd={setEditedEnd}
+    selectedColor={selectedColor}
+    setSelectedColor={setSelectedColor}
+  />
+</div>  
   );
 };
 

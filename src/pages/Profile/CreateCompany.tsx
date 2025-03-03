@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import supabase from "../../api/supabaseClient"; // Adjust the import path as needed
+import React, { useEffect, useState } from "react";
+import supabase from "../../api/supabaseClient";
 import { PulseLoader } from "react-spinners";
-import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
+import { useParams, useNavigate } from "react-router-dom";
 import { LuPencil } from "react-icons/lu";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { FiPhone } from "react-icons/fi";
-import Modal from "../../assets/modal/modal"; // Import your Modal component
+import Modal from "../../assets/modal/modal";
+import { fetchProfileRole } from "../../api/utiilty/profiles";
 
 interface Company {
   company_name: string;
@@ -17,13 +18,13 @@ interface Company {
 }
 
 interface CreateCompanyProps {
-  userId?: string; // Make userId optional
+  userId?: string;
 }
 
 const CreateCompany: React.FC<CreateCompanyProps> = ({ userId }) => {
-  const { userId: routeUserId } = useParams(); // Get userId from route params
-  const actualUserId = userId || routeUserId; // Use provided userId or route param
-  const navigate = useNavigate(); // Initialize useNavigate for redirection
+  const { userId: routeUserId } = useParams();
+  const actualUserId = userId || routeUserId;
+  const navigate = useNavigate();
 
   const [editing, setEditing] = useState<boolean>(false);
   const [company, setCompany] = useState<Company>({
@@ -41,6 +42,17 @@ const CreateCompany: React.FC<CreateCompanyProps> = ({ userId }) => {
   const [modalTitle, setModalTitle] = useState("");
   const [modalDescription, setModalDescription] = useState("");
   const [modalType, setModalType] = useState<"success" | "error">("success");
+  const [profileRole, setProfileRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getRole = async () => {
+      if (actualUserId) {
+        const role = await fetchProfileRole(actualUserId);
+        setProfileRole(role);
+      }
+    };
+    getRole();
+  }, [actualUserId]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof Company) => {
     setCompany({ ...company, [field]: e.target.value });
@@ -50,47 +62,45 @@ const CreateCompany: React.FC<CreateCompanyProps> = ({ userId }) => {
     const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     return regex.test(email);
   };
+
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-  
+
     const file = e.target.files[0];
-  
-    // Validate file type
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+
     if (!file || !allowedTypes.includes(file.type)) {
       setError("Please upload a valid image file (JPEG, JPG, or PNG).");
       return;
     }
-  
-    // Client-side file size validation (example: 5MB limit)
-    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+
+    const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
       setError("Image size exceeds the limit (5MB).");
       return;
     }
-  
+
     setLoading(true);
     setError(null);
-  
+
     try {
       const fileName = `Clogos/${actualUserId}_${file.name}`;
-  
       const { error: uploadError } = await supabase.storage
         .from("company_logos")
         .upload(fileName, file, { contentType: file.type, upsert: true });
-  
+
       if (uploadError) {
         throw uploadError;
       }
-  
+
       const { data: publicUrlData } = supabase.storage
         .from("company_logos")
         .getPublicUrl(fileName);
-  
+
       if (!publicUrlData) {
         throw new Error("Error getting public URL");
       }
-  
+
       setCompany((prev) => ({ ...prev, company_logo_url: publicUrlData.publicUrl }));
     } catch (err: any) {
       console.error("Error uploading logo:", err);
@@ -98,7 +108,7 @@ const CreateCompany: React.FC<CreateCompanyProps> = ({ userId }) => {
     } finally {
       setLoading(false);
       if (e.target instanceof HTMLInputElement) {
-        e.target.value = ""; // Clear the input
+        e.target.value = "";
       }
     }
   };
@@ -120,7 +130,7 @@ const CreateCompany: React.FC<CreateCompanyProps> = ({ userId }) => {
     try {
       const { data, error } = await supabase
         .from("company_profiles")
-        .insert([{ ...company, id: actualUserId }]) // Include actualUserId
+        .insert([{ ...company, id: actualUserId }])
         .select();
 
       if (error) {
@@ -132,18 +142,17 @@ const CreateCompany: React.FC<CreateCompanyProps> = ({ userId }) => {
         setModalDescription("Company profile created successfully!");
         setModalType("success");
         setShowModal(true);
-        setCompany({
-          company_name: "",
-          company_address: "",
-          company_email: "",
-          company_phone: "",
-          company_website: "",
-          company_logo_url: "",
-        });
 
-        // Redirect to the Event-Planner-Dashboard/Profiles page after 2 seconds
         setTimeout(() => {
-          navigate("/Event-Planner-Dashboard/Profiles");
+          if (profileRole === "event_planner") {
+            navigate("/Event-Planner-Dashboard/Profiles");
+          } else if (profileRole === "supplier") {
+            navigate("/Supplier-Dashboard/Supplier");
+          } else if (profileRole === "venue_manager") {
+            navigate("/Venue-Manager-Dashboard/Home");
+          } else {
+            navigate("/"); // Default redirection if role is unknown or null
+          }
         }, 2000);
       }
     } catch (err: any) {
@@ -160,9 +169,19 @@ const CreateCompany: React.FC<CreateCompanyProps> = ({ userId }) => {
 
   const closeModal = () => {
     setShowModal(false);
+    if (modalType === "success") {
+      setCompany({
+        company_name: "",
+        company_address: "",
+        company_email: "",
+        company_phone: "",
+        company_website: "",
+        company_logo_url: "",
+      });
+    }
   };
 
-  const fallbackAvatarUrl = '/images/istockphoto-1207942331-612x612.jpg';
+  const fallbackAvatarUrl = "/images/istockphoto-1207942331-612x612.jpg";
 
   return (
     <div className="pb-4 px-2">

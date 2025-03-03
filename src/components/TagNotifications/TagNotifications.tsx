@@ -63,7 +63,7 @@ const TagNotifications: React.FC<TagNotificationsProps> = ({
           setLoading(false);
           return;
         }
-        
+
         if (profile?.role === 'venue_manager') {
           const { data: managedVenues, error: venuesError } = await supabase
             .from('venues')
@@ -310,8 +310,8 @@ const TagNotifications: React.FC<TagNotificationsProps> = ({
                 className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
               >
                 <IoClose className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-              </button>
-            </div>
+      </button>
+          </div>
 
             <div className="space-y-4">
               <div>

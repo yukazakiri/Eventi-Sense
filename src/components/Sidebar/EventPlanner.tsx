@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
     MdOutlineManageAccounts,
@@ -13,6 +13,9 @@ import { HiOutlineDotsHorizontal } from 'react-icons/hi';
 import { PiConfetti } from 'react-icons/pi';
 import { IoTicketOutline } from 'react-icons/io5';
 import { LuCalendarCheck } from 'react-icons/lu';
+import { PulseLoader } from 'react-spinners';
+import { getCurrentUser } from '../../api/utiilty/profiles';
+import { fetchEventPlanner } from '../../api/utiilty/eventplanner';
 
 interface SidebarProps {
     isSidebarOpen: boolean;
@@ -56,8 +59,56 @@ const SidebarItem: React.FC<{
     );
 };
 
+interface EventPlannerProfile {
+    id: string;
+    // Add other profile fields as needed
+    [key: string]: any;
+  }
+
 const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setSidebarOpen }) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const [profileData, setProfileData] = useState<EventPlannerProfile | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [hasEventPlanner, setHasEventPlanner] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        const user = await getCurrentUser();
+        if (user) {
+          try {
+            const eventPlanner = await fetchEventPlanner(user.id);
+            if (eventPlanner) {
+              setProfileData(eventPlanner as EventPlannerProfile);
+              setHasEventPlanner(true);
+            } else {
+              setHasEventPlanner(false);
+            }
+            setIsLoading(false);
+          } catch (err) {
+            console.error("Error fetching profile:", err);
+            setError(err instanceof Error ? err.message : "An error occurred");
+            setIsLoading(false);
+          }
+        } else {
+          setIsLoading(false);
+        }
+      };
+  
+      fetchData();
+    }, []);
+  
+    if (isLoading) {
+      return (
+        <div className="flex justify-center items-center h-screen">
+          <PulseLoader color="#0000ff" />
+        </div>
+      );
+    }
+  
+    if (error) {
+      return <div>Error: {error}</div>;
+    }
 
     return (
         <>
@@ -100,24 +151,21 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setSidebarOpen }) => {
                     <h2 className={`text-sm uppercase my-2 ml-4 ${isCollapsed ? 'hidden' : 'block'} text-gray-600 dark:text-gray-400`}>
                         menu
                     </h2>
-
+                    {hasEventPlanner && profileData ? (
+                        <>
                     <nav>
                         <ul className={`space-y-2 text-gray-800 ${isCollapsed ? 'mt-[1rem]' : 'mt-0'}`}>
+                     
                             <SidebarItem to="/Event-Planner-Dashboard/Home" icon={<RiHome9Line className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Home" isCollapsed={isCollapsed} />
-                            <SidebarItem to="/Event-Planner-Dashboard/Profiles" icon={<MdOutlineManageAccounts className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Profiles" isCollapsed={isCollapsed} />
-                            <SidebarItem to="/Event-Planner-Dashboard/Create-User" icon={<MdPeople className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Attendee Management" isCollapsed={isCollapsed} />
+                            <SidebarItem to="/Event-Planner-Dashboard/Profile" icon={<MdOutlineManageAccounts className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Profiles" isCollapsed={isCollapsed} />
+
+                            <SidebarItem to="/Event-Planner-Dashboard/Business-Profile" icon={<MdPeople className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Business Profile" isCollapsed={isCollapsed} />
                             <SidebarItem to="/Event-Planner-Dashboard/Financial-Overview" icon={<MdAttachMoney className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Financial Overview" isCollapsed={isCollapsed} />
                             <SidebarItem to="/Event-Planner-Dashboard/Venue-List" icon={<MdAssignment className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Venue" isCollapsed={isCollapsed} />
-                            <SidebarItem to="/Event-Planner-Dashboard/Booking-List" icon={<LuCalendarCheck  className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Bookings" isCollapsed={isCollapsed} />
+                            <SidebarItem to="/Event-Planner-Dashboard/Calendar" icon={<LuCalendarCheck  className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Calendar" isCollapsed={isCollapsed} />
                         </ul>
                     </nav>
-                    {isCollapsed &&
-                                <div className='flex justify-center my-4'>
-                                 <HiOutlineDotsHorizontal className='flex justify-center text-[1.6rem] text-gray-400'/>
-                                 </div>
-                     }
-
-           
+                    
                     <h2 className={`text-sm uppercase my-4  ml-4 ${isCollapsed ? 'hidden' : 'block'} text-gray-600`}>events</h2>
                     <nav>
                         <ul className="space-y-2 text-gray-800">
@@ -125,7 +173,26 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setSidebarOpen }) => {
                         <SidebarItem to="/Event-Planner-Dashboard/TicketList" icon={<IoTicketOutline     className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Ticket List" isCollapsed={isCollapsed} />
                                     
                         </ul>
-                    </nav>  
+                    </nav></> 
+                    ) : (
+                        <>
+                        <nav>
+                        <ul className={`space-y-2 text-gray-800 ${isCollapsed ? 'mt-[1rem]' : 'mt-0'}`}>
+                     
+                            <SidebarItem to="/Event-Planner-Dashboard/Home" icon={<RiHome9Line className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Home" isCollapsed={isCollapsed} />
+                            <SidebarItem to="/Event-Planner-Dashboard/Profile" icon={<MdOutlineManageAccounts className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Profiles" isCollapsed={isCollapsed} />
+                       </ul>
+                    </nav>
+                    
+            
+</>
+                    
+                    )}
+                    {isCollapsed &&
+                                <div className='flex justify-center my-4'>
+                                 <HiOutlineDotsHorizontal className='flex justify-center text-[1.6rem] text-gray-400'/>
+                                 </div>
+                     }
 
                 </div>
             </aside>

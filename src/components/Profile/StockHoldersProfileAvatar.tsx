@@ -117,9 +117,18 @@ function ProfileAvatar({ user, profile }: ProfileAvatarProps) {
             <FiUser className="mr-3 h-4 w-4" />
             View Profile
           </NavLink>
-        ) : profile.role === 'supplier' ? (
+        ) : profile.role === 'supplier' ? ( 
           <NavLink 
             to="/Supplier-Dashboard/profiles" 
+            className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+            onClick={() => setDropdownOpen(false)}
+          >
+            <FiUser className="mr-3 h-4 w-4" />
+            View Profile
+          </NavLink>
+          ) : profile.role === 'event_planner' ? (
+          <NavLink 
+            to="/Event-Planner-Dashboard/profiles" 
             className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
             onClick={() => setDropdownOpen(false)}
           >

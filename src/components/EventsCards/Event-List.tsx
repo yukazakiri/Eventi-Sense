@@ -30,7 +30,7 @@ function EventListing() {
 
   // Define breadcrumb items based on the user's role
   const breadcrumbItems = [
-    { label: 'Home', href: userRole === 'supplier' ? '/Supplier-Dashboard/Home' : '/Venue-Manager-Dashboard/Home', icon: <HomeIcon className="h-4 w-4 mr-1" /> },
+    { label: 'Home', href: userRole === 'supplier' ? '/Supplier-Dashboard/Home' : userRole === 'venue_manager' ? '/Venue-Manager-Dashboard/Home' : '/Event-Planner-Dashboard/Home', icon: <HomeIcon className="h-4 w-4 mr-1" /> },
     { label: 'Event List', href: '' },
   ];
 
@@ -77,6 +77,27 @@ function EventListing() {
             <h1 className="text-[16px] font-semibold tracking-wider text-gray-800 my-4 ml-4 font-sofia dark:text-white">Venue Manager Event Lists</h1>
             <div className='p-4'>
               <Link to="/Venue-Manager-Dashboard/CreateEvents" className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-2xl dark:bg-blue-500 dark:hover:bg-blue-600">Create Event</Link>
+            </div>
+          </div>
+          <EventList />
+        </div>
+      </div>
+    );
+    }
+   else if (userRole === 'event_planner') {
+    return (
+      <div className='md:mx-10'>
+        <div className='flex justify-between'>
+          <h1 className="text-3xl flex items-center font-semibold tracking-tight text-gray-700 my-4 font-bonanova ">Event Planner Dashboard</h1>
+          <div className="flex items-end">
+            <Breadcrumbs items={breadcrumbItems} />
+          </div>
+        </div>
+        <div className='bg-white p-4 border-[1px] border-gray-300 rounded-3xl mb-8 dark:bg-gray-950 dark:border-gray-700'>
+          <div className='flex justify-between'>
+            <h1 className="text-[16px] font-semibold tracking-wider text-gray-800 my-4 ml-4 font-sofia dark:text-white">Event Planner Event Lists</h1>
+            <div className='p-4'>
+              <Link to="/Event-Planner-Dashboard/CreateEvents" className="text-white bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-2xl dark:bg-blue-500 dark:hover:bg-blue-600">Create Event</Link>
             </div>
           </div>
           <EventList />

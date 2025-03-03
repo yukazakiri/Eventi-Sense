@@ -212,7 +212,7 @@ const SupplierForm = () => {
         }
 
         alert("Supplier successfully created!");
-        navigate('/Supplier-Manager-Dashboard/Supplier-Information');
+        navigate('/Supplier-Dashboard/Home');
 
     } catch (error: any) {
         console.error("Error during submission:", error);
@@ -236,21 +236,23 @@ const SupplierForm = () => {
 
   return (
     <>
-      <div className='flex items-center'>
-              <Breadcrumbs items={breadcrumbItems} />
+  
+      <div className='flex justify-between  md:mx-4 mx-2 md:my-4 my-2'>
+                <h1 className="text-2xl font-bold font-bonanova text-gray-600 dark:text-white ">Add you Business Information</h1>
+                <Breadcrumbs items={breadcrumbItems} />
             </div>
-    <div className="mx-8  my-[6rem] font-sofia border-gray-300 border-[1px] rounded-3xl p-4 bg-white">
+          
+ 
+    <div className="mx-8  font-sofia border-gray-300 border-[1px] rounded-3xl p-4 bg-white dark:bg-gray-950 dark:border-gray-700">
   
       <form onSubmit={handleSubmit} className='grid lg:grid-cols-2 gap-4 p-6'>
         <div className='col-span-2 '>
           <section className='flex justify-between items-center my-4'>
-          <div className='flex items-center'>
-                <h1 className="text-[2rem] font-bold font-bonanova text-gray-600">Add you Business Information</h1>
-            </div>
+       
             <div className='flex items-center'>
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className={`text-white mx-4 ${isEditing ? 'bg-red-600 hover:bg-red-700' : 'bg-indigo-600 hover:bg-indigo-700'} focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800`}
+                className={`text-white mx-4 ${isEditing ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-500 hover:bg-blue-600'} focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 text-center dark:focus:ring-blue-800`}
               >
                 {isEditing ? 'Cancel ' : 'Add Supplier Informations'}
               </button>
@@ -258,7 +260,7 @@ const SupplierForm = () => {
           <button
           type="submit" // Add this line
           disabled={isSubmitting} // Disable while submitting
-          className="text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          className="text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 text-center  dark:focus:ring-blue-800"
         >
           {isSubmitting ? 'Submitting...' : 'Submit Supplier'}
         </button>

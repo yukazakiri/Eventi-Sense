@@ -75,6 +75,19 @@ export const uploadAvatar = async (userId: string, file: File): Promise<string |
     return null;
   }
 };
+export const fetchProfileRole = async (userId: string): Promise<string | null> => {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", userId)
+    .single();
+
+  if (error) {
+    console.error("Error fetching profile role:", error.message);
+    throw error;
+  }
+  return data?.role;
+};
 
 export const fetchCompany = async (userId: string): Promise<Company | null> => {
   const { data, error } = await supabase

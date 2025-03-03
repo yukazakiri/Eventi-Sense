@@ -1,14 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-type CardProps = {
+interface CardProps {
   id: string;
   title: string;
   description: string;
   image: string;
   tags: string[]; // Add tags to the props
-  role: 'supplier' | 'venue_manager' | null; // Add role to the props
-};
+  role: 'supplier' | 'venue_manager' | 'event_planner' | null; // Add role to the props
+}
 
 const Card: React.FC<CardProps> = ({ id, title, description, image, tags, role }) => {
   const navigate = useNavigate();

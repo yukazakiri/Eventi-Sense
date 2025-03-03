@@ -15,6 +15,8 @@ import { LuBookOpenCheck, LuCalendar, LuCalendarCheck, LuGrid2X2Plus } from 'rea
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { PiConfetti } from "react-icons/pi";
 import { IoTicketOutline } from "react-icons/io5";
+import supabase from '../../api/supabaseClient';
+
 interface SidebarProps {
     isSidebarOpen: boolean;
     setSidebarOpen: (isOpen: boolean) => void;
@@ -60,18 +62,47 @@ const SidebarItem: React.FC<{
 const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setSidebarOpen }) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [_isLoading, setIsLoading] = useState(true);
+    const [hasSupplier, setHasSupplier] = useState<boolean | null>(null);
 
     const toggleCollapse = () => {
         setIsCollapsed(!isCollapsed);
     };
 
+    useEffect(() => {
+        const checkSupplier = async () => {
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) {
+                    setHasSupplier(false);
+                    return;
+                }
+
+                const { data, error } = await supabase
+                    .from('supplier')
+                    .select('id')
+                    .eq('company_id', user.id);
+
+                if (error) {
+                    throw error;
+                }
+
+                setHasSupplier(data && data.length > 0);
+            } catch (err) {
+                console.error('Error checking supplier:', err);
+                setHasSupplier(false);
+            }
+        };
+
+        checkSupplier();
+    }, []);
+
     // Simulate loading with useEffect
     useEffect(() => {
         const timer = setTimeout(() => {
-            setIsLoading(false); // Set loading to false after 2 seconds
+            setIsLoading(false);
         }, 2000);
 
-        return () => clearTimeout(timer); // Cleanup timer
+        return () => clearTimeout(timer);
     }, []);
 
     return (
@@ -121,41 +152,52 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setSidebarOpen }) => {
                             <SidebarItem to="/Supplier-Dashboard/Home" icon={<RiHome9Line className={`text-xl  ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Home" isCollapsed={isCollapsed} />
                             <SidebarItem to="/Supplier-Dashboard/Profiles" icon={<MdOutlineManageAccounts className={`text-xl  ${isCollapsed ? 'mx-auto' : ''}`} />} label="Profiles" isCollapsed={isCollapsed} />
                             <SidebarItem to="/Supplier-Dashboard/Supplier" icon={<LuBookOpenCheck  className={`text-xl  ${isCollapsed ? 'mx-auto' : ''}`} />} label="Supplier Information" isCollapsed={isCollapsed} />
-                            <SidebarItem to="/Supplier-Dashboard/Calendar" icon={<LuCalendar className={`text-xl  ${isCollapsed ? 'mx-auto' : ''}`} />} label="Calendar" isCollapsed={isCollapsed} />
-                            <SidebarItem to="/Supplier-Dashboard/Booking" icon={<LuCalendarCheck className={`text-xl  ${isCollapsed ? 'mx-auto' : ''}`} />} label="Booking Request" isCollapsed={isCollapsed} />
-                            <SidebarItem to="/Supplier-Dashboard/Services" icon={<LuGrid2X2Plus className={`text-xl  ${isCollapsed ? 'mx-auto' : ''}`} />} label="Services" isCollapsed={isCollapsed} />
-                            <SidebarItem to="/Supplier-Dashboard/Settings" icon={<MdSettings className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Settings" isCollapsed={isCollapsed} />
-                            <SidebarItem to="/Supplier-Dashboard/Support-Help" icon={<MdHelpOutline className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Support & Help" isCollapsed={isCollapsed} />
+                            
+                            {hasSupplier && (
+                                <>
+                                    <SidebarItem to="/Supplier-Dashboard/Calendar" icon={<LuCalendar className={`text-xl  ${isCollapsed ? 'mx-auto' : ''}`} />} label="Calendar" isCollapsed={isCollapsed} />
+                                    <SidebarItem to="/Supplier-Dashboard/Booking" icon={<LuCalendarCheck className={`text-xl  ${isCollapsed ? 'mx-auto' : ''}`} />} label="Booking Request" isCollapsed={isCollapsed} />
+                                    <SidebarItem to="/Supplier-Dashboard/Services" icon={<LuGrid2X2Plus className={`text-xl  ${isCollapsed ? 'mx-auto' : ''}`} />} label="Services" isCollapsed={isCollapsed} />
+                                    <SidebarItem to="/Supplier-Dashboard/Settings" icon={<MdSettings className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} label="Settings" isCollapsed={isCollapsed} />
+                                    <SidebarItem to="/Supplier-Dashboard/Support-Help" icon={<MdHelpOutline className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Support & Help" isCollapsed={isCollapsed} />
+                                </>
+                            )}
                         </ul>
                     </nav>
 
-                    <h2 className={`text-sm uppercase my-2 ml-4 ${isCollapsed ? 'hidden' : 'block'} text-gray-600 dark:text-gray-400`}>
-                        form
-                    </h2>
+                    {hasSupplier && (
+                        <>
+                            <h2 className={`text-sm uppercase my-2 ml-4 ${isCollapsed ? 'hidden' : 'block'} text-gray-600 dark:text-gray-400`}>
+                                form
+                            </h2>
 
-                    <nav>
-                        <ul className="space-y-2 text-gray-800">
-                            <SidebarItem to="/Supplier-Dashboard/Support" icon={<MdHelpOutline className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Support" isCollapsed={isCollapsed} />
-                            <SidebarItem to="/Supplier-Dashboard/Chat" icon={<MdChat className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Chat" isCollapsed={isCollapsed} />
-                            <SidebarItem to="/Supplier-Dashboard/Email" icon={<MdMail className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Email" isCollapsed={isCollapsed} />
-                            <SidebarItem to="/Supplier-Dashboard/Invoice" icon={<MdReceipt className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Invoice" isCollapsed={isCollapsed} />
-                        </ul>
-                    </nav>
-                    {isCollapsed &&
+                            <nav>
+                                <ul className="space-y-2 text-gray-800">
+                                    <SidebarItem to="/Supplier-Dashboard/Support" icon={<MdHelpOutline className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Support" isCollapsed={isCollapsed} />
+                                    <SidebarItem to="/Supplier-Dashboard/Chat" icon={<MdChat className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Chat" isCollapsed={isCollapsed} />
+                                    <SidebarItem to="/Supplier-Dashboard/Email" icon={<MdMail className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Email" isCollapsed={isCollapsed} />
+                                    <SidebarItem to="/Supplier-Dashboard/Invoice" icon={<MdReceipt className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Invoice" isCollapsed={isCollapsed} />
+                                </ul>
+                            </nav>
+
+                            {isCollapsed && (
                                 <div className='flex justify-center my-4'>
-                                 <HiOutlineDotsHorizontal className='flex justify-center text-[1.6rem] text-gray-400'/>
-                                 </div>
-                     }
-                    <h2 className={`text-sm uppercase my-2 ml-4 ${isCollapsed ? 'hidden' : 'block'} text-gray-600 dark:text-gray-400`}>
-                        events
-                    </h2>
+                                    <HiOutlineDotsHorizontal className='flex justify-center text-[1.6rem] text-gray-400'/>
+                                </div>
+                            )}
 
-                    <nav>
-                        <ul className="space-y-2 text-gray-800">
-                            <SidebarItem to="/Supplier-Dashboard/EventList" icon={<PiConfetti     className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Events List" isCollapsed={isCollapsed} />
-                            <SidebarItem to="/Supplier-Dashboard/TicketList" icon={<IoTicketOutline  className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Ticket List" isCollapsed={isCollapsed} />
-                        </ul>
-                    </nav>
+                            <h2 className={`text-sm uppercase my-2 ml-4 ${isCollapsed ? 'hidden' : 'block'} text-gray-600 dark:text-gray-400`}>
+                                events
+                            </h2>
+
+                            <nav>
+                                <ul className="space-y-2 text-gray-800">
+                                    <SidebarItem to="/Supplier-Dashboard/EventList" icon={<PiConfetti className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Events List" isCollapsed={isCollapsed} />
+                                    <SidebarItem to="/Supplier-Dashboard/TicketList" icon={<IoTicketOutline className={`text-xl ${isCollapsed ? 'mx-auto ' : ''}`} />} label="Ticket List" isCollapsed={isCollapsed} />
+                                </ul>
+                            </nav>
+                        </>
+                    )}
                 </div>
             </aside>
         </>

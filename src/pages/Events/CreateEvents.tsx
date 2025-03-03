@@ -64,13 +64,20 @@ const CreateEventForm: React.FC = () => {
             { label: 'Venues', href: '/Supplier-Dashboard/Venue-List' },
             { label: 'Venue Details', href: `/Supplier-Dashboard/VenueDetails/${selectedVenues[0]}` },
             { label: 'Add Availability', href: '' }
-        ]
-        : [
+        ]   
+        : userRole === 'venue_manager'
+        ? [
             { label: 'Home', href: '/Venue-Manager-Dashboard/Home', icon: <HomeIcon className="h-4 w-4 mr-1" /> },
             { label: 'Venues', href: '/Venue-Manager-Dashboard/Venue-List' },
             { label: 'Venue Details', href: `/Venue-Manager-Dashboard/VenueDetails/${selectedVenues[0]}` },
             { label: 'Add Availability', href: '' }
-        ];
+        ]
+        : userRole === 'event_planner'
+        ? [
+            { label: 'Home', href: '/Event-Planner-Dashboard/Home', icon: <HomeIcon className="h-4 w-4 mr-1" /> },
+            { label: 'Events', href: '/Event-Planner-Dashboard/EventList' }
+        ]
+        : [];
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;

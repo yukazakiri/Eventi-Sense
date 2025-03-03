@@ -17,7 +17,7 @@ const CreateInfoSupplierForm: React.FC<InfoSupplierFormProps> = ({
   // Handler for checkbox changes
 
   return (
-    <section className={`shadow-lg bg-white p-8 border-gray-300 border-[1px] rounded-2xl ${isEditing ? 'border-indigo-400 border-2 rounded-lg bg-indigo-50' : ''}`}>
+    <section className={`shadow-lg bg-white p-8 border-gray-300 border-[1px] rounded-2xl dark:bg-gray-900 dark:border-gray-700 ${isEditing ? 'border-indigo-400 border-2 rounded-lg bg-indigo-50' : ''}`}>
       {/* Pricing Model Section */}
       <div className='grid md:grid-cols-2 gap-4'>
       <div className="mb-4 col-span-2">
@@ -28,7 +28,7 @@ const CreateInfoSupplierForm: React.FC<InfoSupplierFormProps> = ({
         name="name"
         value={formData.name}
         onChange={handleInputChange}
-        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-700"
         required
         readOnly={!isEditing}
         placeholder="Example: J & J Catering Services"
@@ -42,7 +42,7 @@ const CreateInfoSupplierForm: React.FC<InfoSupplierFormProps> = ({
         name="phone_number" 
         value={formData.phone_number} 
         onChange={handleInputChange} 
-        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
+        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-700" 
         required 
         readOnly={!isEditing}
         placeholder="Example: 0917-123-4567"
@@ -56,7 +56,7 @@ const CreateInfoSupplierForm: React.FC<InfoSupplierFormProps> = ({
         name="email" 
         value={formData.email} 
         onChange={handleInputChange} 
-        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
+        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-700" 
         required 
         readOnly={!isEditing}
         placeholder="Example: jjcatering@gmail.com"
@@ -72,7 +72,7 @@ const CreateInfoSupplierForm: React.FC<InfoSupplierFormProps> = ({
         name="website" 
         value={formData.website} 
         onChange={handleInputChange} 
-        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
+        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-700" 
         required 
         readOnly={!isEditing}
         placeholder="Example: https://jjcatering.com"
@@ -86,7 +86,7 @@ const CreateInfoSupplierForm: React.FC<InfoSupplierFormProps> = ({
         name="price_range" 
         value={formData.price_range} 
         onChange={handleInputChange} 
-        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
+        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-700" 
         required 
         readOnly={!isEditing}
         placeholder="Example: PHP5000-PHP10000"
@@ -102,7 +102,7 @@ const CreateInfoSupplierForm: React.FC<InfoSupplierFormProps> = ({
         id="description"
         value={formData.description} 
         onChange={handleInputChange} 
-        className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-48 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-48 p-2.5 dark:bg-gray-950 dark:border-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         required 
         readOnly={!isEditing}
         placeholder="Example: J & J Catering Services is a food catering business that offers a variety of dishes for events and gatherings. Our menu includes Filipino dishes such as adobo, sinigang, and lechon kawali. We also offer international dishes such as pasta, pizza, and burgers. Our team of experienced chefs and event coordinators will ensure that your event is a success."

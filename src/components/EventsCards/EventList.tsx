@@ -7,10 +7,12 @@ type CardListProps = {
   limit?: number;
 };
 
+type UserRole = 'supplier' | 'venue_manager' | 'event_planner';
+
 const CardList: React.FC<CardListProps> = ({ limit }) => {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [userRole, setUserRole] = useState<'supplier' | 'venue_manager' | null>(null);
+  const [userRole, setUserRole] = useState<UserRole | null>(null);  
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -29,7 +31,7 @@ const CardList: React.FC<CardListProps> = ({ limit }) => {
 
         if (!profile) throw new Error('Profile not found');
         
-        setUserRole(profile.role as 'supplier' | 'venue_manager');
+        setUserRole(profile.role as UserRole);
 
         // Fetch events based on role
         const { data, error } = await supabase
@@ -63,7 +65,7 @@ const CardList: React.FC<CardListProps> = ({ limit }) => {
 
   if (events.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] text-gray-500">
+      <div className="flex flex-col items-center justify-center min-h-[400px] text-gray-500 dark:text-gray-400">
         <svg 
           className="w-16 h-16 mb-4" 
           fill="none" 
@@ -82,14 +84,18 @@ const CardList: React.FC<CardListProps> = ({ limit }) => {
         <p className="text-sm text-gray-400">
           {userRole === 'supplier' 
             ? "Create your first event to get started"
-            : "No events assigned to your venue yet"}
+            : userRole === 'venue_manager'
+            ? "No events assigned to your venue yet"
+            : userRole === 'event_planner'
+            ? "Start planning your first event"
+            : "No events available"}
         </p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6 dark:bg-gray-950 dark:border-gray-700 ">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6 dark:bg-gray-950 dark:border-gray-700">
       {displayedCardData.map((event, index) => (
         <div key={event.id} className={index >= 3 ? "hidden sm:block" : ""}>
           <Card
@@ -98,7 +104,7 @@ const CardList: React.FC<CardListProps> = ({ limit }) => {
             description={event.description}
             image={event.image_url}
             tags={event.tags || []}
-            role={userRole}
+            role={userRole as UserRole}
           />
         </div>
       ))}

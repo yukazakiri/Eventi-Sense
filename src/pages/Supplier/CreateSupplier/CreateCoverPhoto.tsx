@@ -11,8 +11,8 @@ interface PhotoCoverProps {
 
 const CreatePhotoCover: React.FC<PhotoCoverProps> = ({ imageUrl, handleFileChange, uploading, uploadError, isEditing, selectedFile }) => {
   return (
-    <div className={`shadow-lg bg-white p-[2rem] border-gray-300 border-[1px] rounded-2xl ${isEditing ? 'border-indigo-400 border-2 rounded-lg' : ''}`}>
-      <label htmlFor="coverImage" className="block mb-2 text-md font-medium text-gray-800">
+    <div className={`shadow-lg bg-white p-[2rem] border-gray-300 border-[1px] rounded-2xl dark:border-gray-700 dark:bg-gray-900 ${isEditing ? 'border-indigo-400 border-2 rounded-lg' : ''}`}>
+      <label htmlFor="coverImage" className="block mb-2 text-md font-medium text-gray-800 dark:text-white">
         Cover Photo
       </label>
       <section>
@@ -32,7 +32,7 @@ const CreatePhotoCover: React.FC<PhotoCoverProps> = ({ imageUrl, handleFileChang
                 hover:file:bg-violet-100"
           />
         </div>
-        {imageUrl && <img src={imageUrl} alt="Cover Preview" className="max-w-full h-auto rounded-lg" />}
+        {imageUrl && <img src={imageUrl} alt="Cover Preview" className="max-w-full h-auto rounded-lg dark:bg-gray-900" />}
         {selectedFile && <p className="text-gray-500 mt-2">Selected File: {selectedFile.name}</p>}
         {uploadError && <p className="text-red-500 mt-2">{uploadError}</p>}
       </section>
