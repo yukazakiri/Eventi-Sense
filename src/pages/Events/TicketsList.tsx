@@ -269,79 +269,121 @@ const TicketsList: React.FC = () => {
 
   return (
     <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Tickets List</h1>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-3">Ticket Management</h1>
+        <p className="text-gray-600 dark:text-gray-300 mb-4">
+          {viewMode === 'organizer' 
+            ? "Manage ticket reservations for your events. You can approve, cancel, or delete ticket requests."
+            : "View and track your ticket reservations across all events."}
+        </p>
+        
         <div className="flex gap-2">
           <button
             onClick={() => setViewMode('organizer')}
-            className={`px-4 py-2 rounded-lg transition-colors ${
+            className={`px-4 py-2 rounded-lg transition-colors flex items-center gap-2 ${
               viewMode === 'organizer'
-                ? 'bg-blue-500 text-white dark:bg-blue-500 dark:hover:bg-blue-600'
+                ? 'bg-sky-500 hover:bg-sky-600 text-white dark:bg-sky-500 dark:hover:bg-sky-600'  
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700'
             }`}
+            title="View and manage tickets for events you organize"
           >
-            My Events' Tickets
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Manage Event Tickets
           </button>
           <button
             onClick={() => setViewMode('attendee')}
-            className={`px-4 py-2 rounded-lg transition-colors ${
+            className={`px-4 py-2 rounded-lg transition-colors flex items-center gap-2 ${ 
               viewMode === 'attendee'
-                ? 'bg-blue-500 text-white dark:bg-blue-500 dark:hover:bg-blue-600'
+                ? 'bg-sky-500 hover:bg-sky-600 text-white dark:bg-sky-500 dark:hover:bg-sky-600'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700'
             }`}
+            title="View your personal ticket reservations"
           >
-            My Reserved Tickets
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+            </svg>
+            My Tickets
           </button>
         </div>
       </div>
 
-      <div className="bg-white p-6 overflow-hidden rounded-2xl border-[1px] border-gray-300 dark:bg-gray-950 dark:border-gray-700">
-        {/* Filter Controls */}
-        <div className="mb-6 flex gap-4 flex-wrap">
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="p-2 border border-gray-300 rounded dark:bg-gray-950 dark:text-white dark:border-gray-700"
-          >
-            <option value="">All Statuses</option>
-            <option value="reserved">Reserved</option>
-            <option value="purchased">Purchased</option>
-            <option value="approved">Approved</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
+      <div className="bg-white p-6 overflow-hidden rounded-2xl border-[1px] border-gray-300 dark:bg-gray-900 dark:border-gray-700">
+        {/* Filter Section */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-3">Filter & Search Options</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="flex flex-col">
+              <label className="text-sm text-gray-600 dark:text-gray-300 mb-1">Ticket Status</label>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="p-2 border border-gray-300 rounded dark:bg-gray-950 dark:text-white dark:border-gray-700"
+                title="Filter tickets by their current status"
+              >
+                <option value="">All Statuses</option>
+                <option value="reserved">Reserved</option>
+                <option value="purchased">Purchased</option>
+                <option value="approved">Approved</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
 
-          <select
-            value={eventFilter}
-            onChange={(e) => setEventFilter(e.target.value)}
-            className="p-2 border border-gray-300 rounded dark:bg-gray-950 dark:text-white dark:border-gray-700"
-          >
-            <option value="">All Events</option>
-            {Object.values(events).map((event) => (
-              <option key={event.id} value={event.name}>
-                {event.name}
-              </option>
-            ))}
-          </select>
+            <div className="flex flex-col">
+              <label className="text-sm text-gray-600 dark:text-gray-300 mb-1">Event</label>
+              <select
+                value={eventFilter}
+                onChange={(e) => setEventFilter(e.target.value)}
+                className="p-2 border border-gray-300 rounded dark:bg-gray-950 dark:text-white dark:border-gray-700"
+                title="Filter tickets by specific event"
+              >
+                <option value="">All Events</option>
+                {Object.values(events).map((event) => (
+                  <option key={event.id} value={event.name}>
+                    {event.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          <input
-            type="text"
-            placeholder="Filter by user..."
-            value={userFilter}
-            onChange={(e) => setUserFilter(e.target.value)}
-            className="p-2 border border-gray-300 rounded dark:bg-gray-950 dark:text-white dark:border-gray-700"
-          />
+            <div className="flex flex-col">
+              <label className="text-sm text-gray-600 dark:text-gray-300 mb-1">User Name</label>
+              <input
+                type="text"
+                placeholder="Search by user name..."
+                value={userFilter}
+                onChange={(e) => setUserFilter(e.target.value)}
+                className="p-2 border border-gray-300 rounded dark:bg-gray-950 dark:text-white dark:border-gray-700"
+                title="Filter tickets by user name"
+              />
+            </div>
 
-          {/* Search Bar */}
-          <input
-            type="text"
-            placeholder="Search tickets..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="p-2 border border-gray-300 rounded dark:bg-gray-950 dark:text-white dark:border-gray-700"
-          />
+            <div className="flex flex-col">
+              <label className="text-sm text-gray-600 dark:text-gray-300 mb-1">Quick Search</label>
+              <input
+                type="text"
+                placeholder="Search tickets, events..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="p-2 border border-gray-300 rounded dark:bg-gray-950 dark:text-white dark:border-gray-700"
+                title="Search across all ticket information"
+              />
+            </div>
+          </div>
         </div>
 
-        {/* Tickets Table */}
+        {/* Results Section */}
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold mb-2">
+            {viewMode === 'organizer' ? 'Ticket Requests' : 'Your Tickets'}
+            <span className="text-sm font-normal text-gray-500 dark:text-gray-400 ml-2">
+              ({filteredTickets.length} {filteredTickets.length === 1 ? 'ticket' : 'tickets'} found)
+            </span>
+          </h2>
+        </div>
+
+        {/* Tickets Table - Keep existing table code but add tooltips */}
         <div className="overflow-x-auto shadow border-[1px] border-gray-300 rounded-2xl p-6 dark:bg-gray-950 dark:border-gray-700">
           {filteredTickets.length > 0 ? (
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -349,13 +391,13 @@ const TicketsList: React.FC = () => {
                 <tr>
                   {viewMode === 'organizer' ? (
                     <>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-48">User</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ticket ID</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Event Title</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-24">Quantity</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-32">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Purchase Date</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-40">Actions</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-48" title="Ticket requester's information">User</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" title="Unique ticket identifier">Ticket ID</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" title="Name of the event">Event Title</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-24" title="Number of tickets requested">Quantity</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-32" title="Current status of the ticket">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" title="When the ticket was purchased">Purchase Date</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-40" title="Available actions for this ticket">Actions</th>
                     </>
                   ) : (
                     <>
@@ -464,9 +506,22 @@ const TicketsList: React.FC = () => {
               <p className="text-xl font-semibold mb-2">No tickets found</p>
               <p className="text-sm text-gray-400 dark:text-white">
                 {viewMode === 'organizer' 
-                  ? "No tickets have been created for your events yet"
-                  : "You haven't reserved any tickets yet"}
+                  ? "There are no ticket requests for your events matching the current filters."
+                  : "You don't have any tickets matching the current filters."}
               </p>
+              {(statusFilter || eventFilter || userFilter || searchTerm) && (
+                <button
+                  onClick={() => {
+                    setStatusFilter('');
+                    setEventFilter('');
+                    setUserFilter('');
+                    setSearchTerm('');
+                  }}
+                  className="mt-4 text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+                >
+                  Clear all filters
+                </button>
+              )}
             </div>
           )}
         </div>

@@ -2,9 +2,6 @@ import { useState} from 'react';
 import supabase from '../../api/supabaseClient';
 import { EventPlannerFormData, initialFormData } from '../../api/utiilty/eventplanner';
 
-
-
-
 export default function EventPlannerOnboarding() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<EventPlannerFormData>(initialFormData);
@@ -53,7 +50,7 @@ export default function EventPlannerOnboarding() {
       if (!user) throw new Error('User not authenticated');
 
       const { error } = await supabase
-        .from('EventPlanners')
+        .from('eventplanners')
         .insert([{ 
           ...formData,
           profile_id: user.id,
@@ -78,26 +75,54 @@ export default function EventPlannerOnboarding() {
     });
   };
 
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
+
   if (success) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 font-sofia">
-        <div className="max-w-md w-full mx-auto p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-xl transform transition-all duration-500 hover:scale-105">
-          <div className="text-center">
-            <div className="w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+      <div className="max-w-md w-full mx-auto p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-xl transform transition-all duration-500 hover:scale-105">
+        <div className="text-center">
+          <div className="w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h2 className="text-3xl font-bold text-green-600 dark:text-green-400 mb-4">Registration Successful!</h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
+            Your event planner profile has been created successfully. You can now access all features and start creating memorable events for your clients. Visit your business profile to complete any additional information.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-2">
+            <button 
+              onClick={handleRefresh}
+              className="px-6 py-3 bg-white border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg text-gray-700 dark:text-gray-200 font-medium flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-300"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-            </div>
-            <h2 className="text-3xl font-bold text-green-600 dark:text-green-400 mb-4">Registration Successful!</h2>
-            <p className="text-gray-600 dark:text-gray-300">Your event planner profile has been created successfully.</p>
+              Refresh Page
+            </button>
+            <a 
+              href="/business-profile" 
+              className="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg text-white font-medium transition-colors duration-300 flex items-center justify-center"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              View Business Profile
+            </a>
           </div>
         </div>
       </div>
+    </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center dark:bg-gray-950 py-12 px-4 sm:px-6 lg:px-8 font-sofia ">
+    <div className="min-h-screen flex items-center justify-center dark:bg-gray-950 py-12 px-4 sm:px-6 lg:px-8 font-sofia scrollbar-hide"> 
       <div className="max-w-3xl w-full mx-auto ">
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden transform transition-all duration-500 hover:shadow-2xl">
           <div className="p-8">
@@ -156,7 +181,7 @@ export default function EventPlannerOnboarding() {
                 <div className="space-y-6">
                   <div className="transform transition-all duration-300 hover:scale-[1.02]">
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Company Name <span className="text-red-500">*</span>
+                      Company Name 
                     </label>
                     <input
                       type="text"
@@ -164,8 +189,7 @@ export default function EventPlannerOnboarding() {
                       value={formData.company_name}
                       onChange={handleChange}
                       className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-300"
-                      required
-                      placeholder="Enter your company name"
+                      placeholder="Enter your company name or business name"
                     />
                   </div>
                   <div className="transform transition-all duration-300 hover:scale-[1.02]">
@@ -179,7 +203,7 @@ export default function EventPlannerOnboarding() {
                       onChange={handleChange}
                       className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-300"
                       required
-                      placeholder="Enter your company address"
+                      placeholder="Enter your company or business address"
                     />
                   </div>
                 </div>
@@ -194,7 +218,7 @@ export default function EventPlannerOnboarding() {
                       name="city"
                       value={formData.city}
                       onChange={handleChange}
-                      className="w-full p-2 border rounded-md"
+                      className="w-full p-2 border rounded-md text-black"
                       required
                     />
                   </div>
@@ -205,7 +229,7 @@ export default function EventPlannerOnboarding() {
                       name="state"
                       value={formData.state}
                       onChange={handleChange}
-                      className="w-full p-2 border rounded-md"
+                        className="w-full p-2 border rounded-md text-black"
                       required
                     />
                   </div>
@@ -216,7 +240,7 @@ export default function EventPlannerOnboarding() {
                       name="zip_code"
                       value={formData.zip_code}
                       onChange={handleChange}
-                      className="w-full p-2 border rounded-md"
+                      className="w-full p-2 border rounded-md text-black  "
                       required
                     />
                   </div>
@@ -227,7 +251,7 @@ export default function EventPlannerOnboarding() {
                       name="country"
                       value={formData.country}
                       onChange={handleChange}
-                      className="w-full p-2 border rounded-md"
+                      className="w-full p-2 border rounded-md text-black"
                       required
                     />
                   </div>
@@ -243,7 +267,7 @@ export default function EventPlannerOnboarding() {
                       name="experience_years"
                       value={formData.experience_years}
                       onChange={handleChange}
-                      className="w-full p-2 border rounded-md"
+                      className="w-full p-2 border rounded-md text-black"
                       min="0"
                     />
                   </div>
@@ -254,7 +278,7 @@ export default function EventPlannerOnboarding() {
                       name="specialization"
                       value={formData.specialization}
                       onChange={handleChange}
-                      className="w-full p-2 border rounded-md"
+                      className="w-full p-2 border rounded-md text-black"
                       placeholder="e.g., Weddings, Corporate Events"
                       required
                     />
@@ -271,7 +295,7 @@ export default function EventPlannerOnboarding() {
                       name="website"
                       value={formData.website}
                       onChange={handleChange}
-                      className="w-full p-2 border rounded-md"
+                      className="w-full p-2 border rounded-md text-black"
                       placeholder="https://example.com"
                     />
                   </div>
@@ -281,7 +305,7 @@ export default function EventPlannerOnboarding() {
                       name="bio"
                       value={formData.bio}
                       onChange={handleChange}
-                      className="w-full p-2 border rounded-md h-32"
+                      className="w-full p-2 border rounded-md h-32 text-black"
                       placeholder="Tell us about your company..."
                     />
                   </div>

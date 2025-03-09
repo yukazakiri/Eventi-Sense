@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import EventPlannerinfo from "./EventPlannerinfo";
+import  { useState, useEffect } from "react";
+import EventPlannerinfo from "./Register";
 import UpdateInfo from "./UpdateInfo";
 import { getCurrentUser } from "../../api/utiilty/profiles";
 import { fetchEventPlanner } from "../../api/utiilty/eventplanner";

@@ -1,279 +1,293 @@
-import { useState, useEffect } from 'react';
-import supabase from '../../api/supabaseClient';
+// File: src/pages/profile/UpdateProfile.tsx
+import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { PulseLoader } from 'react-spinners';
+import ProfileForm from './components/ProfileForm';
+import Modal from './components/profileupdate/modal';
+import { EventPlannerProfile, ModalData } from './components/profileupdate/api';
+import { fetchUserProfile, updateUserProfile, uploadProfileImage } from './components/profileupdate/api';
+import SocialMediaForm from './EPSocialMedia';
+import EPGallery from './EPGallery';
 
-interface EventPlannerProfile {
-  planner_id: number;
-  company_name: string;
-  address: string;
-  city: string;
-  state: string;
-  zip_code: string;
-  country: string;
-  experience_years: number;
-  specialization: string;
-  website: string;
-  bio: string;
-}
 
-export default function UpdateInfo() {
+export default function UpdateProfile() {
   const [profile, setProfile] = useState<EventPlannerProfile | null>(null);
-  const [formData, setFormData] = useState<Partial<EventPlannerProfile>>({});
   const [loading, setLoading] = useState(true);
-  const [updating, setUpdating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState('profile');
+  const [modalData, setModalData] = useState<ModalData>({
+    isOpen: false,
+    title: '',
+    description: '',
+    type: 'success',
+  });
+  const [formData, setFormData] = useState<Partial<EventPlannerProfile>>({});
+  
+  const fallbackAvatarUrl = '/images/istockphoto-1207942331-612x612.jpg';
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    let isMounted = true;
+    const controller = new AbortController();
+  
+    const loadProfile = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const data = await fetchUserProfile();
+        if (!isMounted) return;
         
-        if (!user) throw new Error('User not authenticated');
-
-        const { data, error } = await supabase
-          .from('EventPlanners')
-          .select('*')
-          .eq('profile_id', user.id)
-          .single();
-
-        if (error) throw error;
-        if (!data) throw new Error('Profile not found');
-
         setProfile(data);
         setFormData(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+        if (isMounted) {
+          showModal('Error Loading Profile', 
+            err instanceof Error ? err.message : 'An unknown error occurred', 
+            'error');
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
-    fetchProfile();
+    loadProfile();
+  
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      setUpdating(true);
-      setError(null);
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user || !profile) throw new Error('Not authenticated');
-
-      const { error } = await supabase
-        .from('EventPlanners')
-        .update({
-          ...formData,
-          experience_years: Number(formData.experience_years)
-        })
-        .eq('planner_id', profile.planner_id);
-
-      if (error) throw error;
-      
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred');
-    } finally {
-      setUpdating(false);
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
+  const showModal = (title: string, description: string, type: 'success' | 'error') => {
+    setModalData({
+      isOpen: true,
+      title,
+      description,
+      type
     });
   };
 
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const publicUrl = await uploadProfileImage(file);
+      
+      // Update form data with new avatar URL
+      setFormData({
+        ...formData,
+        avatar_url: publicUrl
+      });
+      
+      showModal('Upload Successful', 'Your profile image has been uploaded successfully.', 'success');
+    } catch (error: any) {
+      showModal('Upload Failed', error.message || 'There was an error uploading your file.', 'error');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    try {
+      if (!profile) throw new Error('Profile not loaded');
+      
+      await updateUserProfile(profile, formData);
+      showModal('Profile Updated', 'Your profile has been updated successfully.', 'success');
+      
+      // Refresh the profile data
+      const refreshedProfile = await fetchUserProfile();
+      setProfile(refreshedProfile);
+    } catch (err) {
+      showModal('Update Failed', 
+        err instanceof Error ? err.message : 'There was an error updating your profile.', 
+        'error');
+    }
+  };
+
+  // Define all available tabs
+  const tabs = [
+    { id: 'profile', name: 'Profile', badge: null },
+    { id: 'socialmedia', name: 'Social Media', badge: null },
+    { id: 'gallery', name: 'Gallery', badge: null },
+    
+  ];
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto p-6 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">Loading your profile...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md text-center">
-        <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading Profile</h2>
-        <p className="text-gray-600">{error}</p>
+      <div className="flex justify-center items-center h-64">
+        <PulseLoader color="#0000ff" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Edit Your Profile</h2>
-      
-      {success && (
-        <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md">
-          Profile updated successfully!
-        </div>
-      )}
+    <div className="flex flex-col gap-8 lg:mx-16 md:mx-10 sm:mx-6   bg-white  dark:bg-gray-900 pb-8">
+              {/* Avatar Card */}
+<div className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 transition-all duration-300 ">
+  {/* Colorful gradient banner */}
+  <div className="w-full h-52 bg-gradient-to-r from-orange-400 via-pink-500 to-blue-500 rounded-t-2xl relative">
+    {/* Edit button */}
+    <button className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm p-2 rounded-full">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+      </svg>
+    </button>
+  </div>
 
-      {error && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
-          {error}
-        </div>
-      )}
+  {/* Main content container */}
+  <div className=" px-4 sm:px-6 lg:px-8">
+    <div className="relative -mt-16 pb-6">
+      {/* Avatar circle */}
+      <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white dark:border-gray-700 bg-white ml-6">
+        <img 
+          src={profile?.avatar_url || fallbackAvatarUrl} 
+          alt="Profile" 
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = fallbackAvatarUrl;
+          }}
+        />
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Profile info section */}
+      <section className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Left column */}
         <div className="space-y-4">
-          <section>
-            <h3 className="text-lg font-semibold mb-4 text-gray-700">Company Information</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-gray-700 mb-2">Company Name *</label>
-                <input
-                  type="text"
-                  name="company_name"
-                  value={formData.company_name || ''}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 mb-2">Address *</label>
-                <input
-                  type="text"
-                  name="address"
-                  value={formData.address || ''}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md"
-                  required
-                />
-              </div>
-            </div>
-          </section>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+            {profile?.company_name || 'Emma Smith'}
+          </h2>
+          
+     
 
-          <section>
-            <h3 className="text-lg font-semibold mb-4 text-gray-700">Location Details</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-gray-700 mb-2">City *</label>
-                <input
-                  type="text"
-                  name="city"
-                  value={formData.city || ''}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 mb-2">State *</label>
-                <input
-                  type="text"
-                  name="state"
-                  value={formData.state || ''}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 mb-2">Zip Code *</label>
-                <input
-                  type="text"
-                  name="zip_code"
-                  value={formData.zip_code || ''}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 mb-2">Country *</label>
-                <input
-                  type="text"
-                  name="country"
-                  value={formData.country || ''}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md"
-                  required
-                />
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <h3 className="text-lg font-semibold mb-4 text-gray-700">Experience</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-gray-700 mb-2">Years of Experience *</label>
-                <input
-                  type="number"
-                  name="experience_years"
-                  value={formData.experience_years || ''}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md"
-                  min="0"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 mb-2">Specialization *</label>
-                <input
-                  type="text"
-                  name="specialization"
-                  value={formData.specialization || ''}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md"
-                  required
-                />
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <h3 className="text-lg font-semibold mb-4 text-gray-700">Additional Information</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-gray-700 mb-2">Website</label>
-                <input
-                  type="url"
-                  name="website"
-                  value={formData.website || ''}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md"
-                  placeholder="https://example.com"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 mb-2">Bio</label>
-                <textarea
-                  name="bio"
-                  value={formData.bio || ''}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md h-32"
-                />
-              </div>
-            </div>
-          </section>
+          {/* Current role */}
+          <div className="flex items-center text-gray-600 dark:text-gray-400">
+            <svg 
+              className="mr-2 flex-shrink-0" 
+              width="20" 
+              height="20" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <line x1="9" y1="3" x2="9" y2="21" />
+            </svg>
+            <span className="truncate">Event Planner</span>
+          </div>
         </div>
 
-        <div className="flex justify-end gap-4 mt-8">
-          <button
-            type="button"
-            onClick={() => setFormData(profile!)}
-            className="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
-            disabled={updating}
-          >
-            Reset Changes
-          </button>
-          <button
-            type="submit"
-            disabled={updating}
-            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
-          >
-            {updating ? 'Saving...' : 'Save Changes'}
-          </button>
+        {/* Right column */}
+        <div className="space-y-4">
+          {/* Location */}
+          <div className="flex items-center text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors">
+            <svg 
+              className="mr-2 flex-shrink-0" 
+              width="20" 
+              height="20" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            >
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+            <span>{profile?.city || 'City'}, {profile?.state || 'State'}</span>
+          </div>
+
+          {/* Experience */}
+          <div className="flex items-center text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors">
+            <svg 
+              className="mr-2 flex-shrink-0" 
+              width="20" 
+              height="20" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            >
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+            </svg>
+            <span>{profile?.experience_years || '0'} Years Experience</span>
+          </div>
         </div>
-      </form>
+      </section>
+    </div>
+  </div>
+</div>
+      {/* Tab Navigation */}
+      <div className="border-b border-gray-200 dark:border-gray-700 px-8">
+        <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`
+                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm
+                ${
+                  activeTab === tab.id
+                    ? 'border-sky-500 text-sky-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:border-gray-700'
+                }
+              `}
+            >
+              {tab.name}
+              {tab.badge && (
+                <span className="ml-2 rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+                  {tab.badge}
+                </span>
+              )}
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      {/* Content based on active tab */}
+      <div className="lg:mb-10 lg:mx-10 ">
+        {activeTab === 'profile' && (
+          <ProfileForm
+            handleSubmit={handleSubmit}
+            handleChange={handleChange}
+            handleFileUpload={handleFileUpload}
+            uploading={uploading}
+            fallbackAvatarUrl={fallbackAvatarUrl}
+            profile={profile}
+          />
+        )}
+        {activeTab === 'socialmedia' && (
+          <SocialMediaForm />
+        )}
+        {activeTab === 'gallery' && (
+          <EPGallery />
+        )}
+  
+      </div>
+
+      {/* Modal for notifications */}
+      <Modal  
+        isOpen={modalData.isOpen} 
+        title={modalData.title} 
+        description={modalData.description} 
+        type={modalData.type} 
+        onClose={() => setModalData({ ...modalData, isOpen: false })} 
+      />
     </div>
   );
 }

@@ -8,13 +8,25 @@ import UpdateEvents from '../../pages/Events/UpdateEvent';
 import TicketList from '../../pages/Events/TicketsList';
 import RequestTicket from '../../pages/Events/RequestTickets';
 
-import ProfilePage from '../../pages/Profile/Personal Profile/ProfilePage';
 
-const routes: RouteObject[] = [
+import ProfilePage from '../../pages/Profile/Personal Profile/ProfilePage';
+import EventPlannerinfo from '../../pages/EventPlanner/Register'; 
+import UpdateInfo from '../../pages/EventPlanner/UpdateInfo';
+import EPCalendar from '../../pages/EventPlanner/EPCalendar';
+import ExampleProfile from '../../pages/EventPlanner/exampleProfile';
+
+
+  const routes: RouteObject[] = [
   { path: '/', element: <Home /> },
   { path: '/Home', element: <Home /> },
   { path: '/Profiles', element: <Profiles /> },
   { path: '/CreateCompany/:userId', element: <CreateCompany /> },
+  { path: '/EventPlannerinfo', element: <EventPlannerinfo /> },
+  { path: '/UpdateInfo', element: <UpdateInfo /> },
+  { path: '/Calendar', element: <EPCalendar /> },
+  { path: '/exampleProfile', element: <ExampleProfile /> },
+
+
   { path: '/EventList', element: <EventListing /> },
   { path: '/CreateEvents', element: <CreateEventForm/>},
   { path: '/UpdateEvents/:id', element: <UpdateEvents/>},

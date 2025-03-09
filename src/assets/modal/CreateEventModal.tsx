@@ -28,7 +28,7 @@ const CreateEventModal: React.FC<CreateEventModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 max-w-md w-full mx-4">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 max-w-2xl w-full mx-4">
         <div className="mb-6">
           <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
             Create New Event

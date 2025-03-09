@@ -243,108 +243,115 @@ const CreateEventForm: React.FC = () => {
 
     return (
         <div  className='md:mx-10'>
-              <div className='flex justify-between'>
-            <h1 className="text-3xl flex items-center font-semibold tracking-tight text-gray-700 my-4 font-bonanova dark:text-gray-200">Create Events</h1>
-            <div className="flex items-end  ">
+              <div className='flex justify-between mb-8'>
+            <h1 className="text-3xl flex items-center font-semibold tracking-tight text-gray-700 font-bonanova dark:text-gray-200">Create New Event</h1>
+            <div className="flex items-end">
                 <Breadcrumbs items={breadcrumbItems} />
             </div>
         </div>
-        <div className='m-4 bg-white p-6 border border-gray-300 rounded-2xl font-sofia dark:bg-gray-900 dark:border-gray-700'>
-        <form onSubmit={handleSubmit} className="space-y-4 ">
-        <div className="flex space-x-4 justify-end">
+        <div className='m-4 bg-white p-8 border border-gray-300 rounded-2xl font-sofia shadow-sm dark:bg-gray-900 dark:border-gray-700'>
+        <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="flex space-x-4 justify-end mb-6">
                 <button
                     type="button"
                     onClick={() => setIsVenueModalOpen(true)}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-600"
+                    className="px-6 py-2.5 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors duration-200 flex items-center space-x-2 dark:bg-sky-600 dark:hover:bg-sky-700"
                 >
-                    Tag Venues ({selectedVenues.length})
+                    <span>Select Venues</span>
+                    <span className="bg-sky-400/20 px-2 py-0.5 rounded-md">{selectedVenues.length}</span>
                 </button>
                 <button
                     type="button"
                     onClick={() => setIsSupplierModalOpen(true)}
-                    className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 dark:bg-purple-500 dark:hover:bg-purple-600"
+                    className="px-6 py-2.5 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors duration-200 flex items-center space-x-2 dark:bg-purple-600 dark:hover:bg-purple-700"
                 >
-                    Tag Suppliers ({selectedSuppliers.length})
+                    <span>Select Suppliers</span>
+                    <span className="bg-purple-400/20 px-2 py-0.5 rounded-md">{selectedSuppliers.length}</span>
                 </button>
             </div>
-        <div className="grid gap-6 mb-6 md:grid-cols-2">
-            <div>
-                <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                    Event Name
+        <div className="grid gap-8 mb-6 md:grid-cols-2">
+            <div className="space-y-2">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Event Name *
                 </label>
                 <input
                     type="text"
                     id="name"
                     name="name"
+                    placeholder="Enter event name"
                     value={event.name}
                     onChange={handleInputChange}
                     required
-                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-3 transition-colors duration-200 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                 />
             </div>
 
-            <div>
-                <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                    Description
+            <div className="space-y-2">
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Description *
                 </label>
                 <textarea
                     id="description"
                     name="description"
+                    placeholder="Describe your event"
                     value={event.description}
                     onChange={handleInputChange}
                     required
-                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    rows={3}
+                    className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-3 transition-colors duration-200 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                 />
             </div>
 
-            <div>
-                            <label htmlFor="date" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                Date and Time
-                            </label>
-                            <input
-                                type="datetime-local"
-                                id="date"
-                                name="date"
-                                value={event.date}
-                                onChange={handleInputChange}
-                                onClick={handleDateInputClick} // Trigger date picker on click
-                                ref={dateInputRef} // Attach the ref
-                                required
-                                className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            />
-                        </div>
+            <div className="space-y-2">
+                <label htmlFor="date" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Date and Time *
+                </label>
+                <input
+                    type="datetime-local"
+                    id="date"
+                    name="date"
+                    value={event.date}
+                    onChange={handleInputChange}
+                    onClick={handleDateInputClick}
+                    ref={dateInputRef}
+                    required
+                    className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-3 transition-colors duration-200 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                />
+            </div>
 
-            <div>
-                <label htmlFor="location" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                    Location
+            <div className="space-y-2">
+                <label htmlFor="location" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Location *
                 </label>
                 <input
                     type="text"
                     id="location"
                     name="location"
+                    placeholder="Enter event location"
                     value={event.location}
                     onChange={handleInputChange}
                     required
-                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-3 transition-colors duration-200 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                 />
             </div>
 
-            <div>
-                <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+            <div className="space-y-2">
+                <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                     Category
                 </label>
                 <input
                     type="text"
                     id="category"
                     name="category"
+                    placeholder="e.g., Conference, Workshop, Concert"
                     value={event.category}
                     onChange={handleInputChange}
-                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-3 transition-colors duration-200 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                 />
             </div>
 
-            <div>
-                <label htmlFor="tags" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+            <div className="space-y-2">
+                <label htmlFor="tags" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                     Tags
                 </label>
                 <div className="flex gap-2">
@@ -353,28 +360,28 @@ const CreateEventForm: React.FC = () => {
                         id="tags"
                         value={tagInput}
                         onChange={handleTagInputChange}
-                        placeholder="Add a tag"
-                         className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="Add relevant tags"
+                        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-3 transition-colors duration-200 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                     />
                     <button
                         type="button"
                         onClick={handleAddTag}
-                        className="mt-1 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-blue-600 dark:hover:bg-blue-700"
+                        className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors duration-200 dark:bg-sky-600 dark:hover:bg-sky-700"
                     >
                         Add
                     </button>
                 </div>
-                <div className="mt-2 flex flex-wrap gap-2">
+                <div className="mt-3 flex flex-wrap gap-2">
                     {event.tags?.map((tag, index) => (
                         <span
                             key={index}
-                            className="bg-blue-100 text-blue-800 text-sm font-medium px-2 py-1 rounded"
+                            className="bg-sky-50 text-sky-700 text-sm font-medium px-3 py-1.5 rounded-full flex items-center dark:bg-sky-900/30 dark:text-sky-300"
                         >
                             {tag}
                             <button
                                 type="button"
                                 onClick={() => handleRemoveTag(tag)}
-                                className="ml-2 text-blue-00 hover:text-blue-900"
+                                className="ml-2 text-sky-600 hover:text-sky-800 dark:text-sky-400 dark:hover:text-sky-200"
                             >
                                 ×
                             </button>
@@ -383,59 +390,99 @@ const CreateEventForm: React.FC = () => {
                 </div>
             </div>
 
-            <div>
-                <label htmlFor="image" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+            <div className="space-y-2">
+                <label htmlFor="image" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                     Event Image
                 </label>
-                <input
-                    type="file"
-                    id="image"
-                    name="image"
-                    onChange={handleFileChange}
-                    accept="image/*"
-                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                />
-                {previewUrl && <img src={previewUrl} alt="Preview" className="mt-2 max-h-40" />}
-                {uploading &&<MoonLoader color="#0000ff" />}
+                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-sky-500 transition-colors duration-200 dark:border-gray-600 dark:hover:border-sky-500">
+                    <div className="space-y-1 text-center">
+                        <div className="flex text-sm text-gray-600 dark:text-gray-400">
+                            <label htmlFor="image" className="relative cursor-pointer bg-white rounded-md font-medium text-sky-600 hover:text-sky-500 dark:bg-transparent dark:text-sky-400 dark:hover:text-sky-300">
+                                <span>Upload a file</span>
+                                <input
+                                    type="file"
+                                    id="image"
+                                    name="image"
+                                    onChange={handleFileChange}
+                                    accept="image/*"
+                                    className="sr-only"
+                                />
+                            </label>
+                            <p className="pl-1">or drag and drop</p>
+                        </div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                            PNG, JPG, GIF up to 10MB
+                        </p>
+                    </div>
+                </div>
+                {previewUrl && (
+                    <div className="mt-3 relative">
+                        <img src={previewUrl} alt="Preview" className="mt-2 rounded-lg max-h-40 w-full object-cover" />
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setFile(null);
+                                setPreviewUrl(null);
+                            }}
+                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors duration-200"
+                        >
+                            ×
+                        </button>
+                    </div>
+                )}
+                {uploading && <div className="mt-3"><MoonLoader color="#0ea5e9" /></div>}
             </div>
 
-            <div>
-                <label htmlFor="ticket_price" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+            <div className="space-y-2">
+                <label htmlFor="ticket_price" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                     Ticket Price
                 </label>
-                <input
-                    type="number"
-                    id="ticket_price"
-                    name="ticket_price"
-                    value={event.ticket_price}
-                    onChange={handleInputChange}
-                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                />
+                <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span className="text-gray-500 sm:text-sm">$</span>
+                    </div>
+                    <input
+                        type="number"
+                        id="ticket_price"
+                        name="ticket_price"
+                        placeholder="0.00"
+                        value={event.ticket_price}
+                        onChange={handleInputChange}
+                        className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full pl-7 p-3 transition-colors duration-200 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                    />
+                </div>
             </div>
 
-            <div>
-                <label htmlFor="capacity" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+            <div className="space-y-2">
+                <label htmlFor="capacity" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                     Capacity
                 </label>
                 <input
                     type="number"
                     id="capacity"
                     name="capacity"
+                    placeholder="Enter maximum attendees"
                     value={event.capacity}
                     onChange={handleInputChange}
-                     className="bg-white  border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-3 transition-colors duration-200 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                 />
             </div>
-
-         
             </div>
-            <div>
+
+            <div className="flex justify-end pt-6 border-t border-gray-200 dark:border-gray-700">
                 <button
                     type="submit"
                     disabled={uploading}
-                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                    className="inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-sky-500 hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-sky-600 dark:hover:bg-sky-700"
                 >
-                    {uploading ? <MoonLoader color="#0000ff" /> : 'Create Event'}
+                    {uploading ? (
+                        <>
+                            <MoonLoader size={20} color="#ffffff" className="mr-3" />
+                            <span>Creating Event...</span>
+                        </>
+                    ) : (
+                        'Create Event'
+                    )}
                 </button>
             </div>
         </form>
