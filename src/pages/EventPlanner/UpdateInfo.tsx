@@ -4,7 +4,7 @@ import { PulseLoader } from 'react-spinners';
 import ProfileForm from './components/ProfileForm';
 import Modal from './components/profileupdate/modal';
 import { EventPlannerProfile, ModalData } from './components/profileupdate/api';
-import { fetchUserProfile, updateUserProfile, uploadProfileImage } from './components/profileupdate/api';
+import { fetchUserProfile, updateUserProfile, uploadProfileImage, toggleVisibility } from './components/profileupdate/api';
 import SocialMediaForm from './EPSocialMedia';
 import EPGallery from './EPGallery';
 
@@ -112,7 +112,32 @@ export default function UpdateProfile() {
         'error');
     }
   };
+  // Add this inside your UpdateProfile component
+// In your handleToggleVisibility function
+const handleToggleVisibility = async () => {
+  if (!profile) {
+      showModal('Error', 'Profile data not available. Please try again.', 'error');
+      return;
+  }
 
+  try {
+      setLoading(true);
+      console.log('Before toggleVisibility:', profile);
+      
+      // Use the UUID formatted profile_id, not the numeric planner_id
+      const profileId = profile.profile_id; // This should be the UUID string
+      console.log('Using profile_id for update:', profileId);
+      
+      const updatedProfile = await toggleVisibility(profileId, !profile.is_public);
+      console.log('After toggleVisibility:', updatedProfile);
+      setProfile(updatedProfile);
+      showModal('Visibility Updated', `Your profile is now ${updatedProfile.is_public ? 'public' : 'private'}`, 'success');
+  } catch (err) {
+      showModal('Update Failed', err instanceof Error ? err.message : 'Failed to update visibility', 'error');
+  } finally {
+      setLoading(false);
+  }
+};
   // Define all available tabs
   const tabs = [
     { id: 'profile', name: 'Profile', badge: null },
@@ -227,7 +252,30 @@ export default function UpdateProfile() {
             </svg>
             <span>{profile?.experience_years || '0'} Years Experience</span>
           </div>
+       
         </div>
+        <div className="flex items-center gap-4">
+        <button 
+  onClick={handleToggleVisibility}
+  disabled={loading}
+  className={`px-4 py-2 rounded-md transition-colors ${
+    profile?.is_public 
+      ? 'bg-green-500 hover:bg-green-600 text-white'
+      : 'bg-red-500 hover:bg-red-600 text-white'
+  } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+>
+  {loading ? (
+    <PulseLoader color="#ffffff" size={8} />
+  ) : (
+    profile?.is_public ? 'Public' : 'Private'
+  )}
+</button>
+      <span className="text-sm text-gray-600">
+        {profile?.is_public 
+          ? 'Your profile is visible to everyone'
+          : 'Your profile is hidden from others'}
+      </span>
+    </div>
       </section>
     </div>
   </div>

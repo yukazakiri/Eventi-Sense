@@ -152,7 +152,7 @@ export default function EventPlannerOnboarding() {
                       key={index}
                       className={`h-2 w-2 rounded-full transition-all duration-300 ${
                         index < currentStep 
-                          ? 'bg-blue-600 dark:bg-blue-500 w-4' 
+                          ? 'bg-sky-600 dark:bg-sky-500 w-4' 
                           : 'bg-gray-200 dark:bg-gray-700'
                       }`}
                     />

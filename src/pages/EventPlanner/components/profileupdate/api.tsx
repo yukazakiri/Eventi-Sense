@@ -15,6 +15,7 @@ export interface EventPlannerProfile {
     bio: string;
     avatar_url: string;
     profile_id: string;
+    is_public: boolean;
   }
   
   export interface ModalData {
@@ -24,6 +25,30 @@ export interface EventPlannerProfile {
     type: 'success' | 'error';
   }
   
+// In profileupdate/api.ts
+export const toggleVisibility = async (profileId: string, newStatus: boolean): Promise<EventPlannerProfile> => {
+  console.log('Updating with profileId:', profileId); // This should be a UUID string
+  
+  const { data, error } = await supabase
+      .from('eventplanners')
+      .update({ is_public: newStatus })
+      .eq('profile_id', profileId) // Make sure profileId is the UUID string
+      .select() // This is important to return the updated data
+      .single();
+
+  if (error) {
+      console.error('Supabase error:', error);
+      throw new Error(error.message);
+  }
+
+  if (!data) {
+      console.error('Supabase returned null data.');
+      throw new Error('No matching record found to update.');
+  }
+
+  console.log('Supabase data returned:', data);
+  return data;
+};
 
 export const fetchUserProfile = async (): Promise<EventPlannerProfile> => {
   const { data: { user } } = await supabase.auth.getUser();
