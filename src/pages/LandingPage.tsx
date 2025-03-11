@@ -2,13 +2,13 @@
 import MainNavbar from "../layout/MainNavbar";
 import Button from "../components/Button/button";
 import CardList from "../layout/cards/Event/cardList";
-import Cardvenues from "../layout/cards/Venue/cardList";
-import CardSuppliers from "../layout/cards/Supplier/cardList";
+import Cardvenues from "../layout/cards/Venue/cardListLanding";
+import CardSuppliers from "../layout/cards/Supplier/cardListLanding";
 import MainFooter from "../layout/MainFooter";
 import ReviewSection from "../layout/cards/Review/cardDesign";
 import { Link, NavLink } from "react-router-dom";
 import { HoverButton } from "../components/Button/button-hover";
-import  useVenues  from "../hooks/Venues/useVenues";
+
 const content: { title: string; text: string }[] = [
   { title: "Event Planning Tools", text: "Effortlessly create and manage event schedules with tools designed for efficiency. From budget planning to task management, EventiSense ensures every detail is organized and on track." },
   { title: "Event Collaboration Tools", text: "Seamlessly share event details with your team or clients for smooth collaboration. Assign tasks, track progress, and keep everyone aligned with real-time updates." },
@@ -31,12 +31,7 @@ const content1: { title: string; text: string }[] = [
 ];
 
 function HomePage() {
-  const { venues } = useVenues({
-    searchQuery: '',
-    price: '',
-    capacity: '',
-    venueType: ''
-  });
+
   return (
 
       <section className="static"> 
@@ -97,19 +92,13 @@ function HomePage() {
                      
                        </div>
                      </div>
-                        <Cardvenues venues={venues}   limit={3} />
+                        <Cardvenues limit={3} />
                     </section>
                     <section className="mx-4 2xl:mx-[16rem] xl:mx-[8rem] my-[4rem]">
                      <div className="flex justify-between py-[10px] ">
                        <h1 className="text-4xl font-bold font-bonanova gradient-text uppercase">Suppliers</h1>
                        <div className="text-white flex justify-end font-montserrat cursor-pointer hover:text-yellow-300">
-                         <Button
-                           label="View All"
-                           onClick={() => window.location.href = '/suppliers'}
-                    
-                           gradientText={false} // Gradient text
-                           variant="simple"
-                         />
+                        <HoverButton>  <NavLink to="/supplier-list"> View All   </NavLink></HoverButton> 
                        </div>
                      </div>
                         <CardSuppliers limit={3} />

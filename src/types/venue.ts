@@ -63,6 +63,7 @@ export interface VenueFormData {
     venue_types: VenueTypeOption[];
     venue_accessibilities: AccessibilityOption[];
     venue_pricing_models: PricingModelOption[];
+    cover_photo: string | null;
 }
 
 

@@ -1,5 +1,4 @@
-// src/hooks/useVenues.ts
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import supabase from '../../api/supabaseClient';
 import { VenueFilters, filterVenues } from './venueFilter';
 
@@ -9,15 +8,26 @@ const useVenues = (filters: VenueFilters) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  const prevFilters = useRef<VenueFilters>(filters);
+  const prevAllVenues = useRef<any[]>(allVenues);
+
   useEffect(() => {
     const fetchVenues = async () => {
       try {
         const { data, error } = await supabase
           .from('venues')
-          .select('*')
-          .order('id', { ascending: false });
+          .select(`
+            *,
+            venues_venue_types (
+              venue_type_id,
+              venue_types (
+                name
+              )
+            )
+          `);
 
         if (error) throw error;
+        console.log("Fetched Venues Data:", data);
         setAllVenues(data || []);
         setFilteredVenues(filterVenues(data || [], filters));
       } catch (err) {
@@ -31,7 +41,14 @@ const useVenues = (filters: VenueFilters) => {
   }, []);
 
   useEffect(() => {
-    setFilteredVenues(filterVenues(allVenues, filters));
+    if (
+      JSON.stringify(prevFilters.current) !== JSON.stringify(filters) ||
+      JSON.stringify(prevAllVenues.current) !== JSON.stringify(allVenues)
+    ) {
+      setFilteredVenues(filterVenues(allVenues, filters));
+      prevFilters.current = filters;
+      prevAllVenues.current = allVenues;
+    }
   }, [filters, allVenues]);
 
   return { venues: filteredVenues, loading, error };

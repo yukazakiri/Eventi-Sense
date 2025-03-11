@@ -256,26 +256,26 @@ const handleToggleVisibility = async () => {
         </div>
         <div className="flex items-center gap-4">
         <button 
-  onClick={handleToggleVisibility}
-  disabled={loading}
-  className={`px-4 py-2 rounded-md transition-colors ${
-    profile?.is_public 
-      ? 'bg-green-500 hover:bg-green-600 text-white'
-      : 'bg-red-500 hover:bg-red-600 text-white'
-  } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
->
-  {loading ? (
-    <PulseLoader color="#ffffff" size={8} />
-  ) : (
-    profile?.is_public ? 'Public' : 'Private'
-  )}
-</button>
-      <span className="text-sm text-gray-600">
-        {profile?.is_public 
-          ? 'Your profile is visible to everyone'
-          : 'Your profile is hidden from others'}
-      </span>
-    </div>
+        onClick={handleToggleVisibility}
+        disabled={loading}
+        className={`px-4 py-2 rounded-md transition-colors ${
+          profile?.is_public 
+            ? 'bg-green-500 hover:bg-green-600 text-white'
+            : 'bg-red-500 hover:bg-red-600 text-white'
+        } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+      >
+        {loading ? (
+          <PulseLoader color="#ffffff" size={8} />
+        ) : (
+          profile?.is_public ? 'Public' : 'Private'
+        )}
+      </button>
+            <span className="text-sm text-gray-600">
+              {profile?.is_public 
+                ? 'Your profile is visible to everyone'
+                : 'Your profile is hidden from others'}
+            </span>
+          </div>
       </section>
     </div>
   </div>

@@ -7,6 +7,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import CustomModal from '../../../../../assets/modal/customcalendar';
 import CreateEventModal from '../../../../../assets/modal/CreateEventModal';
+import { LuCalendar } from 'react-icons/lu';
 
 interface AvailabilityEvent {
   id: string;
@@ -196,6 +197,22 @@ const handleDateClick = (info: any) => {
 
   return (
     <div className="py-4 font-sofia bg-white p-8 rounded-3xl border-[1px] border-gray-300 dark:bg-gray-900 dark:border-gray-700">
+      <div className='flex justify-between mb-8'>
+        <h1 className='text-2xl font-bold font-bonanova text-gray-700 dark:text-white flex items-center gap-2'>
+          <div className="p-3 bg-violet-50 dark:bg-violet-900/30 rounded-xl mr-4">
+            <LuCalendar className="text-violet-600 dark:text-violet-500" size={24} />
+          </div>
+          Venue Availability
+        </h1>
+        {/* Add Event Button */}
+        <button
+          onClick={handleCreateClick}
+          className="h-16 bg-sky-500 hover:bg-sky-600 text-white py-4 px-4 rounded-2xl dark:bg-sky-500 dark:hover:bg-sky-600 dark:text-white"
+        >
+          Add Event+
+        </button>
+      </div>
+      
     <div className='flex justify-between'>
      <div className='text-gray-500 dark:text-gray-400 my-4 ml-4'>
     <div className='flex gap-2 mb-2'> <p style={{backgroundColor: '#E2D6FF'}} className='w-4 h-4 rounded'></p>
@@ -224,13 +241,7 @@ const handleDateClick = (info: any) => {
     </div>
   
   </div>
-  {/* Add Event Button */}
-  <button
-    onClick={handleCreateClick}
-    className="h-16 bg-blue-500 hover:bg-blue-600 text-white py-4 px-4 rounded-2xl dark:bg-blue-500 dark:hover:bg-blue-600 dark:text-white"
-  >
-    Add Event+
-  </button>
+
 </div>
   {/* Create Event Modal */}
   <CreateEventModal

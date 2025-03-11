@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import supabase from '../../../api/supabaseClient'; // Adjust path
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaTiktok } from 'react-icons/fa'; // Import icons
-
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaTiktok, FaQuestionCircle } from 'react-icons/fa'; // Import icons
+import { IoMdInformationCircle } from 'react-icons/io'; // Import info icon
+import { LuLink } from 'react-icons/lu';
 interface VenueSocialMedia {
     id?: string;
     venues_id: string;
@@ -9,7 +10,6 @@ interface VenueSocialMedia {
     link: string;
     created_at?: string;
     isEditing?: boolean;
-
 }
 
 interface VenueSocialMediaLinksProps {
@@ -111,156 +111,196 @@ function VenueSocialMediaLinks({ venues_id, isEditing, setIsEditing }: VenueSoci
     }
 
     return (
-          <div className={`bg-white dark:bg-gray-900 p-[2rem] border-[1px] border-gray-300 dark:border-gray-700 rounded-3xl ${
-            isEditing ? 'border-2 rounded-3xl border-indigo-400 dark:border-indigo-500' : ''
-          }`}>
-                
-      
-                  <div className='flex justify-between md:flex-row flex-col md:space-x-4 space-y-4 md:space-y-0'>
-                      <h3 className="text-2xl font-bold font-bonanova text-gray-700 dark:text-gray-200">Social Media Links</h3>
-                      {successMessage && <p className="text-green-500 mb-4">{successMessage}</p>}
-          
-                      {/* Social Media Icons */}
-                      <div className="flex space-x-4 mb-4">
-                          <div className="rounded-full border-[1px] border-gray-200 p-4">
-                          <FaFacebook
-                              className="text-blue-1 cursor-pointer hover:text-blue-2"
-                              size={24}
-                              onClick={() => handleIconClick('Facebook')}
-                          />
-                          </div>
-                          <div className="rounded-full border-[1px] border-gray-200 p-4">
-                          <FaTwitter
-                              className="text-blue-1 cursor-pointer hover:text-blue-2"
-                              size={24}
-                              onClick={() => handleIconClick('Twitter')}
-                          />
-                          </div>
-                          <div className="rounded-full border-[1px] border-gray-200 p-4">
-                          <FaInstagram
-                              className="text-pink-600 cursor-pointer hover:text-pink-700"
-                              size={24}
-                              onClick={() => handleIconClick('Instagram')}
-                          />
-                          </div>
-                          <div className="rounded-full border-[1px] border-gray-200 p-4">
-                          <FaLinkedin
-                              className="text-blue-1 cursor-pointer hover:text-blue-2"
-                              size={24}
-                              onClick={() => handleIconClick('LinkedIn')}
-                          />
-                          </div>
-                          <div className="rounded-full border-[1px] border-gray-200 p-4">
-                          <FaTiktok
-                              className="text-black cursor-pointer hover:text-gray-700"
-                              size={24}
-                              onClick={() => handleIconClick('TikTok')}
-                          />
-                          </div>
-                           
-                      </div>
-                      <div className='flex item-end justify-end mb-4'>
-                        
-                        <div>
-                              {!isEditing &&  (
-                            <>
+        <div className={`bg-white sm:p-6 md:p-[2rem] border-[1px] border-gray-300 rounded-3xl dark:bg-gray-900 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 p-6 backdrop-blur-sm bg-opacity-80 dark:bg-opacity-80 ${isEditing ? 'border-[1px] rounded-3xl border-indigo-400 dark:border-indigo-400' : ''}`}>
+            <div className='flex flex-col space-y-4'>
+                {/* Header Section with Information */}
+                <div className='flex items-start justify-between'>
+                    <div className='flex flex-col space-y-2'>
+                        <h3 className="text-xl sm:text-2xl font-bold font-bonanova text-gray-700 dark:text-white flex items-center gap-2">
+                            <div className="p-3 bg-sky-50 dark:bg-sky-900/30 rounded-xl mr-4">
+                                <LuLink className="text-sky-600 dark:text-sky-500" size={24} />
+                            </div>
+                            Social Media Links
+                            <div className="group relative">
+                                <IoMdInformationCircle className="text-gray-400 hover:text-gray-600 cursor-help" />
+                                <div className="hidden group-hover:block absolute z-50 w-64 p-2 bg-gray-800 text-white text-sm rounded-md shadow-lg -right-1 top-6">
+                                    Connect with your audience by adding your social media profiles
+                                </div>
+                            </div>
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Share your social media presence with your audience
+                        </p>
+                    </div>
+                    
+                    {/* Success Message */}
+                    {successMessage && (
+                        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded-lg flex items-center">
+                            <span>✓</span>
+                            <p className="ml-2 text-sm">{successMessage}</p>
+                        </div>
+                    )}
+                </div>
+
+                {/* Instructions Panel */}
+                <div className="bg-blue-50 dark:bg-gray-800 bg-sky-50 p-4 rounded-lg mb-4 ">
+                    <h4 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2 flex items-center gap-2">
+                        <FaQuestionCircle />
+                        How to add your social media links:
+                    </h4>
+                    <ol className="list-decimal list-inside text-sm text-gray-700 dark:text-gray-400 space-y-1">
+                        <li>Click the "Add Link +" button to start</li>
+                        <li>Select a social media platform icon</li>
+                        <li>Enter your profile URL</li>
+                        <li>Click "Add Link" to save</li>
+                    </ol>
+                </div>
+
+                {/* Social Media Icons Section */}
+                <div className="flex flex-wrap gap-4 items-center">
+                    <p className="text-sm text-sky-600 dark:text-sky-400 w-full">
+                        {isEditing ? 'Select a platform to add:' : 'Available platforms:'}
+                    </p>
+                    <div className="flex flex-wrap gap-3">
+                        {[
+                            { icon: <FaFacebook size={20} />, name: 'Facebook', color: 'text-blue-1' },
+                            { icon: <FaTwitter size={20} />, name: 'Twitter', color: 'text-blue-1' },
+                            { icon: <FaInstagram size={20} />, name: 'Instagram', color: 'text-pink-600' },
+                            { icon: <FaLinkedin size={20} />, name: 'LinkedIn', color: 'text-blue-1' },
+                            { icon: <FaTiktok size={20} />, name: 'TikTok', color: 'text-black dark:text-white' }
+                        ].map((platform) => (
+                            <div key={platform.name} className="relative group">
                                 <button
-                                    onClick={() => setIsEditing(true)}
-                                    className="text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 text-center"
+                                    onClick={() => isEditing && handleIconClick(platform.name)}
+                                    className={`rounded-full border-[1px] border-gray-200 p-3 sm:p-4 dark:border-gray-700 
+                                        ${isEditing ? 'hover:border-sky-500 hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200' : ''}
+                                        ${selectedPlatform === platform.name ? 'border-sky-500 shadow-lg' : ''}
+                                        ${!isEditing ? 'cursor-default' : 'cursor-pointer'}`}
+                                    disabled={!isEditing}
                                 >
-                                   Add Link +
+                                    <div className={platform.color}>{platform.icon}</div>
                                 </button>
-                           
-                            </>
-                        )}
-                        {isEditing  && (
+                                <div className="hidden group-hover:block absolute z-50 -bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded whitespace-nowrap">
+                                    {platform.name}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Add/Cancel Button */}
+                    <div className='flex justify-end ml-auto'>
+                        {!isEditing ? (
+                            <button
+                                onClick={() => setIsEditing(true)}
+                                className="text-white bg-sky-500 hover:bg-sky-600 focus:ring-4 focus:outline-none focus:ring-sky-300 font-medium rounded-full text-sm px-6 py-2.5 flex items-center gap-2 transition-all duration-200 hover:shadow-lg"
+                            >
+                                Add Link +
+                            </button>
+                        ) : (
                             <button
                                 onClick={() => {
                                     setIsEditing(false);
-                                  
+                                    setShowInput(false);
                                 }}
-                                className="text-white bg-red-400 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-blue-800"
+                                className="text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-full text-sm px-6 py-2.5 flex items-center gap-2 transition-all duration-200"
                             >
                                 Cancel
                             </button>
-                        )}</div>
-                           </div>
-                  </div>
-                
-               
-                  {showInput && (
-                      <div className="mb-4">
-                          {isEditing && (
-                              <form onSubmit={handleSubmit} className="mb-4">
-                                  <div className="mb-4">
-                                      <label htmlFor="platform" className="block mb-2 text-md font-medium text-gray-800 dark:text-white">
-                                          Platform
-                                      </label>
-                                      <input
-                                          type="text"
-                                          name="platform"
-                                          id="platform"
-                                          value={newSocialMedia.platform}
-                                          onChange={handleInputChange}
-                                          className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                          required
-                                          disabled // Disabled because the platform is selected via icons
-                                      />
-                                  </div>
-                                  <div className="mb-4">
-                                      <label htmlFor="link" className="block mb-2 text-md font-medium text-gray-800 dark:text-white">
-                                          Link
-                                      </label>
-                                      <input
-                                          type="text"
-                                          name="link"
-                                          id="link"
-                                          placeholder={`Enter ${selectedPlatform} link`}
-                                          value={newSocialMedia.link}
-                                          onChange={handleInputChange}
-                                          className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                          required
-                                      />
-                                  </div>
-                                  <div className='flex '>
-                                      <button
-                                          type="submit"
-                                          className="w-auto flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                                      >
-                                          Add Link
-                                      </button>
-                                      <button type='button' onClick={handleCancel} className='w-auto ml-4 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500'>Cancel</button>
-                                  </div>
-                              </form>
-                          )}
-                      </div>
-                  )}
-              
-          
-                  {/* Display Existing Links */}
-            
-                      <ul className="space-y-2">
-                          {socialMedia.map((link) => (
-                              <li key={link.id} className="flex items-center space-x-2">
-                                  {link.platform === 'Facebook' && <FaFacebook className="text-blue-1" size={20} />}
-                                  {link.platform === 'Twitter' && <FaTwitter className="text-blue-1" size={20} />}
-                                  {link.platform === 'Instagram' && <FaInstagram className="text-pink-600" size={20} />}
-                                  {link.platform === 'LinkedIn' && <FaLinkedin className="text-blue-1" size={20} />}
-                                  {link.platform === 'TikTok' && <FaTiktok className="text-blue-800" size={20} />}
-                                  <a
-                                      href={link.link}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-blue-600 hover:underline"
-                                  >
-                                      {link.platform}
-                                  </a>
-                              </li>
-                          ))}
-                      </ul>
-              
-                  
-              </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Input Form */}
+                {isEditing && showInput && (
+                    <div className="mt-6 bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+                        <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-4">
+                            Add {selectedPlatform} Link
+                        </h4>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label htmlFor="platform" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Selected Platform
+                                </label>
+                                <input
+                                    type="text"
+                                    name="platform"
+                                    id="platform"
+                                    value={newSocialMedia.platform}
+                                    className="bg-gray-100 border border-gray-300 text-gray-600 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 cursor-not-allowed"
+                                    disabled
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="link" className=" mb-2 text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                                    Profile URL
+                                    <div className="group relative">
+                                        <IoMdInformationCircle className="text-gray-400 hover:text-gray-600 cursor-help" />
+                                        <div className="hidden group-hover:block absolute z-50 w-64 p-2 bg-gray-800 text-white text-xs rounded-md shadow-lg">
+                                            Enter the full URL to your {selectedPlatform || 'social media'} profile
+                                            {selectedPlatform && ` (e.g., https://www.${selectedPlatform.toLowerCase()}.com/yourprofile)`}
+                                        </div>
+                                    </div>
+                                </label>
+                                <input
+                                    type="url"
+                                    name="link"
+                                    id="link"
+                                    placeholder={`https://www.${selectedPlatform?.toLowerCase()}.com/yourprofile`}
+                                    value={newSocialMedia.link}
+                                    onChange={handleInputChange}
+                                    className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    required
+                                />
+                            </div>
+                            <div className='flex gap-3'>
+                                <button
+                                    type="submit"
+                                    className="flex-1 py-2.5 px-5 text-sm font-medium text-white bg-sky-600 hover:bg-sky-700 rounded-lg focus:ring-4 focus:ring-sky-300 transition-all duration-200 dark:focus:ring-sky-800"
+                                >
+                                    Add Link
+                                </button>
+                                <button 
+                                    type='button' 
+                                    onClick={handleCancel}
+                                    className="flex-1 py-2.5 px-5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 transition-all duration-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                )}
+
+                {/* Existing Links */}
+                {socialMedia.length > 0 && (
+                    <div className="mt-6">
+                        <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-4">
+                            Your Connected Accounts
+                        </h4>
+                        <ul className="space-y-3">
+                            {socialMedia.map((link) => (
+                                <li key={link.id} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-all duration-200">
+                                    {link.platform === 'Facebook' && <FaFacebook className="text-blue-1" size={20} />}
+                                    {link.platform === 'Twitter' && <FaTwitter className="text-blue-1" size={20} />}
+                                    {link.platform === 'Instagram' && <FaInstagram className="text-pink-600" size={20} />}
+                                    {link.platform === 'LinkedIn' && <FaLinkedin className="text-blue-1" size={20} />}
+                                    {link.platform === 'TikTok' && <FaTiktok className="text-black dark:text-white" size={20} />}
+                                    <a
+                                        href={link.link}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-sky-600 hover:text-sky-800 dark:text-sky-400 dark:hover:text-sky-300 text-sm font-medium break-all"
+                                    >
+                                        {link.platform} Profile
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+            </div>
+        </div>
     );
-    };
-    export default VenueSocialMediaLinks;
+}
+
+export default VenueSocialMediaLinks;

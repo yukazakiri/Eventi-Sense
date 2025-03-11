@@ -18,6 +18,7 @@ export interface Supplier {
   company_id?: string;  // Make sure this is still here!
   created_at?: Date;
   rating?: number;
+  suppliers_services?: string;
 }
 export interface CompanyProfile{
   id?: string;

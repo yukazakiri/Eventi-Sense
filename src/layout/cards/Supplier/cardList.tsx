@@ -1,87 +1,83 @@
-import React, { useState, useEffect } from 'react';
+// CardSuppliers.tsx
+import React, { useState } from 'react';
 import Card from './cardDesign';
-import supabase from '../../../api/supabaseClient';
-import { CompanyProfile, Supplier } from '../../../types/supplier';
 import { useNavigate } from 'react-router-dom';
+import useSuppliers, { SupplierWithCompanyProfile } from '../../../hooks/Supplier/useSupplier';
+import { SupplierFilters } from '../../../hooks/Supplier/supplierFilter';
+import { HoverButton4 } from '../../../components/Button/button-hover';
 
 type CardSuppliersProps = {
   limit?: number;
+  filters?: SupplierFilters;
+  showAll?: boolean;
+  handleViewLess?: () => void;
 };
 
-const CardSuppliers: React.FC<CardSuppliersProps> = ({ limit }) => {
-  const [cardData, setCardData] = useState<{ supplier: Supplier; companyProfile: CompanyProfile | null }[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate(); // Initialize useNavigate
+const CardSuppliers: React.FC<CardSuppliersProps> = ({ limit, filters = { searchQuery: '' }, showAll, handleViewLess }) => {
+  const { suppliers, loading, error } = useSuppliers(filters);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const { data: suppliersData, error: suppliersError } = await supabase
-          .from('supplier')
-          .select('*')
-        console.log('id', suppliersData);
+  const handleCardClick = (supplierId: string) => {
+    navigate(`/supplier/${supplierId}`);
+  };
 
-        if (suppliersError) {
-          throw new Error(suppliersError.message);
-        }
+  const [currentPage, setCurrentPage] = useState(1);
+  const suppliersPerPage = 9;
 
-        const companyProfiles = await supabase
-        .from('company_profiles')
-        .select('*')
-        .in('id', suppliersData.map(supplier => supplier.company_id));
-      
-      const suppliersWithCompanyProfiles = suppliersData.map(supplier => ({
-        supplier,
-        companyProfile: companyProfiles.data?.find(companyProfile => companyProfile.id === supplier.company_id),
-      }));
-      
-      setCardData(suppliersWithCompanyProfiles);
-      } catch (e) {
-        if (e instanceof Error) {
-          setError(e.message);
-        } else {
-          setError('An unexpected error occurred');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
 
-    fetchData();
-  }, []);
-  const handleCardClick = (supplierId: string) => { // Change to string
-    console.log("Clicked supplier ID:", supplierId);
-    navigate(`/supplier/${supplierId}`); // Keep as string
-};
-  if (loading) {
-    return <div>Loading suppliers...</div>;
+  if (loading) return <div>Loading suppliers...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  let displayedSuppliers: SupplierWithCompanyProfile[] = suppliers;
+
+  if (showAll) {
+    const startIndex = (currentPage - 1) * suppliersPerPage;
+    const endIndex = startIndex + suppliersPerPage;
+    displayedSuppliers = suppliers.slice(startIndex, endIndex);
+  } else if (limit) {
+    displayedSuppliers = suppliers.slice(0, limit);
   }
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  const displayedCardData = limit ? cardData.slice(0, limit) : cardData;
+  const totalPages = Math.ceil(suppliers.length / suppliersPerPage);
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      {displayedCardData.map(({ supplier, companyProfile }, index) => {
-        console.log('ids',supplier.id)
-        return (
-          <div key={index} onClick={() => handleCardClick(supplier.id ?? '')}>
-            <Card
-              SupplierName={supplier.name}
-              Services={supplier.address_city}
-              CompanyName={companyProfile ? companyProfile.company_name : 'Company Name Not Found'}
-              image={supplier.cover_image_url}
-              rating={supplier.rating || 0}
-            />
-          </div>
-        );
-      })}
+      {displayedSuppliers.map(({ supplier, companyProfile, services }, index) => (
+        <div key={index} onClick={() => handleCardClick(supplier.id)}>
+          <Card
+            SupplierName={supplier.name}
+            Services={services} // Use the services property here
+            CompanyName={companyProfile?.company_name || 'Company Name Not Found'}
+            image={supplier.cover_image_url}
+            rating={supplier.rating || 0}
+            Location={supplier.address_city}
+          />
+        </div>
+      ))}
+
+      {showAll && totalPages > 1 && (
+        <div className="mt-4">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
+            <button
+              key={pageNumber}
+              onClick={() => handlePageChange(pageNumber)}
+              disabled={currentPage === pageNumber}
+              className={`mx-1 px-3 py-1 rounded ${currentPage === pageNumber ? 'bg-gray-300' : 'bg-gray-100 hover:bg-gray-200'}`}
+            >
+              {pageNumber}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {showAll && totalPages > 1 && (
+        <div className="flex justify-center mt-16">
+          <HoverButton4 onClick={handleViewLess}>View less</HoverButton4>
+        </div>
+      )}
     </div>
   );
 };

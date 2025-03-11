@@ -33,8 +33,8 @@ import EventDetails from '../pages/Events/Event';
 import EventUpdate from '../pages/Events/UpdateEvent';
 
 import EventPlannerDashboard from '../app/EventPlanner';
-import PublicVenueList from '../pages/PublicVenueList';
-
+import PublicVenueList from '../pages/List/PublicVenueList';
+import PublicSupplierList from '../pages/List/PublicSupplier';
 const AppRouter = () => {
   return (
     <>
@@ -68,6 +68,7 @@ const AppRouter = () => {
         <Route path="/settings" element={<Settings/>} />
 
         <Route path="/venue-list" element={<PublicVenueList/>} /> 
+        <Route path="/supplier-list" element={<PublicSupplierList/>} />   
 
         <Route path="/Venue-Manager-dashboard/*" element={
           <ProtectedRoute requiredRole="venue_manager">

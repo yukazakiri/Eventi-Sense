@@ -1,22 +1,16 @@
 // VenueDetailPage.js
 import React, { useEffect, useState } from 'react';
 import supabase from '../../../api/supabaseClient';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import VenueInfoForm from './VenueDetails/VenueInfor';
 import AddressForm from './VenueDetails/VenueAddress';
 import ImageUploadForm from './VenueDetails/VenueCoverPage';
 import AmenitiesForm from './VenueDetails/Amenities';
 import { Venue } from '../../../types/venue';
-import Breadcrumbs from '../../../components/BreadCrumbs/breadCrumbs';
-import { HomeIcon } from '@heroicons/react/24/solid';
-import { FaCalendarDay, FaImage } from 'react-icons/fa';
-import SocialMediaLinks from '../../VenueManager/Social/SocialLinks';
 
-const breadcrumbItems = [
-    { label: 'Home', href: '/Venue-Manager-Dashboard/Home', icon: <HomeIcon className="h-4 w-4 mr-1" /> },
-    { label: 'Venues', href: '/Venue-Manager-Dashboard/Venue-List' },
-    { label: 'Venue Details', href: '' } 
-];
+import SocialMediaLinks from '../../VenueManager/Social/SocialLinks';
+import Gallery from './VenueDetails/AvailabiltyGallery/Gallery';
+import AvailabilityForm from './VenueDetails/AvailabiltyGallery/AddVenueAvailabilityForm';
 
 interface Amenity {
     id: string;
@@ -30,7 +24,6 @@ interface VenueAmenity {
     description: string | null;
 }
 
-
 const VenueDetailPage: React.FC = () => {
     const { venueId: venueIdFromParams = '' } = useParams<{ venueId: string }>();
     const [venueId, setVenueId] = useState<number | string | null>(null);
@@ -43,9 +36,9 @@ const VenueDetailPage: React.FC = () => {
     const [amenities, setAmenities] = useState<Amenity[]>([]);
     const [selectedAmenities, setSelectedAmenities] = useState<VenueAmenity[]>([]);
     const [isEditingAmenities, setIsEditingAmenities] = useState(false);
-     const [isEditingImage, setIsEditingImage]= useState(false);
-     const [isEditing, setIsEditing]= useState(false)
-
+    const [isEditingImage, setIsEditingImage] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [activeTab, setActiveTab] = useState('info');
 
     useEffect(() => {
         const venueIdAsNumber = Number(venueIdFromParams);
@@ -180,69 +173,111 @@ const VenueDetailPage: React.FC = () => {
     if (!venue) {
         return <div>Venue not found.</div>;
     }
+
+    const tabs = [
+        { id: 'info', name: 'Venue Info' },
+        { id: 'address & amenities', name: 'Address & Amenities' },
+        { id: 'social', name: 'Social Media' },
+        { id: 'cover photo', name: 'Cover Photo' },
+        { id: 'gallery', name: 'Gallery' },
+        { id: 'availability', name: 'Availability' },
+    ];
+
     return (
-        <div className="px-8 mb-6">
-            <div className="mx-auto font-sofia">
-           
-                <section className="my-4 flex justify-between items-center h-full">
-                  
-                    <div className="flex items-end">
-                        <div className='flex' >
-                            <div className='px-6 py-4 bg-indigo-600 hover:bg-indigo-800 max-w-auto text-white rounded-3xl mr-4 flex items-center'>
-                                <Link to={`/Venue-Manager-Dashboard/Venue-Details/${venue.id}/add-availability`} className="flex items-center">
-                                    <FaCalendarDay className="mr-2 h-[2rem] w-[3rem] text-slate-100" />
-                                    <span>Add Availability</span>
-                                </Link>
-                            </div>
-                            <div className='px-6 py-4 bg-white hover:bg-indigo-800 group  border-2 border-indigo-600 hover:text-white hover:border-indigo-200 max-w-auto text-indigo-600 rounded-3xl flex items-center'>
-                                <Link to={`/Venue-Manager-Dashboard/Venue-Details/${venue.id}/add-photos`} className="flex items-center">
-                                    <FaImage className="mr-2 h-[3rem] w-[3rem]  text-indigo-600 group-hover:text-slate-100 " />
-                                    <span>Add Photos for Venue</span>
-                                </Link>
-                            </div>
+        <div className="flex flex-col gap-8 lg:mx-16 md:mx-10 sm:mx-6   bg-white  dark:bg-gray-900 pb-8">
+                    <div className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 transition-all duration-300">
+                        {/* Always render the gradient div, but hide it initially if there's a cover photo */}
+                        <div 
+                            className="w-full h-72 bg-gradient-to-r from-orange-400 via-pink-500 to-blue-500 rounded-t-2xl relative fallback-gradient"
+                            style={{display: venue.cover_image_url ? 'none' : 'block'}}
+                        />
+                        
+                        {/* Only render the image if there's a cover photo */}
+                        {venue.cover_image_url && (
+                            <img 
+                            src={venue.cover_image_url} 
+                            alt="Venue Cover" 
+                            className="w-full max-h-96 object-cover rounded-t-2xl" 
+                            onError={(e) => {
+                                (e.target as HTMLElement).style.display = 'none';
+                                // Find the gradient div by class name
+                                const gradientDiv = (e.target as HTMLElement).parentNode?.querySelector('.fallback-gradient');
+                                if (gradientDiv) {
+                                (gradientDiv as HTMLElement).style.display = 'block';
+                                }
+                            }}
+                            />
+                        )}
                         </div>
-                    </div>
-                    <div className="flex items-end  ">
-                <Breadcrumbs items={breadcrumbItems} />
-            </div>
-                </section>
-    
-                <div className="grid lg:grid-cols-2 grid-flow-row gap-8">
-                <div className='col-span-2'>
-                        <SocialMediaLinks venues_id={venue.id.toString()} isEditing={isEditing} setIsEditing={setIsEditing}/>
-                    </div>
-                <div className='col-span-2'>
-                            <ImageUploadForm venueId={venue.id.toString()} isEditing={isEditingImage} setIsEditingImage={setIsEditingImage}  />
-                        </div>
-                    <div className=' col-span-2'>
+            <div>
+            
+
+                {/* Tab Navigation */}
+                <div className="border-b border-gray-200 dark:border-gray-700 px-8">
+                    <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+                        {tabs.map((tab) => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`
+                                    whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm
+                                    ${
+                                        activeTab === tab.id
+                                            ? 'border-sky-500 text-sky-600'
+                                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:border-gray-700'
+                                    }
+                                `}
+                            >
+                                {tab.name}
+                            </button>
+                        ))}
+                    </nav>
+                </div>
+
+                {/* Content based on active tab */}
+                <div className="lg:my-10 lg:mx-10 ">
+                    {activeTab === 'info' && (
                         <VenueInfoForm
                             venue={venue}
-                         
                             isEditing={isEditingInfo}
                             setIsEditing={setIsEditingInfo}
                         />
-                        
-                    </div>
-                    <div>
-                        <AddressForm
-                            venue={venue}
-                            onSave={handleSaveVenue}
-                            isEditing={isEditingAddress}
-                            setIsEditing={setIsEditingAddress}
-                        />
-                      
-                    </div> 
-                     <div className="">
-                            <AmenitiesForm
+                    )}
+                    {activeTab === 'address & amenities' && (
+                        <div className='grid md:grid-cols-2 gap-4  mt-4' >  
+                        <div className='w-full col-start-1'>
+                            <AddressForm
                                 venue={venue}
-                                amenities={amenities}
-                                selectedAmenities={selectedAmenities}
-                                onSave={handleSaveVenueAmenities}
-                                isEditing={isEditingAmenities}
-                                setIsEditing={setIsEditingAmenities}
+                                onSave={handleSaveVenue}
+                                isEditing={isEditingAddress}
+                                setIsEditing={setIsEditingAddress}
                             />
-                      
                         </div>
+                        <div className='w-full'>
+                        <AmenitiesForm
+                        venue={venue}
+                        amenities={amenities}
+                        selectedAmenities={selectedAmenities}
+                        onSave={handleSaveVenueAmenities}
+                        isEditing={isEditingAmenities}
+                        setIsEditing={setIsEditingAmenities}
+                    /> 
+                    </div>
+                    </div>
+                    )}
+              
+                    {activeTab === 'social' && (
+                        <SocialMediaLinks venues_id={venue.id.toString()} isEditing={isEditing} setIsEditing={setIsEditing}/>
+                    )}
+                    {activeTab === 'cover photo' && (
+                        <ImageUploadForm venueId={venue.id.toString()} isEditing={isEditingImage} setIsEditingImage={setIsEditingImage}  />
+                    )}
+                    {activeTab === 'gallery' && (
+                        <Gallery />
+                    )}
+                    {activeTab === 'availability' && (
+                        <AvailabilityForm    />
+                    )}
                 </div>
             </div>
         </div>

@@ -1,13 +1,14 @@
 import { useState } from 'react';
-import CardVenues from '../layout/cards/Venue/cardList';
-import { HoverButton, HoverButton2, HoverButton3, HoverButton4, HoverButton5 } from '../components/Button/button-hover';
-import myImage from '../assets/images/iStock-13447299461.jpg';
-import myImage2 from '../assets/images/venue-chair.jpg';
+import CardVenues from '../../layout/cards/Venue/cardList';
+import { HoverButton, HoverButton2, HoverButton3, HoverButton4, HoverButton5 } from '../../components/Button/button-hover';
+import myImage from '../../assets/images/iStock-13447299461.jpg';
+import myImage2 from '../../assets/images/venue-chair.jpg';
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 import { BiSearch } from 'react-icons/bi';
-import MainFooter from '../layout/MainFooter';
-import { VenueFilters } from '../hooks/Venues/venueFilter';
-import useVenues from '../hooks/Venues/useVenues';
+import MainFooter from '../../layout/MainFooter';
+import { VenueFilters } from '../../hooks/Venues/venueFilter';
+import useVenues from '../../hooks/Venues/useVenues';
+  import {venueTypes } from '../../types/venueTypes';
 
 const SeasideVenueListing = () => {
    
@@ -97,6 +98,21 @@ const SeasideVenueListing = () => {
                 </select>
                 <MdOutlineKeyboardArrowDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 text-lg sm:text-xl pointer-events-none" />
               </div>
+              <div className="w-full md:w-48 relative font-sofia tracking-widest">
+                <select
+                    className="w-full py-2 sm:py-3 px-4 bg-transparent focus:outline-none text-gray-300 appearance-none border-l border-gray-500/50 cursor-pointer"
+                    value={filters.venueType}
+                    onChange={(e) => handleFilterChange('venueType', e.target.value)}
+                >
+                    <option value="" className='text-gray-800/85'>Venue Type</option>
+                    {venueTypes.map((type) => (
+                        <option key={type} value={type} className='text-gray-800/85'>
+                            {type}
+                        </option>
+                    ))}
+                </select>
+                <MdOutlineKeyboardArrowDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 text-lg sm:text-xl pointer-events-none" />
+            </div>
               
               <div className="w-full md:w-48 relative font-sofia tracking-widest">
                 <select 
