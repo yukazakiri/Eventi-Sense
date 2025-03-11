@@ -28,6 +28,7 @@
     "@schedule-x/react": "^2.18.0",
     "@schedule-x/theme-default": "^2.18.0",
     "@supabase/auth-helpers-react": "^0.5.0",
+    "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.48.1",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.7.9",

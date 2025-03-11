@@ -89,10 +89,11 @@ function HomePage() {
                        <div className="text-white flex justify-end font-montserrat cursor-pointer hover:text-yellow-300">
                       
                          <HoverButton>  <NavLink to="/venue-list"> View All   </NavLink></HoverButton> 
+                         <Cardvenues limit={3} />
                      
                        </div>
                      </div>
-                        <Cardvenues limit={3} />
+              
                     </section>
                     <section className="mx-4 2xl:mx-[16rem] xl:mx-[8rem] my-[4rem]">
                      <div className="flex justify-between py-[10px] ">
