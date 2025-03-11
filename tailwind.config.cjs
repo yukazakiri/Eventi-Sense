@@ -36,6 +36,8 @@ module.exports = {
   			pastelYellow: '#FAE3B2',
   			pastelPurple: '#D6CDEA',
   			pastelOrange: '#F2C9B0',
+			pastelGray: '#F6F8F5',
+			pastelGray2: '#646865',
   			blue: '#0E162B',
   			'blue-light-1': '#F1F5F9',
   			'blue-light-2': '#D7E8FE',

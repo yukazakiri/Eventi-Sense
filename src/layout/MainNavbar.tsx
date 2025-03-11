@@ -254,7 +254,7 @@ function MainNavbar() {
   // Default navbar for other roles and non-authenticated users
   return (
     <div>
-      <nav className="shadow-2xl fixed top-0 left-0 w-full z-50 bg-navy-blue-5 text-white">
+      <nav className="shadow-2xl fixed top-0 left-0 w-full z-50 bg-gray-800 text-white">
         {/* Top row with logo, search, and profile */}
         <div className="w-full border-b border-gray-700">
           <div className="container mx-auto px-4 py-3 flex items-center justify-between">
@@ -309,7 +309,7 @@ function MainNavbar() {
               {profile?.role && (
                 <NavLink 
                   to={`/${profile.role.replace('_', '-')}-Dashboard/Home`} 
-                  className="uppercase hover:gradient-text"
+                  className="uppercase font-semibold tracking-widest text-sm hover:gradient-text"
                 >
                   Dashboard
                 </NavLink>
@@ -332,10 +332,10 @@ function MainNavbar() {
         </div>
         
         {/* Bottom row with main navigation - aligned left */}
-        <div className="w-full bg-white">
+        <div className="w-full bg-gray-800">
           <div className="container mx-auto px-4 py-3">
             {/* Desktop navigation - hidden on mobile */}
-            <div className="hidden md:flex items-center justify-start space-x-8 font-montserrat tracking-widest text-[1rem]">
+            <div className="hidden md:flex items-center justify-start space-x-8 font-montserrat tracking-widest text-sm text-gray-100 font-semibold">
               <NavLink to="/" className={({ isActive }) => `uppercase ${isActive ? 'gradient-text' : 'hover:text-gray-300'}`}>
                 Home
               </NavLink>

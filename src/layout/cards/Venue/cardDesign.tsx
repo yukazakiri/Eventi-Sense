@@ -1,34 +1,54 @@
 import React from 'react';
+import imagefallback from '../../../assets/images/fallback.png';
 
 type CardProps = {
   VenueName: string;
   PlaceName: string;
-  Guests: string;
+  capacity: string;
   image: string;
   rating: number; // Rating out of 5
+  Price: number | null;
 };
 
-const Card: React.FC<CardProps> = ({ VenueName, PlaceName, Guests, image, rating }) => {
+const Card: React.FC<CardProps> = ({ VenueName, PlaceName, capacity, image, rating, Price }) => {
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    e.currentTarget.src = imagefallback;
+  };
 
   return (
-    <div className="gradient-background overflow-hidden group cursor-pointer rounded-[20px] w-full group">
-      {/* Image */}
-      <img
-        className="w-full h-[300px] object-cover transform transition-transform duration-300 group-hover:scale-110"
-        src={image}
-        alt={VenueName}
+    <div className="relative group border border-gray-400/20 overflow-hidden cursor-pointer w-full">
+      {/* Hover background overlay */}
+      <span
+        className="absolute inset-0 bg-gradient-to-r from-navy-blue-5 to-navy-blue-5 
+                   transform -translate-y-full group-hover:translate-y-0 
+                   transition-transform duration-500 ease-in-out z-0"
       />
 
+      {/* Image container - Added fixed height */}
+      <div className="relative z-10 h-[300px]">
+        <img
+          className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-110 ease-in-out"
+          src={image || imagefallback}
+          alt={VenueName}
+          onError={handleImageError}
+        />
+        {/* View Details Overlay */}
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20 opacity-0  transform group-hover:scale-110 group-hover:opacity-100 transition-opacity duration-300 ease-in-out ">
+          <span className="text-white text-lg font-sofia tracking-wide">View Details</span>
+        </div>
+      </div>
+
       {/* Content */}
-      <div className="px-4 py-6">
+      <div className="px-4 py-6 relative z-10">
         <div>
-          <div className="flex flex-wrap gap-x-4 text-[1rem] mb-2 font-montserrat">
-            <h1 className="text-gray-300">{VenueName},</h1>
-            <h1 className="font-semibold text-white uppercase gradient-text">{PlaceName}</h1>
+          <div className="flex flex-wrap gap-x-4 text-[1rem] mb-2 font-sofia tracking-wide">
+            <h1 className="text-gray-500 group-hover:text-white transition-colors duration-300">{VenueName},</h1>
+            <h1 className="font-semibold text-white uppercase gradient-text ">{PlaceName}</h1>
           </div>
         </div>
 
-        <p className="text-gray-500 text-base">{Guests}</p>
+        <p className="text-gray-500 font-sofia tracking-wide text-sm group-hover:text-white transition-colors duration-300">Capacity: {capacity || 'N/A'}</p>
+        <p className="text-gray-500 font-sofia tracking-wide text-sm group-hover:text-white transition-colors duration-300">Price-Range: {Price !== null ? Price : 'N/A'}</p>
 
         {/* Star Rating */}
         <div className="flex items-center mt-2">

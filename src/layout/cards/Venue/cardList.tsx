@@ -1,75 +1,78 @@
-import React, { useState, useEffect } from 'react';
-import Card from './cardDesign'; // Import the Card component
-import supabase from '../../../api/supabaseClient';
+import React, { useState } from 'react';
+import Card from './cardDesign';
 import { useNavigate } from 'react-router-dom';
+import imagefallback from '../../../assets/images/fallback.png';
+import { HoverButton4 } from '../../../components/Button/button-hover';
 
 type CardVenuesProps = {
-  limit?: number; // Optional prop to limit the number of cards
+  venues: any[];
+  limit?: number;
+  showAll?: boolean;
+  handleViewLess?: () => void;
 };
 
-const CardVenues: React.FC<CardVenuesProps> = ({ limit }) => {
-  const [venues, setVenues] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const navigate = useNavigate(); // Initialize useNavigate
-
-
-  useEffect(() => {
-    const fetchVenues = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('venues') // Replace 'venues' with your actual table name
-          .select('*') // Select all columns
-          .order('id', { ascending: false }); // Sort by ID in descending order
-
-        if (error) {
-          throw error; // Re-throw the error to be caught below
-        }
-
-        if (data) {
-          setVenues(data);
-        } else {
-          setVenues([]); // Handle the case where no data is returned
-        }
-      } catch (error) {
-        setError(error as Error);
-        console.error("Error fetching venues:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchVenues();
-  }, []); // Empty dependency array ensures this runs only once on mount
- 
-  const handleCardClick = (venueId: number) => {  // venueId should match your venue's ID type
-    console.log("Clicked venue ID:", venueId); 
-    navigate(`/venue/${venueId}`); // Navigate to the venue details page
+const CardVenues: React.FC<CardVenuesProps> = ({ venues, limit, showAll = false, handleViewLess }) => {
+  const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const venuesPerPage = 9;
+  
+  const handleCardClick = (venueId: number) => {
+    navigate(`/venue/${venueId}`);
   };
-
-  if (loading) {
-    return <div>Loading venues...</div>; // Or a more sophisticated loading indicator
+  
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+  
+  let displayedVenues = venues;
+  
+  if (showAll) {
+    const startIndex = (currentPage - 1) * venuesPerPage;
+    const endIndex = startIndex + venuesPerPage;
+    displayedVenues = venues.slice(startIndex, endIndex);
+  } else if (limit) {
+    displayedVenues = venues.slice(0, limit);
   }
-
-  if (error) {
-    return <div>Error: {error.message}</div>; // Display the error message
-  }
-
-  const displayedVenues = limit ? venues.slice(0, limit) : venues;
-
+  
+  const totalPages = Math.ceil(venues.length / venuesPerPage);
+  
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      {displayedVenues.map((venue) => (
-        <div key={venue.id} onClick={() => handleCardClick(venue.id)}> {/* Important: Use a unique key from your data (e.g., venue.id) */}
-          <Card
-            VenueName={venue.name} // Access properties from your 'venues' data
-            Guests={venue.Guests}
-            PlaceName={venue.location}
-            image={venue.cover_image_url} // Assuming your image URL is in 'image_url'
-            rating={venue.rating} // Access the rating
-          />
+    <div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {displayedVenues.map((venue) => (
+          <div key={venue.id} onClick={() => handleCardClick(venue.id)}>
+            <Card
+              VenueName={venue.name}
+              capacity={venue.capacity}
+              PlaceName={venue.location}
+              Price={venue.price}
+              image={venue.cover_image_url || imagefallback}
+              rating={venue.rating}
+            />
+          </div>
+        ))}
+      </div>
+      
+      {showAll && totalPages > 1 && (
+        <div className="mt-4">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
+            <button
+              key={pageNumber}
+              onClick={() => handlePageChange(pageNumber)}
+              disabled={currentPage === pageNumber}
+              className={`mx-1 px-3 py-1 rounded ${currentPage === pageNumber ? 'bg-gray-300' : 'bg-gray-100 hover:bg-gray-200'}`}
+            >
+              {pageNumber}
+            </button>
+          ))}
         </div>
-      ))}
+      )}
+           
+      {showAll && handleViewLess && (
+        <div className="flex justify-center mt-16">
+          <HoverButton4 onClick={handleViewLess}>View less</HoverButton4>
+        </div>
+      )}
     </div>
   );
 };
