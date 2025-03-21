@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainFooter from '../layout/MainFooter';
-import MainNavbar from '../layout/MainNavbar';
+import MainNavbar from '../layout/components/MainNavbar'
 
 const PricingPage = () => {
   const [isAnnual, setIsAnnual] = useState(false);

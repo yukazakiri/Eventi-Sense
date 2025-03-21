@@ -3,9 +3,9 @@ import { Routes, Route } from 'react-router-dom';
 import supabase from '../api/supabaseClient';
 import Sidebar from '../components/Sidebar/VenueManager';
 import routes from '../routers/Venue-Manager/Routes';
-import { getCurrentUser, fetchProfile } from '../api/utiilty/profiles';
+import { getCurrentUser, fetchProfile  } from '../api/utiilty/profiles';
 import { Profile } from '../types/profile';
-import NotificationBadge from '../components/Notifications/NotificationBadge';
+import Notification from '../components/NewNotification/notification';
 import UserProfile from '../components/Profile/StockHoldersProfileAvatar'; // Add import for UserProfile component
 import { FiMoon } from 'react-icons/fi';
 import { FiSun } from 'react-icons/fi';
@@ -62,6 +62,7 @@ function VenueManagerDashboard() {
 
       setUser(user);
       const profileData = await fetchUserProfile(user.id);
+
       
       if (profileData) {
         setProfile(profileData);
@@ -118,7 +119,7 @@ function VenueManagerDashboard() {
         <div className="flex justify-end items-center p-4 bg-white dark:border-b-[1px] border-gray-700 dark:bg-gray-950 shadow-md dark:border-gray-700 font-sofia text-gray-800">
           <div className="flex items-center gap-2">
        <div >
-        <NotificationBadge />
+        <Notification userId={user?.id}/>
        </div>
             <div>
             <button

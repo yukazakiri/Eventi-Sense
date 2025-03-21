@@ -62,9 +62,13 @@ export interface UserAuthProfile {
   }
   
   export interface Profile {
-    id: string;
-    first_name: string;
-    avatar_url: string;
+    id: number;
+    first_name: string | null;
+    last_name: string | null;
+    role: string | null;
+    avatar_url: string | null;
+    email: string | null;
+    
     // Add other profile properties as needed
   }
   

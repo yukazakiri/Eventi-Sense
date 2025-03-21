@@ -107,6 +107,7 @@ export interface Booking {
   phone?: string;
   service?: string;
   message?: string;
+  avatar_url?:string;
 }
 
 

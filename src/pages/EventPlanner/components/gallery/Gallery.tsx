@@ -1,6 +1,6 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { EventPlannerImage, getEventPlannerImages, addEventPlannerImage, deleteEventPlannerImage } from './api';
-import Modal from '../../../../assets/modal/modal';
+import  {Modal} from '../../../../assets/modal/modal';
 import { PhotoIcon, XMarkIcon, ArrowUpTrayIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import { Tooltip } from 'react-tooltip';
 

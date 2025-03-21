@@ -5,7 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { LuPencil } from "react-icons/lu";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { FiPhone } from "react-icons/fi";
-import Modal from "../../assets/modal/modal";
+import  {Modal} from "../../assets/modal/modal";
 import { fetchProfileRole } from "../../api/utiilty/profiles";
 
 interface Company {

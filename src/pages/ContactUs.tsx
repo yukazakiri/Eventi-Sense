@@ -1,5 +1,5 @@
 import MainFooter from "../layout/MainFooter"
-import MainNavbar from "../layout/MainNavbar"
+import MainNavbar from '../layout/components/MainNavbar'
 import Image from "../assets/images/La Trinidad Benguet City Lights.jpg"
 import { Link } from "react-router-dom"
 import Button from "../components/Button/button"

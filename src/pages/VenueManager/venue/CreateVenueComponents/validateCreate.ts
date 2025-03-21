@@ -29,6 +29,18 @@ export const validateStep1 = (formData: VenueFormData): FormErrors => {
   } else if (formData.name.length > 100) {
     errors.name = "Venue name cannot exceed 100 characters";
   }
+  // Contact information validation
+  if (formData.phone_number && !/^09\d{9}$/.test(formData.phone_number)){
+    errors.phone_number = "Please enter a valid phone number";
+  }
+
+  if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    errors.email = "Please enter a valid email address";
+  }
+
+  if (formData.website && !/^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/.test(formData.website)) {
+    errors.website = "Please enter a valid website URL";
+  }
 
   // Capacity validation
   if (formData.capacity && isNaN(Number(formData.capacity))) {
@@ -99,22 +111,9 @@ export const validateStep3 = (formData: VenueFormData): FormErrors => {
 
   if (!formData.address_zip?.trim()) {
     errors.address_zip = "ZIP code is required";
-  } else if (!/^\d{5}(-\d{4})?$/.test(formData.address_zip)) {
-    errors.address_zip = "Please enter a valid ZIP code (e.g., 12345 or 12345-6789)";
-  }
-
-  // Contact information validation
-  if (formData.phone_number && !/^(\+\d{1,3}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/.test(formData.phone_number)) {
-    errors.phone_number = "Please enter a valid phone number";
-  }
-
-  if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-    errors.email = "Please enter a valid email address";
-  }
-
-  if (formData.website && !/^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/.test(formData.website)) {
-    errors.website = "Please enter a valid website URL";
-  }
+} else if (!/^\d{4}$/.test(formData.address_zip)) {
+    errors.address_zip = "Please enter a valid 4-digit ZIP code (e.g., 1234)";
+}
 
   return errors;
 };

@@ -18,6 +18,12 @@ import EventListing from '../../components/EventsCards/Event-List';
 import CreateEventForm from '../../pages/Events/CreateEvents';
 import AllNotifications from '../../pages/Notifications/AllNotifications';
 import CreateCompany from '../../pages/Profile/CreateCompany';
+import UpdateEvent from '../../pages/Events/UpdateEvent';
+
+import UserBookings from '../../pages/Booking/RequestBooking';
+
+import EventListTicket from '../../components/TicketManagement/EventListTicket'
+import EventAttendees from '../../components/TicketManagement/EventTicket';
 const routes: RouteObject[] = [ 
  { path: '/', element: <Home /> },
  { path: '/Home', element: <Home /> },
@@ -40,14 +46,18 @@ const routes: RouteObject[] = [
 
  { path: '/Booking-List', element: <BookingList/> },
  { path: '/CreateEvents', element: <CreateEventForm/>},
+ { path: '/UpdateEvents/:id', element: <UpdateEvent/>},
  { path: '/Profiles', element: <Profiles /> },
  { path: '/EventList', element: <EventListing /> },
  { path: '/TicketList', element: <TicketList  /> },
  { path: '/tickets', element: <RequestTicket   /> },
  { path: '/notifications', element: <AllNotifications /> },
 
+ { path: '/Requested-Bookings', element: <UserBookings/> },
 
 
+ { path: '/EventListTicket', element: <EventListTicket/> },
+ { path: '/EventAttendees/:eventId', element: <EventAttendees /> },
 
 
 

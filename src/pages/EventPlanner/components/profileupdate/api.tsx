@@ -25,6 +25,23 @@ export interface EventPlannerProfile {
     type: 'success' | 'error';
   }
   
+  export interface Event {
+    id: string;
+    name: string;
+    description?: string; // Optional field
+    date: string;
+    location: string;
+    organizer_id: string;
+    organizer_type: string;
+    category?: string; // Optional field
+    image_url?: string; // Optional field
+    ticket_price?: number; // Optional field
+    capacity?: number; // Optional field
+    status: string;
+    created_at?: string; // Optional field
+    updated_at?: string; // Optional field
+    tags?: string; // Optional array of strings
+  }
 // In profileupdate/api.ts
 export const toggleVisibility = async (profileId: string, newStatus: boolean): Promise<EventPlannerProfile> => {
   console.log('Updating with profileId:', profileId); // This should be a UUID string
@@ -49,6 +66,31 @@ export const toggleVisibility = async (profileId: string, newStatus: boolean): P
   console.log('Supabase data returned:', data);
   return data;
 };
+// For specific user by ID
+export const fetchUserProfileById = async (id: string): Promise<EventPlannerProfile> => {
+  const { data, error } = await supabase
+    .from('eventplanners')
+    .select('*')
+    .eq('profile_id', id)
+    .single();
+
+  if (error) throw error;
+  if (!data) throw new Error('Profile not found');
+
+  return data;
+};
+export const fetchSocialMediaById = async (id: string): Promise<any[]> => {
+  const { data, error } = await supabase
+    .from('event_planner_social_media')
+    .select('*')
+    .eq('event_planner_id', id);
+
+  if (error) throw error;
+  if (!data || data.length === 0) throw new Error('No social media data found');
+
+  return data;
+};
+
 
 export const fetchUserProfile = async (): Promise<EventPlannerProfile> => {
   const { data: { user } } = await supabase.auth.getUser();
@@ -118,4 +160,21 @@ export const uploadProfileImage = async (file: File): Promise<string> => {
     .getPublicUrl(fileName);
   
   return publicUrl;
+};
+export const fetchEventsByPlannerId = async (profileId: string): Promise<Event[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('events') // Replace 'events' with your table name
+      .select('*')
+      .eq('profile_id', profileId); // Filter by profile_id
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching events:', error);
+    throw error;
+  }
 };

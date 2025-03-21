@@ -2,7 +2,7 @@ import { useState, useEffect, ChangeEvent } from 'react';
 import { VenueImage } from '../../../../../api/apiVenueGallery';
 import { getVenueImages, addVenueImage, deleteVenueImage } from '../../../../../api/apiVenueGallery';
 import { useParams } from 'react-router-dom';
-import Modal from '../../../../../assets/modal/modal';
+import  {Modal} from '../../../../../assets/modal/modal';
 import { PhotoIcon,  ArrowUpTrayIcon } from '@heroicons/react/20/solid';
 
 

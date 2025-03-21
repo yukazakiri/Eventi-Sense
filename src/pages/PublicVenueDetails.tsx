@@ -3,21 +3,27 @@ import supabase from '../api/supabaseClient';
 import { useEffect, useRef, useState } from 'react';
 import { Venue, VenueImage } from '../types/venue';
 import { VenueAmenity, Amenity, CompanyProfile } from '../types/venue';
-import MainNavbar from '../layout/MainNavbar';
-import { BsArrowDownLeft } from "react-icons/bs";
-import Button from '../components/Button/button';
-import { IoIosSend } from "react-icons/io";
-import { BsFillCalendar2CheckFill } from "react-icons/bs";
+import MainNavbar from '../layout/components/MainNavbar'
+
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import CustomModal from '../assets/modal/publicalendarmodal';
-import { TiLocation } from "react-icons/ti";
-import { LuAccessibility } from "react-icons/lu";
-import { IoPricetagsOutline } from "react-icons/io5";
-import { BsPeople } from "react-icons/bs";
+
+import { LuAccessibility, LuDiamondPlus } from "react-icons/lu";
+
 import PublicSocialLinks from './VenueManager/Social/PublicSocialLinks';
+import { FiPhoneOutgoing } from "react-icons/fi";
+import { MdOutlineDesignServices, MdOutlineMiscellaneousServices } from 'react-icons/md';
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
+import {  HoverButton2  } from '../components/Button/button-hover';
+import '../components/borderwave/Wave.css';
+import { GoArrowDown,GoArrowUpRight } from "react-icons/go";
+import { CgWebsite } from "react-icons/cg";
+import { TbAddressBook } from "react-icons/tb";
+import { RiMoneyDollarCircleLine,RiBuilding2Line  } from "react-icons/ri";
+import { IoLogoBuffer } from "react-icons/io";
 
 
 interface AvailabilityEvent {
@@ -34,7 +40,7 @@ const PublicVenueDetails: React.FC = () => {
   const [venueAmenities, setVenueAmenities] = useState<VenueAmenity[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
   const [venueImages, setVenueImages] = useState<VenueImage[]>([]);
-  const [companyProfile, setCompanyProfile] = useState<CompanyProfile | null>(null);
+  const [_companyProfile, setCompanyProfile] = useState<CompanyProfile | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -46,6 +52,7 @@ const PublicVenueDetails: React.FC = () => {
   const [events, setEvents] = useState<AvailabilityEvent[]>([]);
   const [currentView] = useState('dayGridMonth');
   const calendarRef = useRef<FullCalendar>(null);
+    const [expandedAmenity, setExpandedAmenity] =  useState<any | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -203,264 +210,372 @@ const PublicVenueDetails: React.FC = () => {
   if (loading) return <div>Loading...</div>;
 
   if (!venue) return <div>Venue not found.</div>;
-
+  const toggleAmenity = (index:any) => {
+    if (expandedAmenity === index) {
+      setExpandedAmenity(null);
+    } else {
+      setExpandedAmenity(index);
+    }
+  };
+  const scrollToTarget = () => {
+    const targetElement = document.getElementById('targetSection');
+    if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth' }); // Smooth scrolling
+    }
+};
     return (
       <>
       <MainNavbar />
-      <div className="overflow-hidden bg-slate-50">
-        <div className="bg-orange-50 max-w-[90rem] mx-auto my-[2rem] md:my-[10rem] pb-[2rem] md:pb-[10rem] rounded-2xl shadow-lg">
-          {/* Venue Cover Image Section */}
-          <div className="relative overflow-hidden">
-            {venue?.cover_image_url && (
-              <div className="relative">
-                <img
-                  src={venue.cover_image_url}
-                  alt={venue.name}
-                  className="h-[600px] w-full object-cover rounded-t-3xl"
-                />
-                {/* Top Section with Company Logo and Check Availability Button */}
-                <section className="absolute top-5 w-full z-30">
-                  <div className="flex justify-between">
-                    <div className="cursor-pointer flex items-center bg-white text-white bg-opacity-50 rounded-xl m-4 py-2 px-4 font-bonanova shadow-lg hover:bg-opacity-70 hover:text-gray-100 hover:border-gray-300 transition duration-300 ease-in-out transform hover:scale-110">
-                      {companyProfile?.company_logo_url && (
-                        <img
-                          src={companyProfile.company_logo_url}
-                          alt={companyProfile.company_name}
-                          className="h-10 w-10 rounded-full mr-2"
-                        />
-                      )}
-                      <button>{companyProfile?.company_name}</button>
-                    </div>
-                    <div
-                      onClick={() => {
-                        const availabilitySection = document.getElementById('availability-section');
-                        if (availabilitySection) {
-                          availabilitySection.scrollIntoView({ behavior: 'smooth' });
-                        }
-                      }}
-                      className="group cursor-pointer flex items-center bg-white text-white bg-opacity-50 rounded-xl m-4 py-2 px-4 font-bonanova shadow-lg hover:bg-opacity-70 hover:text-gray-100 hover:border-gray-300 transition duration-300 ease-in-out transform hover:scale-110"
-                    >
-                      <div className="p-2 group-hover:bg-gray-400 rounded-full mr-2">
-                        <BsArrowDownLeft size={20} />
-                      </div>
-                      <button>Check Availability</button>
-                    </div>
-                  </div>
-                </section>
-                {/* Overlay and Venue Details */}
-                <div className="absolute inset-0 bg-black/50 rounded-3xl"></div>
-                <div className="absolute inset-0 flex items-center justify-center p-4 md:p-8 text-white z-10">
-                  <div className="text-center">
-                    <h2 className="font-bonanova gradient-text text-3xl lg:text-4xl xl:text-5xl leading-tight">
-                      {venue?.name}
-                    </h2>
-                    <p className="text-base md:text-lg lg:text-xl xl:text-2xl mt-2 md:mt-4 font-sofia max-w-[40rem]">
-                      {venue?.description}
-                    </p>
-                    <div className="flex justify-center mt-4">
-                      <Button
-                        label="Book Now"
-                        gradientText={true}
-                        variant="primary"
-                        onClick={() => navigate(`/venues/${venueId}/book`)}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-    
-          {/* Venue Details Section */}
-          <section className="font-sofia ">
-            {/* Venue Types and Pricing */}
-            <section className='mx-4 md:mx-8 lg:mx-12 xl:mx-24 mt-8'>
-              <div className=' border-b-2 border-gray-600 py-8'>
-              <ul className="flex  bg-sky-100  rounded-full py-1 w-fit mb-2">
-                {venue.venue_types?.map((vt, index) => (
-                  <li key={vt.id || index} className=" px-2 text-sky-700">
-                    {vt.name}{', '}
-                  </li>
-                ))}
-              </ul>
-              <p className="bg-green-100 text-green-700  w-fit rounded-full px-2 mb-1 py-1 ">
-                PHP {venue?.price}
-              </p>
-              <p className='text-gray-700 flex items-center text-[4rem] font-bonanova ml-2' >
-                {venue?.name}
-              </p>
-              <p className='text-gray-500 flex items-center'>
-                <TiLocation className="mr-1 mb-1" />{venue?.address_street}, {venue?.address_city}, {venue?.address_state} {venue?.address_zip}
-              </p>
-              <div className='mt-2'>
-            {venueId ? (
-                <PublicSocialLinks venueId={venueId} />
-            ) : (
-                <div>Venue ID not found.</div> // Or any other fallback UI
-            )}
-            </div>
-            </div>
-              <div className="md:mt-20 md:mb-10 my-4 flex justify-center items-center  ">
-              <div className="font-bonanova text-2xl lg:text-3xl xl:text-[3rem] text-gray-700 font-medium">
-                Giving the best just for you
-              </div>
+      <div className='bg-[#2F4157]'>
+      <div className="relative w-full h-screen  ">
+      {/* Background Image with Blur Effect */}
+      <div className="absolute inset-0 w-full h-screen ">
+        {venue?.cover_image_url ? (
+          <>
+            {/* Blurred main background image */}
+            <img
+              src={venue.cover_image_url}
+              alt={venue?.name || "Spa facilities"}
+              className="w-full h-screen object-cover "
+            />
+            
+         
+          </>
+        ) : (
+          <>
+            {/* Default blurred background image */}
+            <img
+              src="/path/to/default-spa-image.jpg"
+              alt="Spa facilities"
+              className="w-full h-screen object-cover filter blur-md"
+            />
+            
+       
+          </>
+        )}
+      </div>
+      <div className='grid grid-cols-1 md:grid-cols-2'>
+        {/* Content */}
+        <div className=" z-10 w-full  h-screen flex flex-col justify-center items-start  to-transparent text-white    bg-gray-600  bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-10 border-r-[1px] border-gray-100
+      ">
         
-            </div>   
-                  {/* Venue Amenities */}
-              <div className="flex items-center justify-center mx-auto mb-8">
-              <div className="flex justify-center gap-4 text-gray-600">
-                {venueAmenities.map((venueAmenity) => (
-                  <div
-                    key={venueAmenity.amenity_id}
-                    className="rounded-full px-8 py-2 border border-gray-600 border-t-2  group relative font-sofia text-center cursor-pointer transition duration-300 ease-in-out hover:scale-110"
-                  >
-                    <h4 className="uppercase text-[13px]">
-                      {amenities.find((a) => a.id === venueAmenity.amenity_id)?.name}
-                    </h4>
-                    <div className="absolute -top-5 right-0 translate-x-1/2 -translate-y-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white p-2 rounded-md z-10">
-                      <div>
-                        <p className="text-gray-600">Description: {venueAmenity.description}</p>
-                        <p className="text-gray-600">Quantity: {venueAmenity.quantity}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+        <div className="p-10">
+          <div className="max-w-2xl text-left">
+            <h1 className="font-serif text-4xl lg:text-6xl mb-4">
+              <span className="font-bonanova capitalize text-orange-50 font-semibold">{venue?.name}</span>
+            </h1>
+            
+            <div className='flex'>
+            <div className="w-auto md:py-10 py-6 ">
+              <HoverButton2 onClick={() => navigate(`/venues/${venue.id}/book`)}>
+                Book now
+              </HoverButton2>
+            
+            </div>
+            <div className="p-10 md:hidden block ">
+            <button    onClick={scrollToTarget} className="w-auto  h-14 px-4 py-2 rounded-full  hover:rounded-full transform transition-all duration-500 ease-in-out
+                              hover:bg-[#2F4157] bg-[#2F4157] hover:w-36 hover:h-36 text-white relative group">
+                  <span className="group-hover:opacity-0 transition-opacity duration-300 font-sofia tracking-widest ease-in-out">More Details</span>
+                  <   GoArrowDown 
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"
+                    size={24}
+                  />
+                </button>
+          </div>
+          </div>
+            
+          </div>
+          <div>
+                  {/* Non-blurred image positioned at bottom left (not at edge) */}
+                  
+              <img
+                src={venue.cover_image_url}
+                alt={venue?.name || "Spa facilities"}
+                className="w-full md:h-[400px] h-[300px] object-cover rounded-md shadow-lg"
+              />
+            </div>
+          </div>
+        </div>
+        <div className='text-white h-screen md:flex hidden flex-col justify-center items-center z-50'>
+        <div className="p-10">
+        <button     onClick={scrollToTarget} className="w-auto  h-14 px-4 py-2 rounded-full  hover:rounded-full transform transition-all duration-500 ease-in-out
+                           hover:bg-[#2F4157] bg-[#2F4157] hover:w-36 hover:h-36 text-white relative group">
+              <span className="group-hover:opacity-0 transition-opacity duration-300 font-sofia tracking-widest ease-in-out">More Details</span>
+              <    GoArrowDown 
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"
+                size={24}
+              />
+            </button>   
+      </div>
+      
+        </div>
+        </div>
+
+        {/* Border effect */}
+        <div className="absolute inset-2 sm:inset-4 md:inset-6 border border-white/20 pointer-events-none z-20"></div>
+      </div>
+      
+      <div  id="targetSection" className='max-w-6xl mx-auto flex flex-col justify-center items-center py-10'>  
+  <div>
+<h2 className="md:text-6xl text-4xl  font-bold font-bonanova gradient-text uppercase"> {venue?.name}</h2>
+</div>
+    <p className='md:text-xl text-lg font-sofia text-[#D9DACD] text-center py-8'>{venue?.description}</p>
+  
+</div> 
+        <section className='relative mt-64'>
+<div className="ocean">
+
+<div>
+    <svg className="waves" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
+    viewBox="0 24 150 28" preserveAspectRatio="none" shapeRendering="auto">
+    <defs>
+      <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+    </defs>
+      <g className="parallax">
+        <use xlinkHref="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.5)" />
+        <use xlinkHref="#gentle-wave" x="48" y="3" fill="rgba(146, 163, 177,0.5)" />
+        <use xlinkHref="#gentle-wave" x="48" y="5" fill="rgba(59, 96, 124,0.5)" />
+        <use xlinkHref="#gentle-wave" x="48" y="7" fill="#FFFFFF" />
+      </g>
+    </svg>
+    </div>
+    </div>
+</section>
+      <div className="relative w-full min-h-screen bg-white">
+  <section className='pt-10'>
+    <div className='grid grid-cols-1 md:grid-cols-2'> 
+    <section className='text-gray-800 font-sofia flex flex-col items-center'>
+    <div className='sticky top-0 h-screen w-full overflow-y-auto px-10'>
+      <div>
+      {venueId ? (
+        <PublicSocialLinks venueId={venueId} />
+      ) : (
+        <div>Venue ID not found.</div>
+      )}
+    </div>
+    <div className="p-10">
+  <h2 className="text-2xl font-medium mb-6 font-serif">Accessibility</h2>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {venue.venue_accessibilities?.map((va, index) => (
+      <div key={index} className="flex items-center gap-3">
+        <span className="inline-flex justify-center items-center w-6 h-6">
+          {/* Replace with appropriate accessibility icon */}
+        <LuAccessibility/>
+        </span>
+        <span>{va.name}</span>
+      </div>
+    ))}
+  </div>
+
+  <h2 className="text-2xl font-medium mt-8 mb-6 font-serif">Venue Types</h2>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {venue.venue_types?.map((vt, index) => (
+      <div key={index} className="flex items-center gap-3">
+        <span className="inline-flex justify-center items-center w-6 h-6">
+          {/* Replace with appropriate venue type icon */}
+          <RiBuilding2Line />
+        </span>
+        <span>{vt.name}</span>
+      </div>
+    ))}
+  </div>
+
+  <h2 className="text-2xl font-medium mt-8 mb-6 font-serif">Pricing Models</h2>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {venue.venue_pricing_models?.map((vpm, index) => (
+      <div key={index} className="flex items-center gap-3">
+        <span className="inline-flex justify-center items-center w-6 h-6">
+          {/* Replace with appropriate pricing icon */}
+          <LuDiamondPlus />
+        </span>
+        <span>{vpm.name}</span>
+      </div>
+    ))}
+  </div>
+    </div>
+    </div>
+ 
+      </section>
+      <div className='border-[1px] border-navy-blue-3/40 mw-full '>
+        <div className='bg-[#2F4157]/80 m-4 flex flex-col justify-center items-center border-[1px] border-navy-blue-3/40'>
+          <div className="w-full max-w-4xl text-white font-sofia flex flex-col gap-10 my-14">
+            
+            {/* About section */}
+            <div className="border-b-[1px] border-gray-400">
+              <div className="flex items-center py-4 px-6">
+                <div className="mr-4 text-xl ">
+                  <IoLogoBuffer className='text-yellow-500/70'/>
+                </div>
+                <div className=" font-serif text-xl gradient-text">About</div>
               </div>
             </div>
-          
-            <section className='mb-4'>
-              <div className="grid grid-cols-3 font-sofia gap-2">
-              <div className="p-2 py-12 group hover:shadow-xl transition duration-300 ease-in-out group-hover:scale-110">
-                  <div className="flex items-center justify-center">
-                    <BsPeople className="text-[4rem] p-2 border border-orange-200 text-orange-300 rounded-full transition duration-300 ease-in-out group-hover:scale-110" />
+
+            {/* Price section */}
+            <div className="border-b border-gray-400">
+              <div className="flex items-center justify-between py-4 px-6">
+                <div className="flex items-center">
+                  <div className="mr-4 text-xl">
+                    <RiMoneyDollarCircleLine />
                   </div>
-                  <div className="flex justify-center items-center my-2 transition duration-300 ease-in-out group-hover:scale-110">
-                    <div>
-                    <h3 className="flex justify-center items-center text-gray-700 text-xl font-bonanova mb-1"> Capacity:</h3>
-                    <p className="pl-1 text-justify text-gray-600">{' '}
-                   {venue?.capacity}
-                    </p>
+                  <div className="font-medium">Starting Price</div>
+                </div>
+                <div className="">PHP {venue?.price}</div>
+              </div>
+            </div>
+
+            {/* Website section */}
+            <div className="border-b border-gray-400">
+              <div className="flex items-center justify-between py-4 px-6">
+                <div className="flex items-center">
+                  <div className="mr-4 text-xl">
+                    <CgWebsite />
+                  </div>
+                  <div className="font-medium">Website</div>
+                </div>
+                <div className="">{venue?.website}</div>
+              </div>
+            </div>
+
+            {/* Phone section */}
+            <div className="border-b border-gray-400">
+              <div className="flex items-center justify-between py-4 px-6">
+                <div className="flex items-center">
+                  <div className="mr-4 text-xl">
+                    <FiPhoneOutgoing />
+                  </div>
+                  <div className="font-medium">Phone</div>
+                </div>
+                <div className="">{venue?.phone_number}</div>
+              </div>
+            </div>
+
+            {/* Address section */}
+            <div className="border-b border-gray-400">
+              <div className="flex items-center justify-between py-4 px-6">
+                <div className="flex items-center">
+                  <div className="mr-4 text-2xl">
+                    <TbAddressBook />
+                  </div>
+                  <div className="font-medium">Address</div>
+                </div>
+                <div className="">{venue?.address_street}, {venue?.address_city}, {venue?.address_state} {venue?.address_zip}</div>
+              </div>
+            </div>
+            
+            {/* Amenities section (converted from services) */}
+            <section className='mb-4'>
+              <div className="flex flex-col font-sofia gap-4 text-white">
+                <div className="border-b-[1px] border-gray-400">
+                  <div className="flex items-center py-4 px-6 ">
+                    <div className="mr-4 text-xl">
+                      <IoLogoBuffer className='text-yellow-500/70'/>
                     </div>
+                    <div className="font-serif text-xl gradient-text">Amenities</div>
                   </div>
                 </div>
                 
-                <div className="p-2 py-12 group  hover:shadow-xl transition duration-300 ease-in-out group-hover:scale-110 ">
-                  <div className="flex items-center justify-center">
-                    <LuAccessibility className="text-[4rem] p-2 border border-orange-200 text-orange-300 rounded-full transition duration-300 ease-in-out group-hover:scale-110" />
-                  </div>
-                  <div className="flex justify-center items-center my-2 transition duration-300 ease-in-out group-hover:scale-110">
-                    <div>
-                    <h3 className="flex justify-center items-center text-gray-700 text-xl font-bonanova mb-1"> Accessibility:</h3>
-                    <p className=" text-center text-gray-600">{' '}
-                    {venue.venue_accessibilities?.map((va, index) => (
-                    <span key={va.id || index}>{va.name}{', '}</span>
-                  ))}
-                    </p>
+                {venueAmenities.map((venueAmenity, index) => (
+                  <div key={venueAmenity.amenity_id} className="border-b border-gray-400 overflow-hidden">
+                    {/* Amenity header with name and dropdown arrow */}
+                    <div 
+                      className="flex items-center justify-between p-4 cursor-pointer"
+                      onClick={() => toggleAmenity(index)}
+                    >
+                      <div className="flex items-center text-white">
+                        <div className="mr-4 ml-2">
+                          {index % 2 === 0 ? (
+                            <MdOutlineDesignServices className="text-xl text-white" />
+                          ) : (
+                            <MdOutlineMiscellaneousServices className="text-xl text-white" />
+                          )}
+                        </div>
+                        <div className="font-medium text-white">
+                          {amenities.find((a) => a.id === venueAmenity.amenity_id)?.name}
+                        </div>
+                      </div>
+                      <div className="text-white">
+                        {expandedAmenity === index ? (
+                          <MdKeyboardArrowUp className="text-xl" />
+                        ) : (
+                          <MdKeyboardArrowDown className="text-xl" />
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Expandable content with transition */}
+                    <div className={`
+                      px-4
+                      transition-all
+                      duration-300
+                      ease-in-out
+                      overflow-hidden
+                      ${expandedAmenity === index ? 'max-h-[500px] pb-3' : 'max-h-0'}
+                    `}>
+                      <div className="mb-2">
+                        <div className="text-sm text-white mb-1">Quantity</div>
+                        <div className="text-white">{venueAmenity.quantity}</div>
+                      </div>
+                      <div>
+                        <div className="text-sm text-white mb-1">Description</div>
+                        <div className="text-white text-sm">{venueAmenity.description}</div>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="p-2 py-12 group  hover:shadow-xl transition duration-300 ease-in-out group-hover:scale-110 ">
-                  <div className="flex items-center justify-center">
-                    <IoPricetagsOutline className="text-[4rem] p-4 border border-orange-200 text-orange-300 rounded-full transition duration-300 ease-in-out group-hover:scale-110" />
-                  </div>
-                  <div className="flex justify-center items-center my-2 transition duration-300 ease-in-out group-hover:scale-110">
-                    <div>
-                    <h3 className="flex justify-center items-center text-gray-700 text-xl font-bonanova mb-1">Pricing Models</h3>
-                    <p className="  text-center text-gray-600">{' '}
-                      {venue.venue_pricing_models?.map((vpm, index) => (
-                        <span key={vpm.id || index}>{vpm.name}{', '}</span>
-                      ))}
-                    </p>
-                    </div>
-                  </div>
-                </div>
-               
+                ))}
               </div>
             </section>
-       
-           </section>
-            {/* Venue Description and Message Button */}
-           
-    
-      
-    
-            {/* Venue Gallery */}
-            <div className="mx-2 mb-12 ">
-     
-              <div className="masonry columns-2 md:columns-3">
-                {venueImages.length > 0 ? (
-                  venueImages.map((venueImage) => (
-                    <div key={venueImage.id} className="relative group break-inside-avoid mb-8">
-                      <img src={venueImage.image_url} className="w-full h-auto " />
-                    </div>
-                  ))
-                ) : (
-                  <div className="bg-gray-200 rounded-md p-4 flex items-center justify-center">
-                    <p className="text-gray-600">No images found</p>
-                  </div>
-                )}
-              </div>
-            </div>
-    
-            {/* Venue Information Grid */}
-            <section className='bg-slate-50'>
             
-              <div className='mx-4 md:mx-8 lg:mx-12 xl:mx-24 mt-8 py-8 grid md:grid-cols-2'>
-              <section>
-                <h1 className='text-gray-700 flex items-center text-[3rem] font-bonanova ml-2'>Celebrate with us....</h1>
-                <p className='text-gray-500 ml-5 md:my-4'>
-                Unlock an exclusive experience at <span className='font-bonanova text-lg text-orange-400'>{venue?.name}.</span>  Discover our latest events, special offers, behind-the-scenes glimpses, and stories from those who've made memories here.</p>
-                <div className='ml-4 my-2'>
-                <div className='mb-1 flex'>
-                  
-                  <p className='pl-1 text-gray-500'>
-                   <span className='font-bonanova text-gray-600 text-lg'> Phone: </span>{venue?.phone_number}
-                  </p>
-                </div>
-                <div className='mb-1 flex'>
-                  
-                  <a href={`mailto:${venue?.email}`} className=' text-gray-500'>
-                  <p className='pl-1 text-gray-500'>
-                   <span className='font-bonanova text-gray-600 text-lg'> Email: </span>{venue?.email}
-                  </p>
-                  </a>
-                </div>
-                <div className='mb-1 flex'>
-                  
-                  <a href={venue?.website} target="_blank" rel="noopener noreferrer" className=' text-gray-500'>
-                  <p className='pl-1 text-gray-500'>
-                    <span className='font-bonanova text-gray-600 text-lg'> Website: </span>{venue?.website}
-                  </p>
-                  </a>
-                </div>
-                </div>
-              </section>
-              <section className='flex flex-col justify-center items-center '>
-                <div className=''>
-                  <button className="flex group p-2 px-6 font-sofia bg-gray-700 text-gray-100 border hover:border-slate-100 rounded-sm shadow-md transition duration-300 ease-in-out hover:scale-110">
-                    <IoIosSend className="text-[1.5rem] group-hover:text-yellow-500" />
-                    <span className="text-center text-[15px] mx-2 uppercase">Message Us for info </span>
-                  </button>
-                </div>
-                <div className='my-2'>
-                  or
-                </div>
-                <div>
-                  <button
-                     onClick={() => navigate(`/venues/${venueId}/book`)}
-                   className="flex group p-2 px-6 font-sofia bg-gray-700 text-gray-100 border hover:border-slate-100 rounded-sm shadow-md transition duration-300 ease-in-out hover:scale-110">
-                  <BsFillCalendar2CheckFill className="text-[1.5rem] group-hover:text-yellow-500" />
-                    <span className="text-center text-[15px] mx-2 uppercase">Request a Booking</span>
-                  </button>
-                </div>
-              </section>
+            {/* Book Now button */}
+            <section>
+              <div className="p-10">
+                <button 
+                  onClick={() => navigate(`/venues/${venueId}/book`)}
+                  className="w-auto h-14 px-4 py-2 rounded-full hover:rounded-full transform transition-all duration-500 ease-in-out
+                    hover:bg-[#2F4157] bg-[#2F4157] hover:w-36 hover:h-36 text-white relative group"
+                >
+                  <span className="group-hover:opacity-0 transition-opacity duration-300 font-sofia tracking-widest ease-in-out">Book Now</span>
+                  <GoArrowUpRight
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"
+                    size={24}
+                  />
+                </button>
               </div>
-              
-           
             </section>
-    
-            {/* Availability Calendar Section */}
-            <section id="availability-section" className="my-[4rem] mx-[4rem] font-sofia">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Venue Gallery */}
+  <section>
+    <div className="px-8 sm:px-12 lg:mx-16 my-10">
+      <div className="masonry columns-2 md:columns-3">
+        {venueImages.length > 0 ? (
+          venueImages.map((venueImage) => (
+            <div key={venueImage.id} className="relative group break-inside-avoid mb-4">
+              <img src={venueImage.image_url} className="w-full h-auto" />
+            </div>
+          ))
+        ) : (
+          <div className="bg-gray-200 rounded-md p-4 flex items-center justify-center">
+            <p className="text-gray-600">No images found</p>
+          </div>
+        )}
+      </div>
+    </div>
+    <div>
+      {venueId ? (
+        <PublicSocialLinks venueId={venueId} />
+      ) : (
+        <div>Venue ID not found.</div>
+      )}
+    </div>
+  </section>
+
+  {/* Availability Calendar Section */}
+     {/* Availability Calendar Section */}
+     <section id="availability-section" className="my-[4rem] mx-[4rem] font-sofia">
               <FullCalendar
                 ref={calendarRef}
                 plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -477,10 +592,13 @@ const PublicVenueDetails: React.FC = () => {
                 height={600}
               />
             </section>
-          </section>
-    
-          {/* Custom Modal */}
-          <CustomModal
+</div>
+</div>
+
+
+      
+         {/* Custom Modal */}
+         <CustomModal
             isOpen={isModalOpen}
             onClose={closeModal}
             title="Venue Availability"
@@ -491,11 +609,6 @@ const PublicVenueDetails: React.FC = () => {
             successMessage={successMessage}
             setSuccessMessage={setSuccessMessage}
           />
-        </div>
-    
-       
-      </div>
-    
     </>
     );
 };

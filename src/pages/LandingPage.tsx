@@ -1,5 +1,4 @@
-
-import MainNavbar from "../layout/MainNavbar";
+import MainNavbar from '../layout/components/MainNavbar'
 import Button from "../components/Button/button";
 import CardList from "../layout/cards/Event/cardList";
 import Cardvenues from "../layout/cards/Venue/cardListLanding";
@@ -34,10 +33,10 @@ function HomePage() {
 
   return (
 
-      <section className="static"> 
+      <section className="static bg-white"> 
       <MainNavbar />
       <div className=" xl:">
-        <section className="mt-[4rem] noise-bg h-auto py-[4rem]">
+        <section className=" noise-bg h-auto py-[6rem]">
             <div className="grid grid-cols-1 md:grid-cols-2 items-center justify-center text-white mx-4 2xl:mx-[16rem] xl:mx-[8rem]">
               <div className=" p-6 md:py-[5rem] text-left ">
                 <p className="text-5xl font-semibold font-montserrat leading-snug md:leading-normal lg:leading-relaxed">
@@ -88,12 +87,12 @@ function HomePage() {
                        <h1 className="text-4xl font-bold font-bonanova gradient-text uppercase">Venues</h1>
                        <div className="text-white flex justify-end font-montserrat cursor-pointer hover:text-yellow-300">
                       
-                         <HoverButton>  <NavLink to="/venue-list"> View All   </NavLink></HoverButton> 
-                         <Cardvenues limit={3} />
-                     
-                       </div>
+                         <HoverButton> 
+                           <NavLink to="/venue-list"> View All   </NavLink>
+                        </HoverButton> 
+                        </div> 
                      </div>
-              
+                         <Cardvenues limit={3} />
                     </section>
                     <section className="mx-4 2xl:mx-[16rem] xl:mx-[8rem] my-[4rem]">
                      <div className="flex justify-between py-[10px] ">

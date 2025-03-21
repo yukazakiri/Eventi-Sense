@@ -1,8 +1,7 @@
 import Profile from './Profile';
 import Company from './Company';
 import CreateCompany from './CreateCompany';
-import Breadcrumbs from '../../components/BreadCrumbs/breadCrumbs';
-import { HomeIcon } from '@heroicons/react/20/solid';
+
 import { useState, useEffect } from 'react';
 import supabase from '../../api/supabaseClient';
 
@@ -17,11 +16,6 @@ interface CompanyProfile {
     company_logo_url?: string | null;
 }
 
-const breadcrumbItems = [
-    { label: 'Home', href: '/Venue-Manager-Dashboard/Home', icon: <HomeIcon className="h-4 w-4 mr-1" /> },
-    { label: 'Venues', href: '/Venue-Manager-Dashboard/Venue-List' },
-    { label: 'Venue Details', href: '' },
-];
 
 function Profiles() {
     const [companyProfile, setCompanyProfile] = useState<CompanyProfile | null>(null);
@@ -87,15 +81,8 @@ function Profiles() {
         }, []);
 
     return (
-        <div className="md:mx-10">
-            <div className="flex justify-between">
-                <h1 className="text-[24px] flex items-center font-medium tracking-tight text-gray-700 my-4 font-sofia dark:text-gray-200">
-                    Profiles
-                </h1>
-                <div className="flex items-end">
-                    <Breadcrumbs items={breadcrumbItems} />
-                </div>
-            </div>
+        <div className="md:m-10 m-4">
+      
             <div className="bg-white p-4 border-[1px] border-gray-300 rounded-3xl mb-8 dark:bg-gray-900 dark:border-gray-700">
                 <h1 className="text-[16px] font-semibold tracking-wider text-gray-800 my-4 ml-4 font-sofia dark:text-gray-200">
                     Personal Profile

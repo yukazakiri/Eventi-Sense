@@ -41,7 +41,7 @@ export function HoverButton2({
         onClick={onClick}
         className={cn(
           "relative px-8 py-6 text-white font-sofia tracking-widest overflow-hidden transition-all duration-500",
-          "bg-yellow-600/40 border border-yellow-400/40  hover:bg-transparent hover:border hover:border-yellow-400/40 hover:text-yellow-400/30 ", 
+          "bg-yellow-600/40 border border-yellow-400/40  hover:bg-transparent hover:border hover:border-yellow-400/40  ", 
           "group",
           className
         )}

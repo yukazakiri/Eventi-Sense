@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import supabase from '../../api/supabaseClient'; // Adjust the import path as needed
 
@@ -10,7 +10,11 @@ interface ProfileAvatarProps {
 function ProfileAvatar({ user, profile }: ProfileAvatarProps) {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   
-  console.log('User:', user);
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('User updated:', user);
+    }
+  }, [user]);
 
 
 // Handle logout

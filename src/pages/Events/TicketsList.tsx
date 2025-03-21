@@ -2,48 +2,10 @@ import React, { useEffect, useState } from 'react';
 import supabase from '../../api/supabaseClient';
 import { Event, Ticket } from '../../types/event';
 import { Profile } from '../../types/types';
+import { EditModal } from './components/ticket/EditModal';
 
-// Add these interfaces at the top of the file
-interface EditModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  ticket: Ticket | null;
-  onSave: (ticketId: string, newStatus: string) => void;
-}
 
-const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, ticket, onSave }) => {
-  if (!isOpen || !ticket) return null;
 
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-96 dark:bg-gray-950">
-        <h2 className="text-xl font-bold mb-4">Update Ticket Status</h2>
-        <div className="space-y-4">
-          <div className="flex flex-col gap-2">
-            <button
-              onClick={() => onSave(ticket.id, 'approved')}
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
-            >
-              Approve Ticket
-            </button>
-            <button
-              onClick={() => onSave(ticket.id, 'cancelled')}
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700"
-            >
-              Cancel Ticket
-            </button>
-          </div>
-          <button
-            onClick={onClose}
-            className="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const TicketsList: React.FC = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -71,7 +33,7 @@ const TicketsList: React.FC = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error('No user logged in');
   
-        let ticketData;
+   
   
         if (viewMode === 'organizer') {
           // Get events created by the user
@@ -79,7 +41,7 @@ const TicketsList: React.FC = () => {
             .from('events')
             .select('id')
             .eq('organizer_id', user.id);
-  
+          console.log('userevents', userEvents);
           if (eventsError) throw eventsError;
   
           if (!userEvents?.length) {
@@ -89,13 +51,15 @@ const TicketsList: React.FC = () => {
             setLoading(false);
             return;
           }
-  
+          console.log('userEvents right before tickets query', userEvents);
           // Get tickets for those events
           const { data: ticketsData, error: ticketsError } = await supabase
             .from('tickets')
             .select('*')
             .in('event_id', userEvents.map(event => event.id))
             .order('created_at', { ascending: false });
+          console.log('raw ticketsData', ticketsData);
+          console.log('tickets', ticketsData);
   
           if (ticketsError) throw ticketsError;
   
@@ -118,11 +82,34 @@ const TicketsList: React.FC = () => {
           if (profilesFetchError) throw profilesFetchError;
   
           // Combine the data
-          ticketData = ticketsData.map(ticket => ({
+          const combinedTicketData = ticketsData.map(ticket => ({
             ...ticket,
             events: eventsData.find(event => event.id === ticket.event_id),
             profiles: profilesData.find(profile => profile.id === ticket.user_id),
           }));
+  
+          // Process the joined data
+          if (combinedTicketData) {
+            setTickets(combinedTicketData);
+  
+            // Create events lookup object
+            const eventsMap: { [key: string]: Event } = {};
+            combinedTicketData.forEach(ticket => {
+              if (ticket.events) {
+                eventsMap[ticket.events.id] = ticket.events;
+              }
+            });
+            setEvents(eventsMap);
+  
+            // Create profiles lookup object
+            const profilesMap: { [key: string]: Profile } = {};
+            combinedTicketData.forEach(ticket => {
+              if (ticket.profiles) {
+                profilesMap[ticket.profiles.id] = ticket.profiles;
+              }
+            });
+            setProfiles(profilesMap);
+          }
         } else {
           // Get user's tickets with related data
           const { data: ticketsData, error: ticketsError } = await supabase
@@ -151,34 +138,34 @@ const TicketsList: React.FC = () => {
           if (profilesFetchError) throw profilesFetchError;
   
           // Combine the data
-          ticketData = ticketsData.map(ticket => ({
+          const combinedTicketData = ticketsData.map(ticket => ({
             ...ticket,
             events: eventsData.find(event => event.id === ticket.event_id),
             profiles: profilesData.find(profile => profile.id === ticket.user_id),
           }));
-        }
   
-        // Process the joined data
-        if (ticketData) {
-          setTickets(ticketData);
+          // Process the joined data
+          if (combinedTicketData) {
+            setTickets(combinedTicketData);
   
-          // Create events lookup object
-          const eventsMap: { [key: string]: Event } = {};
-          ticketData.forEach(ticket => {
-            if (ticket.events) {
-              eventsMap[ticket.events.id] = ticket.events;
-            }
-          });
-          setEvents(eventsMap);
+            // Create events lookup object
+            const eventsMap: { [key: string]: Event } = {};
+            combinedTicketData.forEach(ticket => {
+              if (ticket.events) {
+                eventsMap[ticket.events.id] = ticket.events;
+              }
+            });
+            setEvents(eventsMap);
   
-          // Create profiles lookup object
-          const profilesMap: { [key: string]: Profile } = {};
-          ticketData.forEach(ticket => {
-            if (ticket.profiles) {
-              profilesMap[ticket.profiles.id] = ticket.profiles;
-            }
-          });
-          setProfiles(profilesMap);
+            // Create profiles lookup object
+            const profilesMap: { [key: string]: Profile } = {};
+            combinedTicketData.forEach(ticket => {
+              if (ticket.profiles) {
+                profilesMap[ticket.profiles.id] = ticket.profiles;
+              }
+            });
+            setProfiles(profilesMap);
+          }
         }
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -210,14 +197,17 @@ const TicketsList: React.FC = () => {
   // Handle ticket deletion
   const handleDeleteTicket = async (ticketId: string) => {
     try {
-      const { error } = await supabase.from('tickets').delete().eq('id', ticketId);
+      const { error, data } = await supabase.from('tickets').delete().eq('id', ticketId);
+      console.log('Delete Response:', { data, error });
       if (error) throw error;
+  
       setTickets((prevTickets) => prevTickets.filter((ticket) => ticket.id !== ticketId));
     } catch (err) {
       console.error('Error deleting ticket:', err);
       setError('Failed to delete ticket. Please try again later.');
     }
   };
+  
 
   // Handle ticket editing (you can implement this as a modal or separate page)
   const handleEditTicket = (ticketId: string) => {
@@ -268,9 +258,9 @@ const TicketsList: React.FC = () => {
   }
 
   return (
-    <div className="p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-3">Ticket Management</h1>
+    <div className="p-6 bg-white dark:bg-gray-800  rounded-3xl md:my-10 my-4  ">
+      <div className="mb-8 ">
+        <h1 className="text-3xl font-bold mb-3 dark:text-gray-200 font-bonanova">Ticket Management</h1>
         <p className="text-gray-600 dark:text-gray-300 mb-4">
           {viewMode === 'organizer' 
             ? "Manage ticket reservations for your events. You can approve, cancel, or delete ticket requests."

@@ -26,7 +26,7 @@ const CreateInfoVenueForm: React.FC<InfoVenueFormProps> = ({
   };
 
   return (
-    <section className={`shadow-lg bg-white p-8 dark:bg-gray-900 border-[1px] border-gray-300 dark:border-gray-700 rounded-3xl ${isEditing ? 'border-indigo-400  border-2 rounded-lg dark:border-indigo-400' : ''}`}>
+    <section className={`shadow-lg bg-white p-8 dark:bg-gray-900 border-[1px] border-gray-300 dark:border-gray-700 rounded-3xl ${isEditing ? 'border-sky-400  border-2 rounded-lg dark:border-sky-400' : ''}`}>
       {/* Pricing Model Section */}
       <div className='grid md:grid-cols-2 gap-4'>
       <div className="mb-4">

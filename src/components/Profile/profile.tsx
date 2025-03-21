@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'; 
 import supabase from '../../api/supabaseClient'; // Adjust the import path as needed
-import Modal from '../../assets/modal/modal';
+import {Modal} from '../../assets/modal/modal';
 
 export default function Profile() {
   const [profile, setProfile] = useState<any>(null);

@@ -70,28 +70,45 @@ const BookVenue: React.FC = () => {
         if (!bookingEndDate) { setError("Please select an end date."); return; }
         if (!startTime) { setError("Please select a start time."); return; }
         if (!endTime) { setError("Please select an end time."); return; }
-
+    
         const startDateTime = new Date(bookingStartDate);
         startDateTime.setHours(parseInt(startTime.split(':')[0], 10));
         startDateTime.setMinutes(parseInt(startTime.split(':')[1], 10));
-
+    
         const endDateTime = new Date(bookingEndDate);
         endDateTime.setHours(parseInt(endTime.split(':')[0], 10));
         endDateTime.setMinutes(parseInt(endTime.split(':')[1], 10));
-
+    
         if (endDateTime <= startDateTime) { 
             setError("End date and time must be after start date and time."); 
             return; 
         }
-
+    
         try {
             const userId = user?.id;
-
+    
             if (!userId) {
                 setError("You must be logged in to make a booking.");
                 return;
             }
+                // Fetch the sender's profile to get their name
+                const { data: senderProfile, error: profileError } = await supabase
+                .from('profiles')
+                .select('first_name, last_name')
+                .eq('id', userId)
+                .single();
 
+                if (profileError) {
+                console.error("Error fetching sender's profile:", profileError);
+                setError("An error occurred while fetching your profile.");
+                return;
+                }
+
+                const senderName = senderProfile
+                ? `${senderProfile.first_name}, ${senderProfile.last_name}`
+                : name; // Fallback to the name from the form
+    
+            // Create the booking
             const { error: bookingError } = await supabase
                 .from('bookings')
                 .insert([
@@ -108,12 +125,32 @@ const BookVenue: React.FC = () => {
                         status: 'pending',
                     },
                 ]);
-
+    
             if (bookingError) {
                 console.error("Error creating booking:", bookingError);
                 setError(bookingError.message);
             } else {
                 setSuccessMessage("Booking created successfully!");
+                const notificationMessage = `${senderName} has requested to book ${venue?.name}`;
+                // Create notification
+                const { error: notificationError } = await supabase
+                .from('notifications')
+                .insert([
+                    {
+                        user_id: venue?.company_id, // Notify the venue owner
+                        sender_id: userId, // ID of the sender
+                        type: "booking_request",
+                        message: notificationMessage, // Use the sender's name
+                        link: `/Venue-Manager-Dashboard/Booking-List`,
+                        is_read: false // Explicitly set read status
+                    }
+                ]);
+    
+                if (notificationError) {
+                    console.error("Error creating notification:", notificationError);
+                    // You might want to handle this error (e.g., display a message to the user)
+                }
+    
                 // Clear form fields
                 setBookingStartDate(null);
                 setBookingEndDate(null);

@@ -15,7 +15,7 @@ const Card: React.FC<CardProps> = ({ id, title, description, image, tags, role }
 
   const handleClick = () => {
     // Use role-specific route
-    const basePath = role === 'supplier' ? '/Supplier-Dashboard' : '/Venue-Dashboard';
+    const basePath = role === 'supplier' ? '/Supplier-Dashboard' : '/Venue-Manager-Dashboard';
     navigate(`${basePath}/UpdateEvents/${id}`);
   };
 
@@ -44,7 +44,7 @@ const Card: React.FC<CardProps> = ({ id, title, description, image, tags, role }
           {tags.map((tag, index) => (
             <span
               key={index}
-              className="bg-blue-100 text-blue-800 text-sm font-medium px-2 py-1 rounded"
+              className="bg-sky-100/90 text-sky-800/90 dark:bg-sky-400/20 dark:text-sky-300 rounded-full text-sm font-medium px-2 py-1  "
             >
               #{tag}
             </span>

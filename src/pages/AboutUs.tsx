@@ -1,5 +1,5 @@
 import MainFooter from "../layout/MainFooter";
-import MainNavbar from "../layout/MainNavbar";
+import MainNavbar from '../layout/components/MainNavbar'
 import Image2 from "../assets/images/Session_Road___Baguio_City__Philippines-removebg-preview.png";
 import { useState } from "react";
 

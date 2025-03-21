@@ -89,20 +89,24 @@ export const fetchProfileRole = async (userId: string): Promise<string | null> =
   return data?.role;
 };
 
-export const fetchCompany = async (userId: string): Promise<Company | null> => {
-  const { data, error } = await supabase
-    .from("company_profiles")
-    .select("*")
-    .eq("id", userId)
-    .single();
-      if (error) {
-        console.error("Error fetching profile:", error.message);
-        throw error;
-      }
-  
-      return data;
-    };
+export const fetchCompany = async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const { data: profileData, error: profileError } = await supabase
+      .from('company_profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
 
+    if (profileError) {
+      console.error('Error fetching company profile:', profileError);
+      throw new Error('An error occurred while fetching the company profile.');
+    } else {
+      return profileData;
+    }
+  }
+  return null;
+};
     
 export const createCompany = async (companyData: Company) => {
   const { data, error } = await supabase

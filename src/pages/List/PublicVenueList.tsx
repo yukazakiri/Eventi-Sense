@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import CardVenues from '../../layout/cards/Venue/cardList';
-import { HoverButton, HoverButton2, HoverButton3, HoverButton4, HoverButton5 } from '../../components/Button/button-hover';
+import { HoverButton,  HoverButton3, HoverButton4, HoverButton5 } from '../../components/Button/button-hover';
 import myImage from '../../assets/images/iStock-13447299461.jpg';
 import myImage2 from '../../assets/images/venue-chair.jpg';
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
@@ -9,6 +9,8 @@ import MainFooter from '../../layout/MainFooter';
 import { VenueFilters } from '../../hooks/Venues/venueFilter';
 import useVenues from '../../hooks/Venues/useVenues';
   import {venueTypes } from '../../types/venueTypes';
+  import MainNavbar from '../../layout/components/MainNavbar';
+  import { Link } from 'react-router-dom';
 
 const SeasideVenueListing = () => {
    
@@ -35,9 +37,16 @@ const SeasideVenueListing = () => {
   const handleViewLessClick = () => {
     setShowAllVenues(false);
   };
-
+  const scrollToTarget = () => {
+    const targetElement = document.getElementById('targetSection');
+    if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth' }); // Smooth scrolling
+    }
+};
   return (
-    <div className="min-h-screen bg-pastelGray text-gray-800">
+    <>
+    <MainNavbar/>
+    <div className="min-h-screen bg-[#2F4157]">
       {/* Hero Section with Background Image */}
       <div className="relative h-[60vh] sm:h-[70vh] md:h-[80vh]">
         <div
@@ -58,8 +67,7 @@ const SeasideVenueListing = () => {
                 Discover a curated selection of venues nestled amidst the cool, misty heights of Baguio, where the scent of pine and breathtaking mountain vistas create unforgettable experiences.
               </p>
               <div className="flex flex-wrap gap-3 sm:gap-4">
-                <HoverButton className="text-sm sm:text-base">EXPLORE VENUES</HoverButton>
-                <HoverButton2 className="text-sm sm:text-base">BOOK NOW</HoverButton2>
+                <HoverButton className="text-sm sm:text-base" onClick={scrollToTarget}>EXPLORE VENUES</HoverButton>ss
               </div>
             </div>
           </div>
@@ -139,14 +147,38 @@ const SeasideVenueListing = () => {
           </div>
         </div>
       </div>
-      
+      <section className='w-full  h-full'>
+            <div id="targetSection" className='max-w-6xl mx-auto flex flex-col justify-center items-center py-10 pt-28 h-[20rem] '>  
+            <h2 className="md:text-5xl text-xl  font-bold font-bonanova gradient-text uppercase"> Featured Suppliers</h2>
+                    <p className="text-[#D9DACD] text-center mb-14 max-w-2xl mx-auto font-sofia tracking-wide pt-4 ">
+                    Discover our handpicked selection of suppliers that offer a unique atmosphere and stunning views.
+                    </p>
+            </div>
+</section>
+<section className='relative'>
+<div className="ocean">
+
+<div>
+    <svg className="waves" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
+    viewBox="0 24 150 28" preserveAspectRatio="none" shapeRendering="auto">
+    <defs>
+      <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+    </defs>
+      <g className="parallax">
+        <use xlinkHref="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.5)" />
+        <use xlinkHref="#gentle-wave" x="48" y="3" fill="rgba(146, 163, 177,0.5)" />
+        <use xlinkHref="#gentle-wave" x="48" y="5" fill="rgba(59, 96, 124,0.5)" />
+        <use xlinkHref="#gentle-wave" x="48" y="7" fill="#FFFFFF" />
+      </g>
+    </svg>
+    </div>
+    </div>
+</section>
       {/* Featured Venues Section */}
-      <div className=" mx-4 sm:mx-6 xl:mx-24 py-20 mt-20 lg:border-r lg:border-b border-gray-600/20">
+      <section className='bg-white'>
+      <div className=" mx-4 sm:mx-6 xl:mx-24 py-10 lg:border-r lg:border-b border-gray-600/20">
         <div className="mx-auto max-w-7xl px-6 ">
-          <h2 className="text-4xl font-semibold tracking-wide uppercase text-gray-600 mb-2 text-center font-bonanova">Featured Venues</h2>
-          <p className="text-gray-600 text-center mb-14 max-w-2xl mx-auto font-sofia tracking-wide">
-            Discover our handpicked selection of venues that offer a unique atmosphere and stunning views.
-          </p>
+         
           
           <div>
             {loading ? (
@@ -217,10 +249,11 @@ const SeasideVenueListing = () => {
                     <p className="text-gray-700 leading-relaxed mb-6 md:mb-8 font-sofia tracking-wide text-sm sm:text-base">
                       Do you have any questions about your visit with us? We are happy to help:
                     </p>
-                    <HoverButton5 className="w-full md:w-auto">
-                      BOOKING QUESTIONS
-                    </HoverButton5>
-
+                    <Link to="/contact">
+                                                <HoverButton5 className="w-full md:w-auto">
+                                                    BOOKING QUESTION
+                                                </HoverButton5>
+                                                </Link>
                     <h2 className="text-2xl md:text-3xl font-light text-gray-800 mt-6 md:mt-8">
                       Address
                     </h2>
@@ -236,9 +269,10 @@ const SeasideVenueListing = () => {
           </div>
         </div>
       </div>
-      
+      </section>
       <MainFooter/>
     </div>
+    </>
   );
 };
 

@@ -150,7 +150,7 @@ const BookSupplier: React.FC = () => {
 
     if (loading || userLoading) return <div>Loading...</div>;
     if (error && !supplier) return <div>{error}</div>;
-    if (!user) return <Navigate to="/login" />;
+    if (!user) return <Navigate to="/register" />;
     if (!supplier) return <div>Supplier not found.</div>;
 
     return (

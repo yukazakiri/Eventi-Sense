@@ -12,6 +12,7 @@ import UpdateEvents from '../../pages/Events/UpdateEvent';
 import EventListing from '../../components/EventsCards/Event-List';
 import TicketList from '../../pages/Events/TicketsList';
 import RequestTicket from '../../pages/Events/RequestTickets';
+import UserBookings from '../../pages/Booking/RequestBooking';
 
 
 const routes: RouteObject[] = [
@@ -28,7 +29,7 @@ const routes: RouteObject[] = [
   { path: '/EventList', element: <EventListing /> },
   { path: '/TicketList', element: <TicketList  /> },
   { path: '/tickets', element: <RequestTicket   /> },
-
+  { path: '/Requested-Bookings', element: <UserBookings/> },
 
 
 ];

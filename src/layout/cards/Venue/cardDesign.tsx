@@ -48,12 +48,12 @@ const Card: React.FC<CardProps> = ({ VenueName, PlaceName, capacity, image, rati
                 <p className="text-gray-500 font-sofia tracking-wide text-sm group-hover:text-white transition-colors duration-300">Capacity: {capacity || 'N/A'}</p>
                 <p className="text-gray-500 font-sofia tracking-wide text-sm group-hover:text-white transition-colors duration-300">Price-Range: {Price !== null ? Price : 'N/A'}</p>
                 <p className="text-gray-500 font-sofia tracking-wide text-sm group-hover:text-white transition-colors duration-300">
-                    Venue Type: {venueType.length > 0 ? (venueType.length > 3 ? venueType.slice(0, 3).map((type, index) => (
-                        <span key={index} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                  {venueType.length > 0 ? (venueType.length > 3 ? venueType.slice(0, 3).map((type, index) => (
+                        <span key={index} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-sky-700 mr-2 mb-2">
                             {type}
                         </span>
-                    )).concat(<span key="ellipsis" className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">...</span>) : venueType.map((type, index) => (
-                        <span key={index} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                    )).concat(<span key="ellipsis" className="inline-block bg-sky-200 rounded-full px-3 py-1 text-sm font-semibold text-sky-700 mr-2 mb-2">...</span>) : venueType.map((type, index) => (
+                        <span key={index} className="inline-block bg-sky-200 rounded-full px-3 py-1 text-sm font-semibold text-sky-700 mr-2 mb-2">
                             {type}
                         </span>
                     ))) : 'N/A'}

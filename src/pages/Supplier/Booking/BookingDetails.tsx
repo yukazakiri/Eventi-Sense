@@ -230,7 +230,7 @@ const UserBookings: React.FC<UserBookingsProps> = ({ supplierId }) => {
                 <div className="flex space-x-2">
                     <button
                         onClick={() => setSelectedBooking(booking)}
-                        className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-600"
+                        className="px-4 py-2 bg-sky-500 text-white text-sm rounded-lg hover:bg-sky-600 dark:bg-sky-500 dark:hover:bg-sky-600"
                     >
                         View
                     </button>

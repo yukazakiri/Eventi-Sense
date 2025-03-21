@@ -1,4 +1,4 @@
-import MainNavbar from "../layout/MainNavbar"
+import MainNavbar from '../layout/components/MainNavbar'
 
 
 function FAQ() {

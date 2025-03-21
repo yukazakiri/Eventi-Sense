@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import supabase from '../../api/supabaseClient'; // Your Supabase client
 import CompanyProfile from './Booking/Booking'; // Your CompanyProfile component
+import Breadcrumbs from '../../components/BreadCrumbs/breadCrumbs';
+import { HomeIcon } from '@heroicons/react/20/solid';
+const breadcrumbItems = [
+  { label: 'Home', href: '/Venue-Manager-Dashboard/Home', icon: <HomeIcon className="h-4 w-4 mr-1" /> },
+  { label: 'Bookings', href: '' },
+];
+
 
 interface Company {
   id: string;
@@ -67,8 +74,12 @@ const Home: React.FC = () => {
   }
 
   return (
-    <main className="mx-auto md:mx-[6rem] dark:bg-gray-950">
-      <div className="font-sofia my-8">
+    <main className="mx-auto md:mx-[2rem] md:my-6 my-4 ">
+         <div className='flex justify-end mr-4'>
+                            <Breadcrumbs items={breadcrumbItems} />
+                        </div>
+         <div className='dark:bg-gray-900 bg-white rounded-3xl p-8'>
+      <div className="font-sofia mb-6 dark:bg-gray-800   p-4 rounded-xl">
         <h1 className="text-3xl font-bonanova font-semibold text-gray-600 dark:text-gray-200">
           List Of Bookings
         </h1>
@@ -76,7 +87,9 @@ const Home: React.FC = () => {
           Here is a list of all bookings associated with your company.
         </p>
       </div>
+   
       <CompanyProfile company={company} />
+      </div>
     </main>
   );
 };

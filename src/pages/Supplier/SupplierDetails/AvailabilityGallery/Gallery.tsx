@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { supplierImage } from '../../../../api/apiSupplierGallery';
 import { getsupplierImages, addsupplierImage, deletesupplierImage } from '../../../../api/apiSupplierGallery';
-import Modal from '../../../../assets/modal/modal';
+import  {Modal} from '../../../../assets/modal/modal';
 
 
 interface SupplierGalleryProps {

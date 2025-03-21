@@ -2,25 +2,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../../../../api/supabaseClient';
 import { VenueFormData, Amenity } from '../../../../types/venue';
-import Breadcrumbs from '../../../../components/BreadCrumbs/breadCrumbs';
-import { HomeIcon, ArrowRightIcon, ArrowLeftIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
+import {  ArrowRightIcon, ArrowLeftIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
 import CreateInfoVenueForm from './CreateInfo';
 import CreateAddressVenueForm from './CreateAddress';
 import { validateVenueForm } from './FormValidation';
 import CreatePhotoCover from './CreateCoverPhoto';
 import { displayValidationErrors, hasErrors, validateCurrentStep } from './validateCreate';
 
-interface AmenityForm {
-  id: string;
-  quantity: number | null;
-  description: string | null;
-}
-
-const breadcrumbItems = [
-  { label: 'Home', href: '/Venue-Manager-Dashboard/Home', icon: <HomeIcon className="h-4 w-4 mr-1" /> },
-  { label: 'Venues', href: '/Venue-Manager-Dashboard/Venue-List' },
-  { label: 'Create Venue', href: '' }
-];
 
 const VenueForm = () => {
   const navigate = useNavigate();
@@ -47,9 +35,9 @@ const VenueForm = () => {
     company_id: '',
   });
 
-  const [amenities, setAmenities] = useState<Amenity[]>([]);
-  const [amenitiesLoading, setAmenitiesLoading] = useState<boolean>(true);
-  const [amenitiesError, setAmenitiesError] = useState<string | null>(null);
+  const [_amenities, setAmenities] = useState<Amenity[]>([]);
+  const [_amenitiesLoading, setAmenitiesLoading] = useState<boolean>(true);
+  const [_amenitiesError, setAmenitiesError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
  
   const [_user, setUser] = useState<any | null>(null);
@@ -80,7 +68,7 @@ const VenueForm = () => {
     { number: 1, title: "Venue Information" },
     { number: 2, title: "Cover Photo" },
     { number: 3, title: "Address Details" },
-    { number: 4, title: "Amenities" }
+    { number: 4, title: "Review & Submit" }
   ];
 
   useEffect(() => {
@@ -204,39 +192,6 @@ const VenueForm = () => {
     }));
   };
 
-  const handleCheckboxChange = (amenity: Amenity) => {
-    setFormData(prevData => {
-      const existingIndex = prevData.amenities.findIndex(a => a.id === amenity.id);
-      if (existingIndex > -1) {
-        // Remove if unchecked
-        const updatedAmenities = [...prevData.amenities];
-        updatedAmenities.splice(existingIndex, 1);
-        return { ...prevData, amenities: updatedAmenities };
-      }
-      // Add new amenity with default values
-      return {
-        ...prevData,
-        amenities: [
-          ...prevData.amenities,
-          {
-            id: amenity.id,
-            quantity: null,
-            description: null
-          }
-        ]
-      };
-    });
-  };
-
-  const handleAmenityChange = (amenityId: string, field: keyof AmenityForm, value: string | number | null) => {
-    setFormData(prevData => ({
-      ...prevData,
-      amenities: prevData.amenities.map(amenity => 
-        amenity.id === amenityId ? { ...amenity, [field]: value } : amenity
-      )
-    }));
-  };
-
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     setSelectedFile(file || null);
@@ -256,37 +211,41 @@ const VenueForm = () => {
     if (!selectedFile) {
       return;
     }
-
+  
     setUploading(true);
     setUploadError(null);
-
+  
     try {
-      const filePath = `VenuesPhoto/CoverPhoto/${venueId}/${selectedFile.name}`;
+      // Generate a unique filename using a timestamp or UUID
+      const timestamp = Date.now();
+      const fileExtension = selectedFile.name.split('.').pop();
+      const uniqueFileName = `${timestamp}.${fileExtension}`;
+      const filePath = `VenuesPhoto/CoverPhoto/${venueId}/${uniqueFileName}`;
+  
       const { error } = await supabase.storage
-        .from('company_logos')
+        .from('venue_images')
         .upload(filePath, selectedFile, {
           contentType: selectedFile.type,
-          upsert: false
+          upsert: false,
         });
-
+  
       if (error) {
         throw error;
       }
-
+  
       // Construct the public URL correctly
-      const { data: { publicUrl } } = supabase.storage.from('company_logos').getPublicUrl(filePath);
+      const { data: { publicUrl } } = supabase.storage.from('venue_images').getPublicUrl(filePath);
       setImageUrl(publicUrl);
-
+  
       const { error: updateError } = await supabase
         .from('venues')
         .update({ cover_image_url: publicUrl })
         .eq('id', venueId);
-
+  
       if (updateError) throw updateError;
-
-      alert("Image uploaded successfully!");
+  
+      alert('Image uploaded successfully!');
       setSelectedFile(null);
-
     } catch (error: any) {
       console.error('Error uploading image:', error);
       setUploadError(error.message);
@@ -294,35 +253,42 @@ const VenueForm = () => {
       setUploading(false);
     }
   };
+  
   const nextStep = () => {
     if (activeStep < totalSteps) {
-      // Validate the current step
       const errors = validateCurrentStep(formData, activeStep, selectedFile);
       setFormErrors(errors);
-      
+  
       if (hasErrors(errors)) {
-        // Display errors and prevent moving to next step
         displayValidationErrors(errors);
         return;
       }
-      
-      // If validation passes, proceed to next step
+  
       setActiveStep(activeStep + 1);
     }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  };const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Only allow submission if the user is on the final step
+    if (activeStep !== totalSteps) {
+        alert("Please complete all steps before submitting.");
+        return;
+    }
+
+    // Set the submitting state to true only when the user explicitly clicks "Create Venue"
+    setIsSubmitting(true);
+
+    // Validate the entire form
     const errors = validateVenueForm(formData);
     setFormErrors(errors);
 
+    if (hasErrors(errors)) {
+        displayValidationErrors(errors);
+        setIsSubmitting(false); // Reset submit state if validation fails
+        return;
+    }
 
-  if (hasErrors(errors)) {
-    displayValidationErrors(errors);
-    return;
-  }
-    // For this non-validating version, we'll proceed regardless of errors
-    setIsSubmitting(true);
+    // Proceed with submission
     setUploading(true);
 
     try {
@@ -351,22 +317,41 @@ const VenueForm = () => {
             ...pricing_model.map(price => insertRelatedDataWithNames(newVenueId, price, 'venue_pricing_models', 'venues_venue_pricing_models', 'venue_pricing_model_id')),
         ]);
 
-        if (newVenueId && formData.amenities && formData.amenities.length > 0) {
-            const amenityInserts = formData.amenities.map(({ id, quantity, description }) => ({
-                venue_id: newVenueId,
-                amenity_id: id,
-                quantity,
-                description,
-            }));
+        alert("You have successfully created a venue!");
 
-            const { error: amenitiesError } = await supabase
-                .from("venue_amenities")
-                .insert(amenityInserts);
+        // Retrieve user and company profile to get user id and company id.
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) throw new Error("User not found");
+        const userId = user.id;
 
-            if (amenitiesError) throw amenitiesError;
+        const { data: companyProfile, error: companyError } = await supabase
+            .from("company_profiles")
+            .select("id")
+            .eq("user_id", userId)
+            .single();
+
+        if (companyError || !companyProfile) throw new Error("Company profile not found");
+        const companyId = companyProfile.id;
+
+        // Create notification
+        const notificationMessage = "A new venue has been created.";
+        const { error: notificationError } = await supabase
+            .from('notifications')
+            .insert([
+                {
+                    user_id: companyId, // Notify the company owner
+                    sender_id: userId, // ID of the sender
+                    type: "venue_creation",
+                    message: notificationMessage,
+                    link: `/Venue-Manager-Dashboard/Venue-List`,
+                    is_read: false
+                }
+            ]);
+
+        if (notificationError) {
+            console.error("Error creating notification:", notificationError);
         }
 
-        alert("Venue successfully created!");
         navigate('/Venue-Manager-Dashboard/Venue-List');
 
     } catch (error) {
@@ -376,7 +361,7 @@ const VenueForm = () => {
         setIsSubmitting(false);
         setUploading(false);
     }
-  };
+};
 
   const insertRelatedDataWithNames = async (
     venueId: string,
@@ -436,8 +421,6 @@ const VenueForm = () => {
     }
   };
 
-
-
   const prevStep = () => {
     if (activeStep > 1) {
       setActiveStep(activeStep - 1);
@@ -447,7 +430,7 @@ const VenueForm = () => {
   // Loading states check
   if (venueTypesLoading || accessibilitiesLoading || pricingModelsLoading) {
     return <div className="flex items-center justify-center h-screen">
-      <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-indigo-500"></div>
+      <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-sky-500 "></div>
       <span className="ml-3 text-xl font-medium text-gray-700">Loading venue data...</span>
     </div>;
   }
@@ -469,38 +452,34 @@ const VenueForm = () => {
       case 3:
         return "Enter your venue's address details including street, city, state, and zip code.";
       case 4:
-        return "Select the amenities your venue offers. You can add quantities and descriptions for each.";
+        return "You're almost done! Review your information and submit to create your venue.";
       default:
         return "";
     }
   };
 
   return (
-    <div className="mx-10 font-sofia">
+    <div className="md:m-10 m-4 font-sofia">
       <div className='col-span-2'>
-        <section className='flex justify-between items-center my-4 sticky top-0'>
-          <div className='flex items-center'>
-            <Breadcrumbs items={breadcrumbItems} />
-          </div>
-        </section>
+    
       </div>
       <section className='bg-white  md:p-10 rounded-3xl dark:bg-gray-900'>
       {/* Progress Indicator */}
       <div className="mb-8">
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">Create Your Venue</h1>
-          <p className="text-gray-600 mt-2">Complete the following steps to create your venue</p>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-300 font-bonanova">Create Your Venue</h1>
+          <p className="text-gray-600 mt-2 dark:text-gray-400">Complete the following steps to create your venue</p>
         </div>
         
         {/* Step Counter */}
         <div className="text-center mb-2">
-          <span className="font-semibold text-indigo-600">Step {activeStep} of {totalSteps}</span>
+          <span className="font-semibold text-sky-600">Step {activeStep} of {totalSteps}</span>
         </div>
         
         {/* Progress Bar */}
         <div className="w-full h-2 bg-gray-200 rounded-full mb-6">
           <div 
-            className="h-full bg-indigo-600 rounded-full transition-all duration-300 ease-in-out"
+            className="h-full bg-sky-600 rounded-full transition-all duration-300 ease-in-out"
             style={{ width: `${(activeStep / totalSteps) * 100}%` }}
           ></div>
         </div>
@@ -512,7 +491,7 @@ const VenueForm = () => {
               key={step.number} 
               className={`flex-1 text-center ${
                 activeStep === step.number 
-                  ? 'font-bold text-indigo-600 border-b-2 border-indigo-600' 
+                  ? 'font-bold text-sky-600 border-b-2 border-sky-600' 
                   : activeStep > step.number 
                   ? 'text-green-600' 
                   : 'text-gray-400'
@@ -521,7 +500,7 @@ const VenueForm = () => {
               <div className="flex flex-col items-center">
                 <div className={`flex items-center justify-center w-8 h-8 mb-2 rounded-full ${
                   activeStep === step.number 
-                    ? 'bg-indigo-100 text-indigo-600 border border-indigo-600' 
+                    ? 'bg-sky-100 text-sky-600 border border-sky-600' 
                     : activeStep > step.number 
                     ? 'bg-green-100 text-green-600 border border-green-600' 
                     : 'bg-gray-100 text-gray-400 border border-gray-400'
@@ -539,16 +518,16 @@ const VenueForm = () => {
         </div>
         
         {/* Step Guidance Message */}
-        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-md">
+        <div className="bg-sky-400/10 border-l-4 border-sky-500 p-4 mb-6 rounded-md">
           <div className="flex">
             <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+              <svg className="h-5 w-5 text-sky-500" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
               </svg>
             </div>
             <div className="ml-3">
-              <p className="text-sm text-blue-700">{getStepMessage()}</p>
-              <p className="text-xs mt-1 text-blue-500">Don't worry! You can edit all information after creating your venue.</p>
+              <p className="text-sm text-sky-700 dark:text-sky-400">{getStepMessage()}</p>
+              <p className="text-xs mt-1 text-sky-500 dark:text-sky-700">Don't worry! You can edit all information after creating your venue.</p>
             </div>
           </div>
         </div>
@@ -595,76 +574,40 @@ const VenueForm = () => {
           </div>
         )}
 
-        {/* Step 4: Amenities */}
+        {/* Step 4: Review & Submit */}
         {activeStep === 4 && (
           <div className="transition-opacity duration-500 ease-in-out">
             <div className="shadow-lg bg-white p-6 border border-gray-300 rounded-3xl mb-4">
-              <h2 className="text-xl font-bold mb-4 text-gray-800">Venue Amenities</h2>
-              <p className="text-gray-600 mb-6">Select the amenities your venue offers to guests</p>
+              <h2 className="text-xl font-bold mb-4 text-gray-800">Ready to Submit Your Venue</h2>
               
-              {amenitiesLoading ? (
-                <div className="flex justify-center p-6">
-                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
+              <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-md mb-6">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <CheckCircleIcon className="h-5 w-5 text-green-500" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm text-green-700">
+                      You're all set! Your venue is ready to be published.
+                    </p>
+                  </div>
                 </div>
-              ) : amenitiesError ? (
-                <div className="text-red-500">Error: {amenitiesError}</div>
-              ) : amenities.length > 0 ? (
-                <div className="grid md:grid-cols-2 gap-4">
-                  {amenities.map((amenity) => {
-                    const venueAmenity = formData.amenities.find(a => a.id === amenity.id);
-                    return (
-                      <div key={amenity.id} className="p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
-                        <label className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={!!venueAmenity}
-                            onChange={() => handleCheckboxChange(amenity)}
-                            className="w-5 h-5 text-indigo-600"
-                          />
-                          <span className="font-medium text-gray-800">{amenity.name}</span>
-                        </label>
-
-                        {venueAmenity && (
-                          <div className="ml-7 mt-3 space-y-3">
-                            <div>
-                              <label className="block text-sm text-gray-600">Quantity:</label>
-                              <input
-                                type="number"
-                                min="0"
-                                placeholder="How many?"
-                                value={venueAmenity.quantity ?? ''}
-                                onChange={(e) => 
-                                  handleAmenityChange(
-                                    amenity.id, 
-                                    'quantity', 
-                                    e.target.value ? parseInt(e.target.value) : null
-                                  )
-                                }
-                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                              />
-                            </div>
-
-                            <div>
-                              <label className="block text-sm text-gray-600">Description:</label>
-                              <textarea
-                                placeholder="Add details about this amenity..."
-                                value={venueAmenity.description ?? ''}
-                                onChange={(e) => 
-                                  handleAmenityChange(amenity.id, 'description', e.target.value)
-                                }
-                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                                rows={2}
-                              />
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="text-center p-6 text-gray-500">No amenities found.</div>
-              )}
+              </div>
+              
+              <div className="space-y-4 text-gray-600">
+                <p>
+                  <span className="font-medium">What happens next?</span> After submission:
+                </p>
+                <ul className="list-disc pl-5 space-y-2">
+                  <li>Your venue will be created and added to your venue list</li>
+                  <li>You can add and manage amenities after submission</li>
+                  <li>You can update any venue details at any time</li>
+                  <li>Your venue will be available for booking based on your settings</li>
+                </ul>
+                
+                <p className="pt-4 text-sm italic">
+                  Note: Amenities can be added and customized after your venue is created. You'll be able to specify quantities and add descriptions for each amenity.
+                </p>
+              </div>
             </div>
           </div>
         )}
@@ -678,7 +621,7 @@ const VenueForm = () => {
             className={`flex items-center px-6 py-3 rounded-lg ${
               activeStep === 1 
                 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
-                : 'bg-white text-indigo-600 border border-indigo-600 hover:bg-indigo-50'
+                : 'bg-white text-sky-600 border border-sky-600 hover:bg-sky-50'
             }`}
           >
             <ArrowLeftIcon className="h-5 w-5 mr-2" />
@@ -689,7 +632,7 @@ const VenueForm = () => {
             <button
               type="button"
               onClick={nextStep}
-              className="flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+              className="flex items-center px-6 py-3 bg-sky-600 text-white rounded-lg hover:bg-sky-700"
             >
               Next
               <ArrowRightIcon className="h-5 w-5 ml-2" />

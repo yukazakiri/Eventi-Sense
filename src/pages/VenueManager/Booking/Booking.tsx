@@ -117,7 +117,7 @@ function Booking({ company }: CompanyProfileProps) {
 
           return (
             
-            <div key={venue.id} className="rounded overflow-hidden shadow-lg flex flex-col h-full group">
+            <div key={venue.id}  className="overflow-hidden h-auto group cursor-pointer w-full hover:bg-navy-blue-5 dark:hover:bg-navy-sky-5 border-[1px] border-gray-300 dark:border-gray-700 rounded-xl transition-all duration-300 shadow-2xl">
             <NavLink to={`/Venue-Manager-Dashboard/BookingDetail/${venue.id}`} className="block h-full transition duration-500 ease-in-out hover:scale-105">
               <div className="relative">
                 {venue.cover_image_url && (
@@ -128,24 +128,20 @@ function Booking({ company }: CompanyProfileProps) {
                 <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition duration-500 ease-in-out">
                   <span className="text-white text-lg ">View More</span>
                 </div>
-          
-                <div className="text-base font-sofia shadow-lg absolute top-0 right-0 rounded-md bg-indigo-600 px-4 py-2 text-white mt-3 mr-3 group-hover:bg-white group-hover:text-indigo-800 transition duration-500 ease-in-out">
+           
+                <div className="text-base font-sofia shadow-lg absolute top-0 right-0 rounded-md bg-sky-600 px-4 py-2 text-white mt-3 mr-3 group-hover:bg-white group-hover:text-sky-800 transition duration-500 ease-in-out">
                 {bookingCount}  Bookings
                 </div>
               </div>
               <div className="px-6 py-4 mb-auto">
-                <div className="font-medium text-lg hover:text-indigo-600 transition duration-500 ease-in-out inline-block mb-2">
+                <div className="font-medium text-lg gradient-text transition duration-500 ease-in-out inline-block mb-2">
                   {venue.name}
                 </div>
                 <p className="text-gray-500 dark:text-gray-200 text-sm">
                   {venue.description || "No description available"}
                 </p>
               </div>
-              <div className="px-6 py-3 flex flex-row items-center justify-between bg-gray-100 dark:bg-gray-950">
-                <span className="py-1 text-xs font-regular text-gray-900 dark:text-gray-200 mr-1 flex flex-row items-center">
-                  <span className="ml-1">{}</span>
-                </span>
-              </div>
+         
             </NavLink>
           </div>
           );

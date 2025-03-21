@@ -36,6 +36,7 @@ const CreateEventForm: React.FC = () => {
     const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
     const dateInputRef = useRef<HTMLInputElement>(null);
     const [userRole, setUserRole] = useState<string>('');
+    const [isFreeEvent, setIsFreeEvent] = useState(false);
     useEffect(() => {
         const fetchUserRole = async () => {
             const { data: { user } } = await supabase.auth.getUser();
@@ -61,21 +62,21 @@ const CreateEventForm: React.FC = () => {
     const breadcrumbItems = userRole === 'supplier'
         ? [
             { label: 'Home', href: '/Supplier-Dashboard/Home', icon: <HomeIcon className="h-4 w-4 mr-1" /> },
-            { label: 'Venues', href: '/Supplier-Dashboard/Venue-List' },
-            { label: 'Venue Details', href: `/Supplier-Dashboard/VenueDetails/${selectedVenues[0]}` },
-            { label: 'Add Availability', href: '' }
+            { label: 'EventList', href: '/Supplier-Dashboard/EventList' },
+            { label: 'Create Event', href: '' }
         ]   
         : userRole === 'venue_manager'
         ? [
             { label: 'Home', href: '/Venue-Manager-Dashboard/Home', icon: <HomeIcon className="h-4 w-4 mr-1" /> },
-            { label: 'Venues', href: '/Venue-Manager-Dashboard/Venue-List' },
-            { label: 'Venue Details', href: `/Venue-Manager-Dashboard/VenueDetails/${selectedVenues[0]}` },
-            { label: 'Add Availability', href: '' }
+            { label: 'EventList', href: '/Venue-Manager-Dashboard/EventList' },
+            { label: 'Create Event', href: '' }
         ]
         : userRole === 'event_planner'
         ? [
             { label: 'Home', href: '/Event-Planner-Dashboard/Home', icon: <HomeIcon className="h-4 w-4 mr-1" /> },
-            { label: 'Events', href: '/Event-Planner-Dashboard/EventList' }
+            { label: 'EventList', href: '/Venue-Manager-Dashboard/EventList' },
+            { label: 'Create Event', href: '' }
+     
         ]
         : [];
 
@@ -157,6 +158,12 @@ const CreateEventForm: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+
+        if (!isFreeEvent && event?.ticket_price !== undefined && event.ticket_price <= 0) {
+            alert('Please enter a valid ticket price or mark the event as free.');
+            return;
+        }
         console.log('Form submitted');
 
         try {
@@ -208,6 +215,24 @@ const CreateEventForm: React.FC = () => {
                 }
 
                 alert('Event created successfully!');
+                  // Create Notification
+                  const notificationMessage = "A new event has been created.";
+                  const { error: notificationError } = await supabase
+                      .from('notifications')
+                      .insert([
+                          {
+                              user_id: user.id, // Notify the user who created the event
+                              sender_id: user.id,
+                              type: "event_creation",
+                              message: notificationMessage,
+                              link: `/events/${createdEvent.id}`,
+                              is_read: false
+                          }
+                      ]);
+  
+                  if (notificationError) {
+                      console.error("Error creating notification:", notificationError);
+                  }
                 setEvent({
                     name: '',
                     description: '',
@@ -434,6 +459,7 @@ const CreateEventForm: React.FC = () => {
             </div>
 
             <div className="space-y-2">
+        
                 <label htmlFor="ticket_price" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                     Ticket Price
                 </label>
@@ -448,9 +474,28 @@ const CreateEventForm: React.FC = () => {
                         placeholder="0.00"
                         value={event.ticket_price}
                         onChange={handleInputChange}
+                        disabled={isFreeEvent}
+                        min="0"
                         className="bg-white border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full pl-7 p-3 transition-colors duration-200 dark:bg-gray-950 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                     />
                 </div>
+                <div className="space-y-2">
+    <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+        <input
+            type="checkbox"
+            checked={isFreeEvent}
+            onChange={(e) => {
+                setIsFreeEvent(e.target.checked);
+                setEvent(prev => ({
+                    ...prev,
+                    ticket_price: e.target.checked ? 0 : prev.ticket_price
+                }));
+            }}
+            className="h-4 w-4 rounded border-gray-300 text-sky-600 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-800"
+        />
+        Free Event
+    </label>
+</div>
             </div>
 
             <div className="space-y-2">

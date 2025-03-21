@@ -1,5 +1,5 @@
 import { useEffect, useState, ChangeEvent, FormEvent } from 'react';
-import Modal from '../../assets/modal/modal';
+import {Modal} from '../../assets/modal/modal';
 import { LuPencil } from 'react-icons/lu';
 import { MdOutlineMailOutline } from 'react-icons/md';
 import { fetchProfile, updateProfile, getCurrentUser, uploadAvatar } from '../../api/utiilty/profiles';

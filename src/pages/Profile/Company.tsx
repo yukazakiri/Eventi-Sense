@@ -1,6 +1,6 @@
  import React, { useState, useEffect } from "react";
 import supabase from "../../api/supabaseClient";
-import Modal from "../../assets/modal/modal"; // Import your Modal component
+import {Modal} from "../../assets/modal/modal"; // Import your Modal component
 import { LuPencil } from "react-icons/lu";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { FiPhone } from "react-icons/fi";

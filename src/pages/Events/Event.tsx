@@ -1,10 +1,11 @@
 import MainFooter from '../../layout/MainFooter'
-import MainNavbar from '../../layout/MainNavbar'
-import ViewEvents from './ViewEvents'
+import MainNavbar from '../../layout/components/MainNavbar'
+import ViewEvents from './EventDetails/eventDetails'
 
 function Event() {
+  const cream = '#F9F7F2';
   return (
-    <div className='bg-navy-blue-3 dark:bg-gray-950' >
+    <div style={{backgroundColor: cream}} >
         <MainNavbar/>
         <ViewEvents/>
         <MainFooter/>

@@ -1,6 +1,6 @@
 import Profile from "../components/Profile/profile"
 import MainFooter from "../layout/MainFooter"
-import MainNavbar from "../layout/MainNavbar"
+import MainNavbar from '../layout/components/MainNavbar'
 
 
 function ProfilePage() {
