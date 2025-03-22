@@ -12,7 +12,7 @@ interface FloatingActionButtonProps {
   zIndex?: number;
   user: any;
   profile: any;
-  searchQuery: string;
+
   mobileMenuOpen: boolean;
   isDropdownOpen?: boolean;
   setSearchQuery: (value: string) => void;
@@ -29,24 +29,19 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
   zIndex = 9999,
   user,
   profile,
-  searchQuery,
-  isDropdownOpen,
-  setSearchQuery,
-  setDropdownOpen,
-  handleSearch,
 
+  isDropdownOpen,
+  setDropdownOpen,
 
 }) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  
   const handleNavigation = (path: string) => {
     document.body.style.overflow = 'auto';
-
-    // Force full page reload
     window.location.href = path;
   };
+
   const getPositionClasses = () => {
     switch (position) {
       case 'top-right':
@@ -58,17 +53,16 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
         return 'bottom-5 right-5';
     }
   };
+
   const handleButtonClick = () => {
     setIsMenuOpen(!isMenuOpen);
-    // Keep in sync with body overflow
     document.body.style.overflow = !isMenuOpen ? 'hidden' : 'auto';
   };
 
   const handleCloseMenu = () => {
-    document.body.style.overflow = 'auto'; // Add this
+    document.body.style.overflow = 'auto';
     setIsMenuOpen(false);
   };
-
 
   const positionClasses = getPositionClasses();
 
@@ -86,7 +80,6 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
     shadow-2xl
     transform transition-all duration-500
     hover:scale-105
-    
     z-[9999]
   `;
 
@@ -105,7 +98,6 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
     md:text-lg
     font-sofia tracking-wide
     hover:bg-gray-800
-  
     group
   `;
 
@@ -142,18 +134,14 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
       </div>
    
       <div 
-        className={`fixed top-0 left-0 h-full w-full  bg-navy-blue-5/90 transition-transform duration-700 ease-in-out bg-cover bg-center ${
+        className={`fixed top-0 left-0 h-full w-full bg-navy-blue-5/90 transition-transform duration-700 ease-in-out bg-cover bg-center ${
           isMenuOpen 
             ? 'transform translate-x-0' 
             : 'transform -translate-x-full'
         }`}
-        style={{ zIndex: zIndex - 1
-     
-         }}
-        
+        style={{ zIndex: zIndex - 1 }}
         onClick={(e) => e.stopPropagation()}
       >
-       
         <div className="grid grid-cols-1 md:grid-cols-2 h-full relative overflow-y-auto">
           <button 
             onClick={handleCloseMenu}
@@ -190,62 +178,74 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
                     About
                   </NavLink>
                 </div>
-                <div className="py-2">
-                  <div 
-                    className="flex items-center justify-between cursor-pointer"
-                    onClick={() => setDropdownOpen?.(!isDropdownOpen)}
-                  >
-                    <div className="flex items-center gap-4 md:gap-8">
-                      <span className="text-sm md:text-xl font-thin">III.</span>
-                      <span>Services</span>
-                    </div>
-                    <svg
-                      className={`ml-2 w-4 h-4 transform transition-transform duration-300 ${isDropdownOpen ? 'rotate-180 text-yellow-300' : ''}`}
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                  {isDropdownOpen && (
-                    <div className="pl-6 md:pl-12 mt-2 space-y-2 md:space-y-3 text-base md:text-lg">
-                      <NavLink 
-                        to="/service1" 
-                        onClick={(e) => {
-                          e.preventDefault();
-             
-                          window.location.href = '/service1';
-                        }}
-                      >
-                        Service 1
-                      </NavLink>
-                      <NavLink 
-                        to="/service2" 
-                        className="block py-1"
-                        onClick={(e) => {
-                          e.preventDefault();
-             
-                          window.location.href = '/service1';
-                        }}>
-                        Service 2 
-                      </NavLink>
-                      <NavLink 
-                        to="/service3" 
-                        className="block py-1"
-                        onClick={(e) => {
-                          e.preventDefault();
-             
-                          window.location.href = '/service1';
-                        }}
-                      >
-                        Service 3
-                      </NavLink>
-                    </div>
-                  )}
-                </div>
-                <div className="flex items-center gap-4 md:gap-8">
+                <div className="relative">
+              {/* Dropdown Toggle Button */}
+              <button 
+                className="flex items-center space-x-1 gap-6   hover:text-primary-600 transition-colors"
+                onClick={() => setDropdownOpen?.(!isDropdownOpen)}
+              >   <span className="text-sm md:text-xl font-thin">III.</span>
+                <span> Directories</span>
+                <svg 
+                  className={`w-6 h-6 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  viewBox="0 0 20 20" 
+                  fill="currentColor"
+                >
+                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
+              
+              {/* Dropdown Menu - Using height transition for smooth push effect */}
+              <div 
+                className={`w-auto  text-white text-xl  overflow-hidden transition-all duration-500 ease-in-out ${
+                  isDropdownOpen ? 'max-h-48 opacity-100 mt-2' : 'max-h-0 opacity-0'
+                }`}
+              >
+                <a 
+                  href="/Event-List"
+                  className="block px-4 py-2 text-white hover:bg-gray-200/10 hover:text-yellow-500"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.location.href = '/Event-List';
+                  }}
+                >
+                  Events
+                </a>
+                <a 
+                  href="/Event-Planner"
+                  className="block px-4 py-2 text-white hover:bg-gray-200/10 hover:text-yellow-500"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.location.href = '/Event-Planner';
+                  }}
+                >
+                 Event Planners
+                </a>
+                <a 
+                  href="/venue-list"
+                  className="block px-4 py-2 text-white hover:bg-gray-200/10 hover:text-yellow-500"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.location.href = '/venue-list';
+                  }}
+                >
+                  Venues
+                </a>
+                <a 
+                  href="/supplier-list"
+                  className="block px-4 py-2 text-white hover:bg-gray-200/10 hover:text-yellow-500"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.location.href = '/supplier-list';
+                  }}
+                >
+                  Suppliers
+                </a>
+              </div>
+            </div>
+
+
+                <div className="flex items-center gap-4 md:gap-8 transition-all duration-300">
                   <span className="text-sm md:text-xl font-thin">IV.</span>
                   <NavLink 
                     to="/contact" 
@@ -261,7 +261,6 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
                     <NavLink 
                       to={`/${profile.role.replace('_', '-')}-Dashboard/Home`}
                       className={({ isActive }) => `block ${isActive ? 'gradient-text' : ''}`}
-        
                     >
                       Dashboard
                     </NavLink>
@@ -272,58 +271,37 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
                     <ProfileAvatar 
                       user={user} 
                       profile={profile} 
-           
                     />
                   ) : (
                     <Button
                       label="Sign Up"
                       onClick={() => {
-           
                         window.location.href = '/register';
                       }}
-                  
                       gradientText={true}
                       variant="secondary"
                     />
                   )}
                 </div>
               </div>
-              <div className="px-4 md:px-6 py-4 mt-2 md:mt-4">
-                <form onSubmit={handleSearch} className="w-full">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Search events..."
-                      className="w-full py-2 pl-3 pr-8 md:pl-4 md:pr-10 text-xs md:text-sm text-gray-900 bg-white rounded-lg focus:outline-none"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                    <button type="submit" className="absolute inset-y-0 right-0 flex items-center pr-3">
-                      <svg className="w-4 h-4 md:w-5 md:h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                      </svg>
-                    </button>
-                  </div>
-                </form>
-              </div>
             </div>
           </nav>
 
-          <section className="hidden md:flex justify-center items-center bg-navy-blue-4 h-full p-4 md:p-8 text-center">
+          <section className="hidden md:flex justify-center items-center bg-[#2F4157]/80 h-full p-4 md:p-8 text-center">
             <div className="flex flex-col items-center justify-center space-y-4 md:space-y-8 max-w-md">
-              <div className="mb-2 md:mb-4">
+              <div className="mb-2 md:mb-4 font-bonanova">
                 <h1 className="text-white text-xl md:text-3xl font-light tracking-wider">EVENTISENSE</h1>
                 <p className="text-gray-300 text-xs md:text-sm mt-1">HOTEL & SPA RESORT</p>
               </div>
-              <div>
+              <div className='font-sofia'>
                 <h2 className="text-white text-lg md:text-2xl font-light mb-4 md:mb-6">Hotel & Spa<br />Resort Eventisense</h2>
-                <p className="text-gray-300 text-sm md:text-base">Letecká 19</p>
+                <p className="text-gray-300 text-sm md:text-base">Baguio City</p>
                 <p className="text-gray-300 text-sm md:text-base">962 31 Sliač — Sielnica</p>
-                <p className="text-gray-300 text-sm md:text-base">Slovakia</p>
+                <p className="text-gray-300 text-sm md:text-base">Philippines</p>
               </div>
               <div className="mt-4 md:mt-8">
                 <p className="text-gray-300 text-sm md:text-base mb-1 md:mb-2">+421 45 530 00 00</p>
-                <p className="text-gray-300 text-sm md:text-base mb-2 md:mb-4">recepcia@hoteleventisense.sk</p>
+                <p className="text-gray-300 text-sm md:text-base mb-2 md:mb-4">Eventi@eventisense.com</p>
                 <div className="flex items-center justify-center text-sm md:text-base">
                   <p className="text-gray-300">Contacts</p>
                   <span className="text-gray-300 ml-2">→</span>

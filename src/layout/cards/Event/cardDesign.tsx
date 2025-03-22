@@ -5,7 +5,7 @@ type CardProps = {
   id: string;
   title: string;
   description: string;
-  image: string;
+  image?: string;
   tags: string[];
 };
 
@@ -42,7 +42,7 @@ const Card: React.FC<CardProps> = ({ id, title, description, image, tags }) => {
         <div className="mt-4 flex flex-wrap gap-2 font-sofia">
           {tags.map((tag, index) => (
             <span
-              key={index}
+              key={index} // Add key prop here
               className="text-gray-700 text-sm font-medium px-4 py-1 rounded-full bg-gray-400/10 group-hover:text-yellow-400 group-hover:bg-yellow-500/30"
             >
               {tag}

@@ -1,4 +1,4 @@
-import React,{ useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isEqual } from 'lodash'; // Make sure to install lodash
 import supabase from '../../api/supabaseClient';
@@ -121,9 +121,10 @@ function MainNavbar() {
         icon={<RiMenu4Fill/>}
         user={user}
         profile={memoizedProfile}
-        searchQuery={searchQuery}
         mobileMenuOpen={mobileMenuOpen}
+        isDropdownOpen={isDropdownOpen}
         setSearchQuery={setSearchQuery}
+        setDropdownOpen={setDropdownOpen}
         handleSearch={handleSearch}
         toggleMobileMenu={toggleMobileMenu}
         navigate={navigate}

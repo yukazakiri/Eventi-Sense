@@ -151,7 +151,7 @@ const UpdateEvent: React.FC = () => {
         : userRole === 'event_planner'
         ? [
             { label: 'Home', href: '/Event-Planner-Dashboard/Home', icon: <HomeIcon className="h-4 w-4 mr-1" /> },
-            { label: 'EventList', href: '/Venue-Manager-Dashboard/EventList' },
+            { label: 'EventList', href: '/Event-Planner-Dashboard/EventList' },
             { label: 'Update Event', href: '' }
      
         ]

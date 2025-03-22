@@ -32,7 +32,7 @@ const handleLogout = async () => {
   
 
   return (
-    <div className="relative font-Monserrat group">
+    <div className="relative font-Monserrat group font-sofia">
         <div className='flex items-center space-x-4 group-hover:opacity-100 'onClick={() => setDropdownOpen(!isDropdownOpen)}>
       <button
         type="button"
@@ -45,10 +45,10 @@ const handleLogout = async () => {
           className="w-10 h-10 rounded-full"  
         />
       </button> 
-    <h1 className='text-[14px] cursor-pointer text-white'>My Profile</h1>
+    <h1 className='text-[14px] cursor-pointer text-white '>My Profile</h1>
       </div>
       {isDropdownOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-navy-blue-5 text-white shadow-2xl rounded-md py-2">
+        <div className="absolute right-0 mt-2 w-48 bg-navy-blue-5 text-white shadow-2xl rounded-md py-2 text-lg">
           <NavLink to="/profile" className="block px-4 py-2 hover:bg-gray-100">
             View Profile
           </NavLink>

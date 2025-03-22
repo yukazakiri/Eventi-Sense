@@ -35,10 +35,12 @@ import EventUpdate from '../pages/Events/UpdateEvent';
 import EventPlannerDashboard from '../app/EventPlanner';
 import PublicVenueList from '../pages/List/PublicVenueList';
 import PublicSupplierList from '../pages/List/PublicSupplier';
-import PaymentPage from '../components/payment/paymentpage';
+import PaymentPage from '../components/payment/paymentPages';
 import TicketPage from '../components/payment/TicketPage';
 import PublicEventPlannerList from '../pages/List/PublicEventPlanner';
 import PublicEventPlanner from '../pages/PublicEventPlanners';
+import EventsList from '../pages/Events/AllEventList'
+
 const AppRouter = () => {
   return (
     <>
@@ -77,6 +79,8 @@ const AppRouter = () => {
         <Route path="/tickets/:ticketId" element={<TicketPage />} />  
         <Route path="/Event-Planner" element={< PublicEventPlannerList/>} /> 
         <Route  path="/Event-Planner/:id/Profile"  element={< PublicEventPlanner/>} /> 
+        <Route path="/Event-List" element={<EventsList/>} />
+   
 
  
 

@@ -1,46 +1,53 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import CardList from '../../layout/cards/EventPlanner/cardList';
+import CardList from '../../layout/cards/Event/cardList';
 import { HoverButton, HoverButton2, HoverButton3, HoverButton4, HoverButton5 } from '../../components/Button/button-hover';
-import myImage from '../../assets/images/planner.jpg';
+import myImage from '../../assets/images/events.jpg';
 import myImage2 from '../../assets/images/plannerverti.jpg';
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 import { BiSearch } from 'react-icons/bi';
 import MainFooter from '../../layout/MainFooter';
 import MainNavbar from '../../layout/components/MainNavbar';
-import useEventPlanners from '../../hooks/EventPlanner/useEventPlanners'; // Import the hook
+import useEvents from '../../hooks/Events/useEvents'; // Updated hook for events
+import { GoArrowDown } from "react-icons/go";
+import { eventCategories } from "./constants/category";
 
-const PublicEventPlanner = () => {
+const AllEventList = () => {
     const [filters, setFilters] = useState({
         searchQuery: '',
         location: '',
-        minExperience: 0, // Added minExperience filter
-        availability: false
+        category: '',
+        minTicketPrice: 0,
+        maxTicketPrice: 1000,
     });
 
-    const [showAllPlanners, setShowAllPlanners] = useState(false);
+    const [showAllEvents, setShowAllEvents] = useState(false);
 
-    // Use the useEventPlanners hook
-    const { eventPlanners} = useEventPlanners(filters);
+    // Use the useEvents hook
+    const { events, loading, error } = useEvents(filters);
 
     // Unified filter handlers
     const handleFilterChange = (field: string, value: any) => {
         setFilters(prev => ({ ...prev, [field]: value }));
     };
-
+    const handleCategoryChange = (category: string) => {
+        setFilters((prev) => ({ ...prev, category }));
+      };
     const handleViewAllClick = () => {
-        setShowAllPlanners(true);
+        setShowAllEvents(true);
     };
 
     const handleViewLessClick = () => {
-        setShowAllPlanners(false);
+        setShowAllEvents(false);
     };
+
     const scrollToTarget = () => {
         const targetElement = document.getElementById('targetSection');
         if (targetElement) {
-            targetElement.scrollIntoView({ behavior: 'smooth' }); // Smooth scrolling
+            targetElement.scrollIntoView({ behavior: 'smooth' });
         }
     };
+
     return (
         <>
             <MainNavbar />
@@ -53,22 +60,28 @@ const PublicEventPlanner = () => {
                     />
                     <div className="absolute inset-0 bg-gray-900/60"></div>
                     {/* Decorative Border */}
-                    <div className="absolute inset-2 sm:inset-4 md:inset-6 border border-gray/20 pointer-events-none"></div>
+                    <div className="absolute inset-2 sm:inset-4 md:inset-6 border border-gray-400/20 pointer-events-none"></div>
 
                     <div className="relative h-full flex items-center">
                         <div className="container mx-auto px-4 sm:px-6">
                             <div className="max-w-3xl">
                                 <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-white mb-4 sm:mb-6 font-bonanova uppercase">
-                                    Event Planners Directory
+                                    Events Directory
                                 </h1>
                                 <p className="text-md text-white/90 leading-relaxed mb-6 sm:mb-10 max-w-2xl font-sofia tracking-widest">
-                                    Find the perfect event planner for your special occasion. Browse our curated selection of experienced professionals ready to bring your vision to life.
+                                    Discover exciting events near you. Browse our curated selection of events and find the perfect one to attend.
                                 </p>
                                 <div className="flex flex-wrap gap-3 sm:gap-4">
-                                    <HoverButton className="text-sm sm:text-base" onClick={scrollToTarget}>EXPLORE PLANNERS</HoverButton>
-                                    <Link to="/contact">
-                                    <HoverButton2 className="text-sm sm:text-base" >CONTACT NOW</HoverButton2>
-                                    </Link>
+                                        <button     onClick={scrollToTarget} className="w-auto  h-14 px-4 py-2 rounded-full  hover:rounded-full transform transition-all duration-500 ease-in-out
+                                                               hover:bg-[#2F4157] bg-[#2F4157] hover:w-36 hover:h-36 hover:text-yellow-400/50 text-white relative group">
+                                                  <span className="group-hover:opacity-0 transition-opacity duration-300 font-sofia tracking-widest ease-in-out">More Details</span>
+                                                  <    GoArrowDown 
+                                                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"
+                                                    size={24}
+                                                  />
+                                                </button>   
+                              
+                                   
                                 </div>
                             </div>
                         </div>
@@ -84,15 +97,13 @@ const PublicEventPlanner = () => {
                                 <div className="w-full md:flex-1 relative">
                                     <input
                                         type="text"
-                                        placeholder="Search event planners..."
+                                        placeholder="Search events..."
                                         className="w-full py-2 sm:py-3 px-4 bg-transparent focus:outline-none text-gray-300 cursor-text placeholder:text-gray-400"
                                         value={filters.searchQuery}
                                         onChange={(e) => handleFilterChange('searchQuery', e.target.value)}
                                     />
                                     <BiSearch className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 text-lg sm:text-xl" />
                                 </div>
-
-                        
 
                                 {/* Location Dropdown */}
                                 <div className="w-full md:w-48 relative font-sofia tracking-widest">
@@ -109,18 +120,17 @@ const PublicEventPlanner = () => {
                                     <MdOutlineKeyboardArrowDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 text-lg sm:text-xl pointer-events-none" />
                                 </div>
 
-                                {/* Experience Dropdown */}
+                                {/* Category Dropdown */}
                                 <div className="w-full md:w-48 relative font-sofia tracking-widest">
-                                    <select
-                                        className="w-full py-2 sm:py-3 px-4 bg-transparent focus:outline-none text-gray-300 appearance-none border-l border-gray-500/50 cursor-pointer"
-                                        value={filters.minExperience}
-                                        onChange={(e) => handleFilterChange('minExperience', parseInt(e.target.value))}
-                                    >
-                                        <option value={0} className='text-gray-800/85'>Experience</option>
-                                        <option value={1} className='text-gray-800/85'>1+ years</option>
-                                        <option value={3} className='text-gray-800/85'>3+ years</option>
-                                        <option value={5} className='text-gray-800/85'>5+ years</option>
-                                    </select>
+                                <select onChange={(e) => handleCategoryChange(e.target.value)}    className="w-full  py-2 sm:py-3 px-4 bg-transparent focus:outline-none text-gray-300 appearance-none border-l border-gray-500/50 cursor-pointer"
+                                       >
+                                    <option value="" className='text-gray-800/85'>All Categories</option>
+                                    {eventCategories.map((category) => (
+                                    <option key={category.id} value={category.name}  className='text-gray-800/85'>
+                                        {category.name}
+                                    </option>
+                                    ))}
+                                </select>
                                     <MdOutlineKeyboardArrowDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 text-lg sm:text-xl pointer-events-none" />
                                 </div>
 
@@ -135,10 +145,10 @@ const PublicEventPlanner = () => {
                     </div>
                 </div>
 
-                {/* Featured Event Planners Section */}
-                <section  className='w-full h-full'>
-                <div id="targetSection" className='max-w-6xl mx-auto flex flex-col justify-center items-center py-6 pt-20 h-[12rem]'>
-                        <h2 className="md:text-5xl text-xl font-bold font-bonanova gradient-text uppercase">Featured Event Planners</h2>
+                {/* Featured Events Section */}
+                <section className='w-full h-full'>
+                    <div id="targetSection" className='max-w-6xl mx-auto flex flex-col justify-center items-center py-6 pt-20 h-[12rem]'>
+                        <h2 className="md:text-5xl text-xl font-bold font-bonanova gradient-text uppercase">Featured Events</h2>
                     
                     </div>
                 </section>
@@ -163,20 +173,20 @@ const PublicEventPlanner = () => {
                     </div>
                 </section>
 
-                {/* Event Planners List Section */}
+                {/* Events List Section */}
                 <section className='bg-white'>
-                    <div className="mx-4 sm:mx-6 xl:mx-16 py-10 lg:border-r lg:border-b border-gray-600/20">
+                    <div className="mx-4 sm:mx-6 xl:mx-20 py-10 lg:border-r lg:border-b border-gray-600/20">
                         <div className="mx-auto max-w-7xl">
                             <div>
                                 <CardList
-                                    eventPlanners={eventPlanners} // Pass filtered event planners
-                                    limit={showAllPlanners ? undefined : 4}
+                                    events={events}
+                                    limit={showAllEvents ? undefined : 3}
                                 />
 
                                 {/* Conditional Rendering for View All/View Less Buttons */}
-                                {!showAllPlanners ? (
+                                {!showAllEvents ? (
                                     <div className="flex justify-center mt-16">
-                                        <HoverButton4 onClick={handleViewAllClick}>VIEW ALL PLANNERS</HoverButton4>
+                                        <HoverButton4 onClick={handleViewAllClick}>VIEW ALL EVENTS</HoverButton4>
                                     </div>
                                 ) : (
                                     <div className="flex justify-center mt-16">
@@ -197,7 +207,7 @@ const PublicEventPlanner = () => {
                                         <div className="absolute inset-2 md:inset-4 border border-white/90 pointer-events-none" />
                                         <img
                                             src={myImage2}
-                                            alt="Event Planner"
+                                            alt="Event"
                                             className="w-full h-full object-cover"
                                         />
                                         <div className="absolute inset-0 bg-gray-900/60" />
@@ -215,10 +225,10 @@ const PublicEventPlanner = () => {
                                             {/* About Section */}
                                             <div className="text-left">
                                                 <h2 className="text-2xl md:text-3xl font-light text-gray-800 mb-4 md:mb-6">
-                                                    Our Event Planners
+                                                    Our Events
                                                 </h2>
                                                 <p className="text-gray-700 leading-relaxed md:mb-8 font-sofia tracking-wide text-sm sm:text-base">
-                                                    Each of our carefully selected event planners offers a unique set of skills and specialties. From intimate gatherings to grand celebrations, we have the perfect professional to bring your vision to life.
+                                                    Explore a variety of events tailored to your interests. From music festivals to art exhibitions, we have something for everyone.
                                                 </p>
                                             </div>
 
@@ -228,12 +238,12 @@ const PublicEventPlanner = () => {
                                                     Contact
                                                 </h2>
                                                 <p className="text-gray-700 leading-relaxed mb-6 md:mb-8 font-sofia tracking-wide text-sm sm:text-base">
-                                                    Do you have any questions about our event planners? We are happy to help:
+                                                    Do you have any questions about our events? We are happy to help:
                                                 </p>
                                                 <Link to="/contact">
-                                                <HoverButton5 className="w-full md:w-auto">
-                                                    CONTACT US
-                                                </HoverButton5>
+                                                    <HoverButton5 className="w-full md:w-auto">
+                                                        CONTACT US
+                                                    </HoverButton5>
                                                 </Link>
 
                                                 <h2 className="text-2xl md:text-3xl font-light text-gray-800 mt-6 md:mt-8">
@@ -258,4 +268,4 @@ const PublicEventPlanner = () => {
     );
 };
 
-export default PublicEventPlanner;
+export default AllEventList;

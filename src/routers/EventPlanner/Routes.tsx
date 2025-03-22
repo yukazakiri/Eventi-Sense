@@ -15,6 +15,8 @@ import UpdateInfo from '../../pages/EventPlanner/UpdateInfo';
 import EPCalendar from '../../pages/EventPlanner/EPCalendar';
 import ExampleProfile from '../../pages/EventPlanner/exampleProfile';
 
+import AttendeeManagementPage from '../../components/payment/EventCreator/attendee';
+
 
   const routes: RouteObject[] = [
   { path: '/', element: <Home /> },
@@ -34,7 +36,9 @@ import ExampleProfile from '../../pages/EventPlanner/exampleProfile';
   { path: '/tickets', element: <RequestTicket   /> },
 
   { path: '/Profile', element: <ProfilePage /> },
+  
 
+ {path: '/Events/:eventId/attendees', element: <AttendeeManagementPage/> },
 
 ];
 

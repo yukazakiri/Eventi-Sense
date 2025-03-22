@@ -315,14 +315,14 @@ const PublicVenueDetails: React.FC = () => {
         <div className="absolute inset-2 sm:inset-4 md:inset-6 border border-white/20 pointer-events-none z-20"></div>
       </div>
       
-      <div  id="targetSection" className='max-w-6xl mx-auto flex flex-col justify-center items-center py-10'>  
+      <div  id="targetSection" className='max-w-6xl mx-auto flex flex-col justify-center items-center py-10 '>  
   <div>
 <h2 className="md:text-6xl text-4xl  font-bold font-bonanova gradient-text uppercase"> {venue?.name}</h2>
 </div>
     <p className='md:text-xl text-lg font-sofia text-[#D9DACD] text-center py-8'>{venue?.description}</p>
   
 </div> 
-        <section className='relative mt-64'>
+        <section className='relative mt-12'>
 <div className="ocean">
 
 <div>
