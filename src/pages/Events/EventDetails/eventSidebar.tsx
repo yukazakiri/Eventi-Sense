@@ -7,12 +7,12 @@ interface EventContentProps {
   }
   const EventSidebar: React.FC<EventContentProps> = ({ event, onOpenModal }) => {
     return (
-        <aside className="mt-10 top-0 sticky py-2">
-        <div className="bg-gray-100/50 backdrop-blur-lg border border-white/50 shadow-xl shadow-yellow-400/30 rounded-xl flex flex-col justify-center items-center p-4 space-y-3 transition-all hover:bg-gray-100/60 hover:backdrop-blur-xl">
-          <h3 className='text-yellow-600/80 text-xl font-bonanova font-semibold uppercase tracking-wider border-b border-gray-300/50 pb-2'>
+        <aside className="mt-16 top-0 sticky py-2 group">
+        <div className="bg-gray-100/20 backdrop-blur-lg border border-white/50 shadow-xl shadow-sky-400/30 rounded-xl flex flex-col justify-center items-center p-4 space-y-3 transition-all hover:bg-gray-100/50 hover:backdrop-blur-xl">
+          <h3 className='text-white   text-xl font-bonanova font-semibold uppercase tracking-wider border-b border-gray-300/50 pb-2'>
             Ticket Price
           </h3>
-          <p className="text-green-600/80 font-bold text-2xl ">
+          <p className="text-green-400/80 group-hover:text-green-500 font-bold text-2xl ">
             {event.ticket_price === 0 ? 'FREE' : `₱${event.ticket_price}`}
           </p>
           <button 

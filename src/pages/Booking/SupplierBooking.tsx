@@ -3,7 +3,7 @@ import supabase from '../../api/supabaseClient';
 import { useState, useEffect } from 'react';
 import Button from '../../components/Button/button';
 import { Supplier,SupplierServices } from '../../types/supplier';
-import MainNavbar from '../../layout/MainNavbar';
+import MainNavbar from '../../layout/components/MainNavbar';
 
 interface User {
     id: string;

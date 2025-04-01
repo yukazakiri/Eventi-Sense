@@ -40,6 +40,7 @@ import TicketPage from '../components/payment/TicketPage';
 import PublicEventPlannerList from '../pages/List/PublicEventPlanner';
 import PublicEventPlanner from '../pages/PublicEventPlanners';
 import EventsList from '../pages/Events/AllEventList'
+import { CreateEvent } from '../pages/CreateEvent';
 
 const AppRouter = () => {
   return (
@@ -80,6 +81,7 @@ const AppRouter = () => {
         <Route path="/Event-Planner" element={< PublicEventPlannerList/>} /> 
         <Route  path="/Event-Planner/:id/Profile"  element={< PublicEventPlanner/>} /> 
         <Route path="/Event-List" element={<EventsList/>} />
+        <Route path="/Create-Event" element={<CreateEvent/>} />
    
 
  

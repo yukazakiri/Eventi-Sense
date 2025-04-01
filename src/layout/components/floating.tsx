@@ -93,9 +93,9 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
     border-[1px]
     border-gray-500/90
     font-thin
-    text-white text-md
+    text-white
     font-sofia
-    md:text-lg
+   text-lg
     font-sofia tracking-wide
     hover:bg-gray-800
     group
@@ -145,19 +145,19 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 h-full relative overflow-y-auto">
           <button 
             onClick={handleCloseMenu}
-            className={`absolute top-3 right-3 md:top-5 md:right-5 w-8 h-8 md:w-12 md:h-12 flex items-center justify-center rounded-full border-[1px] border-white text-white transition-all ${
+            className={`absolute top-3 right-3 md:top-5 md:right-5 w-12 h-12 flex items-center justify-center rounded-full border-[1px] border-white text-white transition-all ${
               isMenuOpen 
                 ? 'opacity-100 transform rotate-0 scale-100' 
                 : 'opacity-0 transform rotate-90 scale-50'
             }`}
             aria-label="Close menu"
           >
-            <VscClose className="text-xl md:text-2xl transform hover:rotate-90 duration-500" />
+            <VscClose className="text-2xl transform hover:rotate-90 duration-500" />
           </button>
           
-          <nav className="flex flex-col items-center justify-center space-y-4 md:space-y-8 p-4 md:p-8">
+          <nav className="flex flex-col md:items-center md:justify-center space-y-4 md:space-y-8 p-4 md:p-8">
             <div className="flex flex-col pt-12 md:pt-16 text-white/80 font-bonanova tracking-widest">
-              <div className="px-4 py-4 md:px-6 md:py-8 flex flex-col space-y-6 md:space-y-10 text-xl md:text-3xl">
+              <div className="px-4 py-4 md:px-6 md:py-8 flex flex-col space-y-6 md:space-y-10  text-3xl">
                 <div className="flex items-center gap-4 md:gap-12">
                   <span className="text-sm md:text-xl font-thin">I.</span>
                   <NavLink 
@@ -169,7 +169,7 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
                   </NavLink>
                 </div>
                 <div className="flex items-center gap-4 md:gap-10">
-                  <span className="text-sm md:text-xl font-thin">II.</span>
+                  <span className="text-xl font-thin">II.</span>
                   <NavLink 
                     to="/about" 
                     className={({ isActive }) => `block ${isActive ? 'gradient-text' : ''}`}
@@ -181,9 +181,9 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
                 <div className="relative">
               {/* Dropdown Toggle Button */}
               <button 
-                className="flex items-center space-x-1 gap-6   hover:text-primary-600 transition-colors"
+                className="flex items-center space-x-1 md:gap-6 gap-2   hover:text-primary-600 transition-colors"
                 onClick={() => setDropdownOpen?.(!isDropdownOpen)}
-              >   <span className="text-sm md:text-xl font-thin">III.</span>
+              >   <span className="text-xl font-thin">III.</span>
                 <span> Directories</span>
                 <svg 
                   className={`w-6 h-6 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} 
@@ -246,7 +246,7 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
 
 
                 <div className="flex items-center gap-4 md:gap-8 transition-all duration-300">
-                  <span className="text-sm md:text-xl font-thin">IV.</span>
+                  <span className="text-xl font-thin">IV.</span>
                   <NavLink 
                     to="/contact" 
                     className={({ isActive }) => `block ${isActive ? 'gradient-text' : ''}`}
@@ -257,7 +257,7 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
                 </div>
                 {profile?.role && (
                   <div className="flex items-center gap-4 md:gap-10">
-                    <span className="text-sm md:text-xl font-thin">V.</span>
+                    <span className="text-xl font-thin">V.</span>
                     <NavLink 
                       to={`/${profile.role.replace('_', '-')}-Dashboard/Home`}
                       className={({ isActive }) => `block ${isActive ? 'gradient-text' : ''}`}

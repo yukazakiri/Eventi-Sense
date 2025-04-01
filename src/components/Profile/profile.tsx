@@ -91,7 +91,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8">
+    <div className="min-h-screen bg-navy-blue-5/95 py-8">
       <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
         <h1 className="text-3xl font-bold mb-6">Profile</h1>
         {profile ? (

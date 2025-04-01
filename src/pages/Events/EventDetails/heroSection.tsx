@@ -1,8 +1,7 @@
 import React from 'react';
-import { MdPeople, MdOutlineAccessTimeFilled } from "react-icons/md";
-import { IoLocationSharp } from "react-icons/io5";
+
 import { HoverButton2 } from '../../../components/Button/button-hover';
-import { formatDateInPHTime } from './components/dateUtils';
+
 
 interface HeroSectionProps {
   event: {
@@ -19,7 +18,7 @@ interface HeroSectionProps {
 
 const HeroSection: React.FC<HeroSectionProps> = ({ event, onOpenModal }) => {
   return (
-    <div className="relative h-[40vh] xs:h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[75vh]">
+    <div className="relative h-[50vh]">
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center"
@@ -50,41 +49,11 @@ const HeroSection: React.FC<HeroSectionProps> = ({ event, onOpenModal }) => {
         </div>
       </div>
 
-      {/* Info Bar */}
-      <div className="absolute -bottom-14 xs:-bottom-16 sm:-bottom-20 md:-bottom-12 left-0 right-0 backdrop-blur-sm py-3 sm:py-4 md:py-6 max-w-7xl mx-auto font-sofia tracking-widest text-xxs xs:text-xs sm:text-sm shadow-lg shadow-black/30 bg-navy-blue-5/95">
-        <div className="absolute inset-2 sm:inset-3 border border-white/20 pointer-events-none"></div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-4 items-center">
-            <InfoItem 
-              icon={<MdOutlineAccessTimeFilled className="text-yellow-500/60 m-2 sm:m-3 text-lg sm:text-xl" />}
-              text={formatDateInPHTime(event.date)}
-            />
-            <InfoItem
-              icon={<IoLocationSharp className="text-yellow-500/60 m-2 sm:m-3 text-lg sm:text-xl" />}
-              text={event.location}
-            />
-            <InfoItem
-              icon={<MdPeople className="text-yellow-500/60 m-2 sm:m-3 text-lg sm:text-xl" />}
-              text={event.capacity}
-            />
-          </div>
-        </div>
-      </div>
+    
     </div>
   );
 };
 
-const InfoItem: React.FC<{ icon: React.ReactNode; text: string }> = ({ icon, text }) => (
-  <div className="w-full md:w-auto relative font-sofia tracking-widest">
-    <div className="flex flex-row xs:flex-row md:flex-col gap-1 xs:gap-2 items-center justify-start md:justify-center w-full py-1 sm:py-1 px-2 xs:px-4">
-      <div className="border-yellow-500/40 border-[1px] rounded-full">
-        {icon}
-      </div>
-      <p className="flex justify-center items-center w-auto ml-0 xs:ml-2 text-center xs:text-left md:text-center text-white text-xxs text-xs sm:text-sm truncate">
-        {text}
-      </p>
-    </div>
-  </div>
-);
+
 
 export default HeroSection;

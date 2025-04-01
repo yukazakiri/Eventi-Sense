@@ -52,7 +52,7 @@ module.exports = {
   			'navy-blue-2': '#111B2B',
   			'navy-blue-3': '#02244F',
   			'navy-blue-4': '#021B3C',
-  			'navy-blue-5': '#011228',
+  			'navy-blue-5': '#152131',
   			'dark-blue': '#060b18',
 		
 				gray: {

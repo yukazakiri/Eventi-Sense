@@ -20,7 +20,7 @@ const EventDetails: React.FC = () => {
         <div>
             {/* Main Content */}
             <HeroSection event={event} onOpenModal={() => setIsModalOpen(true)} />
-            <div className='mx-auto max-w-screen-xl'>
+            <div className='mx-auto max-w-screen-xl '>
                 <div className="grid grid-cols-1 md:grid-cols-[1fr_250px] lg:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[minmax(0,1fr)_400px] gap-2">
                     {/* Pass companyProfile as a prop to EventContent */}
                     <EventContent

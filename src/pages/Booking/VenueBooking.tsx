@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Button from '../../components/Button/button';
 import { Venue } from '../../types/venue';
 import { VenueAmenity, Amenity } from '../../types/venue';
-import MainNavbar from '../../layout/MainNavbar';
+import MainNavbar from '../../layout/components/MainNavbar';
 
 const BookVenue: React.FC = () => {
     const { venueId } = useParams<{ venueId: string }>();

@@ -35,8 +35,8 @@ export const useEventDetails = (id: string) => {
 
                     switch (eventData.organizer_type) {
                         case 'supplier':
-                            tableName = 'supplier'; // Fetch from suppliers table
-                            queryField = 'company_id'; // organizer_id matches suppliers.id
+                            tableName = 'company_profiles'; // Fetch from suppliers table
+                            queryField = 'id'; // organizer_id matches suppliers.id
                             break;
                         case 'venue_manager':
                             tableName = 'company_profiles'; // Fetch from company_profiles table

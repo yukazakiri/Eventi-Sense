@@ -3,11 +3,14 @@ import MainNavbar from '../../layout/components/MainNavbar'
 import ViewEvents from './EventDetails/eventDetails'
 
 function Event() {
-  const cream = '#F9F7F2';
+
   return (
-    <div style={{backgroundColor: cream}} >
+    <div   style={{ 
+      background: 'linear-gradient(135deg, #014871 0%, #D7EDE2 100%)' 
+    }} >
         <MainNavbar/>
         <ViewEvents/>
+
         <MainFooter/>
         
     </div>

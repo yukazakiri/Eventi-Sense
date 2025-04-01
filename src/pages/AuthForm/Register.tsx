@@ -77,7 +77,7 @@ export default function Auth() {
           },
         },
       };
-      const { data, error } = await supabase.auth.signUp(signUpData);
+      const {  error } = await supabase.auth.signUp(signUpData);
       if (error) throw error;
 
       setMessageType('success');
@@ -102,11 +102,27 @@ export default function Auth() {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen bg-[#E7E7E7] p-4">
-      <div className="w-full max-w-4xl ">
+    <div 
+    className="flex flex-col justify-center items-center min-h-screen p-4 relative w-full h-screen"
+    style={{
+      backgroundImage: `url('/images/elegant.jpg')`, 
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'center',
+    }}
+  >
+      {/* Half Background Overlay */}
+      <div 
+    className="absolute inset-0 bg-[#101F36] "
+    style={{
+      clipPath: 'polygon(0 0, 20% 0, 85% 100%, 0 100%)'
+    }}
+  ></div>
+
+      <div className="w-full max-w-md">
         {/* Card with perspective effect */}
         <motion.div 
-          className="relative bg-[#1D1D53]  shadow-2xl overflow-hidden p-8 py-14 grid grid-cols-1 md:grid-cols-2 gap-4"
+          className="relative bg-[#08233E]  shadow-2xl overflow-hidden p-8 py-14  gap-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -118,7 +134,7 @@ export default function Auth() {
             }}>
         </div>
           {/* Form header with gradient */}
-          <div className="bg-[#1D1D53] py-6 px-8 flex flex-col justify-center items-center  ">
+          <div className="bg-[#08233E] py-6 px-8 flex flex-col justify-center items-center  ">
             
             <motion.h2
 

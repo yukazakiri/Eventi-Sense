@@ -149,8 +149,13 @@ const TicketReservationModal: React.FC<ModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4">
-  <div className="bg-white/50 backdrop-blur-lg border border-white/30 rounded-2xl shadow-xl shadow-gray-400/20 w-full max-w-3xl overflow-hidden transform transition-all flex flex-col md:flex-row min-h-[400px]">
+    <div className="fixed inset-0 z-50 bg-black/30  flex items-center justify-center p-4 font-sofia
+   
+
+    ">
+  <div className="bg-white/20  border-white/30 shadow-xl shadow-gray-400/20 w-full max-w-3xl overflow-hidden transform transition-all flex flex-col md:flex-row min-h-[400px]
+   rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-0 border border-gray-100
+  ">
     
     {/* Image Section */}
     <div className="relative flex-1 bg-gray-100/50 min-h-[250px] md:min-h-auto">
@@ -168,7 +173,7 @@ const TicketReservationModal: React.FC<ModalProps> = ({
     </div>
 
     {/* Content Section */}
-    <div className="flex-1 p-6 md:p-8 flex flex-col justify-between">
+    <div className="flex-1 p-6 md:p-8 flex flex-col gap-8">
       <div className="space-y-6">
         <div>
           <h2 className="text-2xl font-bold text-white font-bonanova uppercase  mb-2">{event.name}</h2>
@@ -186,35 +191,36 @@ const TicketReservationModal: React.FC<ModalProps> = ({
               max="10"
               value={quantity}
               onChange={(e) => setQuantity(Math.max(1, Math.min(10, Number(e.target.value))))}
-              className="w-24 px-4 py-2 text-center bg-white/70 backdrop-blur border border-white/50 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+              className="w-full px-4 py-2 text-center bg-white/70 backdrop-blur border border-white/50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
             />
           </div>
         </div>
       </div>
 
-      <div className="space-y-4">
-        <div className="flex flex-col md:flex-row gap-3">
+      <div className="space-y-8">
+        <div className="flex flex-col md:flex-row gap-4">
           <button 
             onClick={onClose}
-            className="flex-1 px-6 py-2.5 bg-white/80 text-gray-700 rounded-full border border-white/50 shadow-sm hover:bg-white hover:shadow-md transition-all"
+            className="flex-1 px-6 py-2.5 bg-white/80 text-gray-700 rounded-full border border-white/50 shadow-sm hover:bg-rose-100 hover:shadow-md transition-all"
           >
             Cancel
           </button>
           <button 
             onClick={handleReserveTickets}
-            className="flex-1 px-6 py-2.5 bg-blue-600/90 text-white rounded-full border border-blue-700/50 shadow-sm hover:bg-blue-700 hover:shadow-md transition-all"
+            className="flex-1 px-6 py-2.5  text-white rounded-full  shadow-sm hover:bg-blue-700 bg-green-500 hover:shadow-md transition-all"
+      
           >
             {event.ticket_price === 0 ? 'Confirm' : 'Reserve'}
           </button>
         </div>
 
-        <div className="text-sm space-y-2 text-gray-600">
+        <div className="text-md space-y-2 text-gray-300 mt-8">
           <div className="flex items-center gap-2">
-            <BiMap className="flex-shrink-0" />
+            <BiMap className="flex-shrink-0 text-2xl" />
             <span>{event.location}</span>
           </div>
           <div className="flex items-center gap-2">
-            <BsCalendar3 className="flex-shrink-0" />
+            <BsCalendar3 className="flex-shrink-0 text-lg ml-1" />
             <span>{formatDateInPHTime(event.date)}</span>
           </div>
         </div>
