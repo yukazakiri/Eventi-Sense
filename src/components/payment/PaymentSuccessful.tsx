@@ -1,15 +1,13 @@
 
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 interface PaymentSuccessModalProps {
-    isOpen: boolean;
-    onClose: () => void; // Explicitly define the onClose prop type
-    ticketId: string; // Add ticketId prop
-  }
-  
-  const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({ isOpen, onClose, ticketId, }) => {
-  const navigate = useNavigate();
+  isOpen: boolean;
+  onClose: () => void;
+  ticketId: string;
+}
 
+const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({ isOpen, onClose, ticketId }) => {
   if (!isOpen) return null;
 
   return (
@@ -41,24 +39,20 @@ interface PaymentSuccessModalProps {
         </p>
 
         <div className="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4 justify-center">
-          <button
-            onClick={() => {
-                navigate(`/tickets/${ticketId}`); // Use ticketId to navigate
-                onClose();
-            }}
-            className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
+          <Link
+            to={`/tickets/${ticketId}/Details`}
+            onClick={onClose}
+            className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200 text-center"
           >
             View My Tickets
-          </button>
-          <button
-            onClick={() => {
-              navigate('/events');
-              onClose();
-            }}
-            className="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-colors duration-200"
+          </Link>
+          <Link
+            to="/events"
+            onClick={onClose}
+            className="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-colors duration-200 text-center"
           >
             Browse More Events
-          </button>
+          </Link>
           <button
             onClick={onClose}
             className="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-colors duration-200"

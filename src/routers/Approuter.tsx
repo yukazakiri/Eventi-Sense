@@ -19,7 +19,7 @@ import PricingPage from '../pages/PricingPage';
 
 import ProtectedRoute from '../components/Route-Protection/Protection';
 import UnauthorizedPage from '../pages/NoAccess/Unauthorized'; // Import the UnauthorizedPage component
-import UserDetails from '../pages/Admin/UserManagement/UserDetails';
+import UserDetails from '../pages/Admin/UserManagement/main';
 
 import TestSupabase from '../hooks/TestSupabase';
 import Profile from '../pages/ProfilePage';
@@ -77,7 +77,7 @@ const AppRouter = () => {
         <Route path="/venue-list" element={<PublicVenueList/>} /> 
         <Route path="/supplier-list" element={<PublicSupplierList/>} />
         <Route path="/payment" element={<PaymentPage />} />   
-        <Route path="/tickets/:ticketId" element={<TicketPage />} />  
+        <Route path="/tickets/:ticketId/Details" element={<TicketPage />} />  
         <Route path="/Event-Planner" element={< PublicEventPlannerList/>} /> 
         <Route  path="/Event-Planner/:id/Profile"  element={< PublicEventPlanner/>} /> 
         <Route path="/Event-List" element={<EventsList/>} />

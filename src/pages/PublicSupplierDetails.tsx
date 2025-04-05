@@ -57,16 +57,35 @@ const PublicSupplierDetails: React.FC = () => {
       try {
         setLoading(true);
 
-        // Fetch supplier data
-        const { data: supplierData, error: supplierError } = await supabase
-          .from('supplier')
+        // Try fetching supplier by 'id'
+        let { data: supplierData, error: supplierError } = await supabase
+          .from('supplier') // Assuming table is plural 'suppliers'
           .select('*')
-          .eq('id', supplierId)
+          .eq('id', supplierId) // First attempt: fetch by supplierId (supplier's ID)
           .single();
 
-        if (supplierError) throw supplierError;
+        // If the first fetch didn't return data (PGRST116: No rows found), try fetching by 'company_id'
+        if (supplierError?.code === 'PGRST116' || !supplierData) {
+          const { data: fallbackData, error: fallbackError } = await supabase
+            .from('supplier')
+            .select('*')
+            .eq('company_id', supplierId) // Second attempt: fetch by supplierId as company_id
+            .single();
 
-        // Fetch company profile
+          // If we have a valid supplier by company_id
+          if (fallbackError && fallbackError.code !== 'PGRST116') {
+            throw fallbackError; // Only throw if the error isn't "no rows found"
+          }
+
+          supplierData = fallbackData;
+        }
+
+        // If neither fetch succeeded, handle the missing supplier case
+        if (!supplierData) {
+          throw new Error('Supplier not found by ID or company_id.');
+        }
+
+        // Continue with existing code using supplierData
         const { data: companyProfileData, error: companyError } = await supabase
           .from('company_profiles')
           .select('*')
@@ -75,28 +94,27 @@ const PublicSupplierDetails: React.FC = () => {
 
         if (companyError) throw companyError;
 
-        // Fetch supplier images
+        // Rest of your existing fetches using supplierData.id
         const { data: imagesData, error: imagesError } = await supabase
           .from('supplier_images')
           .select('*')
-          .eq('supplier_id', supplierId);
+          .eq('supplier_id', supplierData.id);
 
         if (imagesError) throw imagesError;
 
         const { data: servicesData, error: servicesError } = await supabase
-        .from('suppliers_services')
-        .select('*')    
-        .eq('supplier_id', supplierId);
+          .from('suppliers_services')
+          .select('*')    
+          .eq('supplier_id', supplierData.id);
 
         if (servicesError) throw servicesError;
 
-      
-          // Set states
-          setsupplier(supplierData);
-          setCompanyProfile(companyProfileData);
-          setsupplierImages(imagesData);
-          setservices(servicesData);
-        
+        // Set states
+        setsupplier(supplierData);
+        setCompanyProfile(companyProfileData);
+        setsupplierImages(imagesData);
+        setservices(servicesData);
+
       } catch (err: any) {
         console.error('Error fetching data:', err);
         setError('An error occurred while fetching data.');

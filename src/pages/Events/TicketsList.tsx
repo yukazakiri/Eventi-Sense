@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import supabase from '../../api/supabaseClient';
 import { Event, Ticket } from '../../types/event';
 import { Profile } from '../../types/types';
 import { EditModal } from './components/ticket/EditModal';
+import { fetchTickets, updateTicketStatus, deleteTicket } from './TicketServices/Services';
 
-
-
+interface Order {
+  id: string;
+  ticket_id: string;
+  amount: number;
+  payment_status: string;
+  payment_method: string;
+  created_at: string;
+}
 
 const TicketsList: React.FC = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -13,160 +19,31 @@ const TicketsList: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<{ [eventId: string]: Event }>({});
   const [profiles, setProfiles] = useState<{ [userId: string]: Profile }>({});
+  const [orders, setOrders] = useState<{ [ticketId: string]: Order }>({});
 
   // Filter states
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [eventFilter, setEventFilter] = useState<string>('');
   const [userFilter, setUserFilter] = useState<string>('');
-  const [searchTerm, setSearchTerm] = useState<string>(''); // Search term state
-  const fallbackAvatarUrl = '/images/istockphoto-1207942331-612x612.jpg'; // Path to your fallback image
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const fallbackAvatarUrl = '/images/istockphoto-1207942331-612x612.jpg';
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [viewMode, setViewMode] = useState<'organizer' | 'attendee'>('organizer');
+
   useEffect(() => {
-    const fetchData = async () => {
+    const loadTickets = async () => {
       try {
         setLoading(true);
         setError(null);
-  
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error('No user logged in');
-  
-   
-  
-        if (viewMode === 'organizer') {
-          // Get events created by the user
-          const { data: userEvents, error: eventsError } = await supabase
-            .from('events')
-            .select('id')
-            .eq('organizer_id', user.id);
-          console.log('userevents', userEvents);
-          if (eventsError) throw eventsError;
-  
-          if (!userEvents?.length) {
-            setTickets([]);
-            setEvents({});
-            setProfiles({});
-            setLoading(false);
-            return;
-          }
-          console.log('userEvents right before tickets query', userEvents);
-          // Get tickets for those events
-          const { data: ticketsData, error: ticketsError } = await supabase
-            .from('tickets')
-            .select('*')
-            .in('event_id', userEvents.map(event => event.id))
-            .order('created_at', { ascending: false });
-          console.log('raw ticketsData', ticketsData);
-          console.log('tickets', ticketsData);
-  
-          if (ticketsError) throw ticketsError;
-  
-          // Fetch related events and profiles manually
-          const eventIds = ticketsData.map(ticket => ticket.event_id);
-          const userIds = ticketsData.map(ticket => ticket.user_id);
-  
-          const { data: eventsData, error: eventsFetchError } = await supabase
-            .from('events')
-            .select('*')
-            .in('id', eventIds);
-  
-          if (eventsFetchError) throw eventsFetchError;
-  
-          const { data: profilesData, error: profilesFetchError } = await supabase
-            .from('profiles')
-            .select('*')
-            .in('id', userIds);
-  
-          if (profilesFetchError) throw profilesFetchError;
-  
-          // Combine the data
-          const combinedTicketData = ticketsData.map(ticket => ({
-            ...ticket,
-            events: eventsData.find(event => event.id === ticket.event_id),
-            profiles: profilesData.find(profile => profile.id === ticket.user_id),
-          }));
-  
-          // Process the joined data
-          if (combinedTicketData) {
-            setTickets(combinedTicketData);
-  
-            // Create events lookup object
-            const eventsMap: { [key: string]: Event } = {};
-            combinedTicketData.forEach(ticket => {
-              if (ticket.events) {
-                eventsMap[ticket.events.id] = ticket.events;
-              }
-            });
-            setEvents(eventsMap);
-  
-            // Create profiles lookup object
-            const profilesMap: { [key: string]: Profile } = {};
-            combinedTicketData.forEach(ticket => {
-              if (ticket.profiles) {
-                profilesMap[ticket.profiles.id] = ticket.profiles;
-              }
-            });
-            setProfiles(profilesMap);
-          }
-        } else {
-          // Get user's tickets with related data
-          const { data: ticketsData, error: ticketsError } = await supabase
-            .from('tickets')
-            .select('*')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false });
-  
-          if (ticketsError) throw ticketsError;
-  
-          // Fetch related events and profiles manually
-          const eventIds = ticketsData.map(ticket => ticket.event_id);
-  
-          const { data: eventsData, error: eventsFetchError } = await supabase
-            .from('events')
-            .select('*')
-            .in('id', eventIds);
-  
-          if (eventsFetchError) throw eventsFetchError;
-  
-          const { data: profilesData, error: profilesFetchError } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', user.id);
-  
-          if (profilesFetchError) throw profilesFetchError;
-  
-          // Combine the data
-          const combinedTicketData = ticketsData.map(ticket => ({
-            ...ticket,
-            events: eventsData.find(event => event.id === ticket.event_id),
-            profiles: profilesData.find(profile => profile.id === ticket.user_id),
-          }));
-  
-          // Process the joined data
-          if (combinedTicketData) {
-            setTickets(combinedTicketData);
-  
-            // Create events lookup object
-            const eventsMap: { [key: string]: Event } = {};
-            combinedTicketData.forEach(ticket => {
-              if (ticket.events) {
-                eventsMap[ticket.events.id] = ticket.events;
-              }
-            });
-            setEvents(eventsMap);
-  
-            // Create profiles lookup object
-            const profilesMap: { [key: string]: Profile } = {};
-            combinedTicketData.forEach(ticket => {
-              if (ticket.profiles) {
-                profilesMap[ticket.profiles.id] = ticket.profiles;
-              }
-            });
-            setProfiles(profilesMap);
-          }
-        }
+        
+        const { tickets, events, profiles, orders } = await fetchTickets({ viewMode });
+        
+        setTickets(tickets);
+        setEvents(events);
+        setProfiles(profiles);
+        setOrders(orders);
       } catch (err) {
         console.error('Error fetching data:', err);
         setError('Failed to load tickets. Please try again later.');
@@ -174,8 +51,8 @@ const TicketsList: React.FC = () => {
         setLoading(false);
       }
     };
-  
-    fetchData();
+
+    loadTickets();
   }, [viewMode]);
 
   // Filter tickets based on selected criteria and search term
@@ -194,22 +71,16 @@ const TicketsList: React.FC = () => {
     return matchesStatus && matchesEvent && matchesUser && matchesSearch;
   });
 
-  // Handle ticket deletion
   const handleDeleteTicket = async (ticketId: string) => {
     try {
-      const { error, data } = await supabase.from('tickets').delete().eq('id', ticketId);
-      console.log('Delete Response:', { data, error });
-      if (error) throw error;
-  
+      await deleteTicket(ticketId);
       setTickets((prevTickets) => prevTickets.filter((ticket) => ticket.id !== ticketId));
     } catch (err) {
       console.error('Error deleting ticket:', err);
       setError('Failed to delete ticket. Please try again later.');
     }
   };
-  
 
-  // Handle ticket editing (you can implement this as a modal or separate page)
   const handleEditTicket = (ticketId: string) => {
     const ticket = tickets.find(t => t.id === ticketId);
     if (ticket) {
@@ -218,17 +89,10 @@ const TicketsList: React.FC = () => {
     }
   };
 
-  // Add this new function
   const handleUpdateTicketStatus = async (ticketId: string, newStatus: string) => {
     try {
-      const { error } = await supabase
-        .from('tickets')
-        .update({ status: newStatus })
-        .eq('id', ticketId);
-
-      if (error) throw error;
-
-      // Update local state
+      await updateTicketStatus(ticketId, newStatus);
+      
       setTickets(tickets.map(ticket => 
         ticket.id === ticketId ? { ...ticket, status: newStatus } : ticket
       ));
@@ -258,8 +122,8 @@ const TicketsList: React.FC = () => {
   }
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-800  rounded-3xl md:my-10 my-4  ">
-      <div className="mb-8 ">
+    <div className="p-6 bg-white dark:bg-gray-800 rounded-3xl md:my-10 my-4">
+      <div className="mb-8">
         <h1 className="text-3xl font-bold mb-3 dark:text-gray-200 font-bonanova">Ticket Management</h1>
         <p className="text-gray-600 dark:text-gray-300 mb-4">
           {viewMode === 'organizer' 
@@ -373,7 +237,7 @@ const TicketsList: React.FC = () => {
           </h2>
         </div>
 
-        {/* Tickets Table - Keep existing table code but add tooltips */}
+        {/* Tickets Table */}
         <div className="overflow-x-auto shadow border-[1px] border-gray-300 rounded-2xl p-6 dark:bg-gray-950 dark:border-gray-700">
           {filteredTickets.length > 0 ? (
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">

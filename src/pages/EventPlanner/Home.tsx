@@ -1,6 +1,6 @@
 import  { useState, useEffect } from "react";
 import EventPlannerinfo from "./Register";
-import UpdateInfo from "./UpdateInfo";
+import HomeDetails from "./HomeDetails";
 import { getCurrentUser } from "../../api/utiilty/profiles";
 import { fetchEventPlanner } from "../../api/utiilty/eventplanner";
 import { PulseLoader } from 'react-spinners';
@@ -60,10 +60,12 @@ export default function Home() {
   return (
     <div className="dark:bg-gray-950 scrollbar-hide">
       {hasEventPlanner && profileData ? (
-        <UpdateInfo />
+       <HomeDetails/>
       ) : (
         <EventPlannerinfo />
       )}
+
+ 
     </div>
   );
 }

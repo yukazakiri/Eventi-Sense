@@ -40,6 +40,26 @@ export const updateProfile = async (userId: string, updatedProfile: Partial<Prof
   
       return data;
   };
+  export const deleteProfile = async (userId: string): Promise<Profile | null> => {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .delete()
+        .eq("id", userId)
+        .select("*")
+        .single();
+    
+      if (error) {
+        console.error("Error deleting profile:", error.message);
+        throw error;
+      }
+    
+      return data;
+    } catch (error) {
+      console.error("Error in deleteProfile:", error);
+      throw error;
+    }
+  };
 export const createProfile = async (profileData: Profile) => {
     try {
         const {data, error} = await supabase.from('profiles').insert([profileData]);
@@ -88,6 +108,19 @@ export const fetchProfileRole = async (userId: string): Promise<string | null> =
   }
   return data?.role;
 };
+export const fetchAllProfiles = async (): Promise<Profile[]> => {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*");
+
+  if (error) {
+    console.error("Error fetching all profiles:", error.message);
+    throw error;
+  }
+
+  return data;
+};
+
 
 export const fetchCompany = async () => {
   const { data: { user } } = await supabase.auth.getUser();
@@ -126,5 +159,28 @@ export const updateCompany = async (userId: string, updatedCompany: Partial<Comp
     .single();
 
   return { data, error };
+};
+
+// Add this new function
+export const fetchAuthUsers = async () => {
+  const { data, error } = await supabase.auth.admin.listUsers();
+  if (error) {
+    console.error("Error fetching auth users:", error.message);
+    throw error;
+  }
+  return data.users;
+};
+
+export const fetchAllCompanyProfiles = async (): Promise<Company[]> => {
+  const { data, error } = await supabase
+    .from("company_profiles")
+    .select("*");
+
+  if (error) {
+    console.error("Error fetching all company profiles:", error.message);
+    throw error;
+  }
+
+  return data || [];
 };
   

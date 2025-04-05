@@ -3,6 +3,34 @@ import { Navigate } from 'react-router-dom';
 import supabase from '../../api/supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// Add function to record user activity
+const recordUserActivity = async (userId: string) => {
+  try {
+    const { error } = await supabase
+      .from('user_activity')
+      .insert([{ user_id: userId }]);
+    
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error recording user activity:', error);
+  }
+};
+
+// Add function to update logout time
+const recordUserLogout = async (userId: string) => {
+  try {
+    const { error } = await supabase
+      .from('user_activity')
+      .update({ logout_time: new Date().toISOString() })
+      .eq('user_id', userId)
+      .is('logout_time', null);
+    
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error recording user logout:', error);
+  }
+};
+
 export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState({
@@ -28,32 +56,64 @@ export default function Auth() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Add cleanup effect for logout
+  useEffect(() => {
+    // Add event listener for page unload
+    const handleUnload = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await recordUserLogout(user.id);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload);
+    };
+  }, []);
+
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
     setMessage('');
     try {
-      // Sign in the user
       const { data, error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
       });
       if (error) throw error;
-  
-      // Fetch the user's role from the public.profiles table
+
+      // Record user activity on successful login
+      await recordUserActivity(data.user.id);
+
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', data.user?.id)
         .single();
-  
+
       if (profileError) throw profileError;
-  
-      // Set the user role and trigger redirect
-      setUserRole(profileData.role);
+
+      // Set user role and redirect based on role
+      const role = profileData?.role || 'user';
+      setUserRole(role);
+      
+      // Show success message and redirect
       setMessageType('success');
       setMessage('Login successful! Redirecting...');
-      setTimeout(() => setRedirect(true), 1000);
+
+      // Redirect based on user role
+      const redirectPath = role === 'admin' 
+        ? '/admin-dashboard/Home'
+     
+        : '/';
+
+      setTimeout(() => {
+        setRedirect(true);
+        window.location.href = redirectPath;
+      }, 1500);
+
     } catch (error: any) {
       setMessageType('error');
       setMessage(error.message);
@@ -61,6 +121,26 @@ export default function Auth() {
       setIsLoading(false);
     }
   };
+
+  // Add logout handler
+  const handleLogout = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await recordUserLogout(user.id);
+      }
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
+
+  // Add this to your component cleanup
+  useEffect(() => {
+    return () => {
+      handleLogout();
+    };
+  }, []);
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
@@ -122,10 +202,10 @@ export default function Auth() {
       <div className="w-full max-w-md">
         {/* Card with perspective effect */}
         <motion.div 
-          className="relative bg-[#08233E]  shadow-2xl overflow-hidden p-8 py-14  gap-4"
+          className="relative bg-[#08233E] shadow-2xl overflow-hidden p-8 py-14 gap-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <div className="absolute inset-2 sm:inset-2 md:inset-4 pointer-events-none" 
             style={{ 
@@ -134,25 +214,22 @@ export default function Auth() {
             }}>
         </div>
           {/* Form header with gradient */}
-          <div className="bg-[#08233E] py-6 px-8 flex flex-col justify-center items-center  ">
-            
+          <div className="bg-[#08233E] py-6 px-8 flex flex-col justify-center items-center">
             <motion.h2
-
-              className="text-3xl font-bold uppercase text-white text-center font-bonanova "
-              initial={{ y: -20 }}
-              animate={{ y: 0 }}
-              transition={{ delay: 0.2, duration: 0.4 }}
+              className="text-3xl font-bold uppercase text-white text-center font-bonanova"
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
             >
-              <div className='gradient-text '>
-                  {isSignUp ? 'Create Account' : 'Welcome Back'}
+              <div className='gradient-text'>
+                {isSignUp ? 'Create Account' : 'Welcome Back'}
               </div>
-            
             </motion.h2>
             <motion.p 
               className="text-blue-100 text-center mt-2 font-sofia text-gray-400"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.4 }}
+              transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
             >
               {isSignUp ? 'Sign up to get started' : 'Sign in to your account'}
             </motion.p>
@@ -163,10 +240,13 @@ export default function Auth() {
   <AnimatePresence mode="wait">
     <motion.div
       key={isSignUp ? 'signup' : 'signin'}
-      initial={{ opacity: 0, x: isSignUp ? 100 : -100 }}
+      initial={{ opacity: 0, x: isSignUp ? 50 : -50 }}
       animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: isSignUp ? -100 : 100 }}
-      transition={{ duration: 0.5 }}
+      exit={{ opacity: 0, x: isSignUp ? -50 : 50 }}
+      transition={{ 
+        duration: 0.7,
+        ease: "easeInOut"
+      }}
     >
       {isSignUp ? (
         // Sign-Up Form
@@ -306,10 +386,10 @@ export default function Auth() {
             ? 'bg-red-50 text-red-700 border border-red-200' 
             : 'bg-green-50 text-green-700 border border-green-200'
         }`}
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 5 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
       >
         <p className="text-sm">{message}</p>
       </motion.div>

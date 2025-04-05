@@ -38,6 +38,21 @@ function ProfileAvatar({ user, profile }: ProfileAvatarProps) {
   const handleLogout = async () => {
     console.log('Logout button clicked');
     try {
+      // Record logout activity
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (currentUser) {
+        const { error: activityError } = await supabase
+          .from('user_activity')
+          .update({ logout_time: new Date().toISOString() })
+          .eq('user_id', currentUser.id)
+          .is('logout_time', null);
+
+        if (activityError) {
+          console.error('Error recording logout activity:', activityError);
+        }
+      }
+
+      // Perform logout
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error('Error signing out:', error);

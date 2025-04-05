@@ -7,6 +7,7 @@ import { IoIosTimer } from 'react-icons/io';
 import { LuPartyPopper } from 'react-icons/lu';
 import { getTimeComponents } from './components/dateUtils';
 import OrganizerCard from './components/organizerCard';
+import { Event, Organizer, CompanyProfile } from './types';
 
 // Type definitions
 interface EventTag {
@@ -16,13 +17,13 @@ interface EventTag {
 }
 
 interface EventContentProps {
-    event: any;
+    event: Event;
     eventTags: EventTag[];
-    organizer: any;
-    companyProfile: any;
+    organizer?: Organizer;
+    companyProfile?: CompanyProfile;
     onOpenModal: () => void;
-}
-
+  }
+  
 const EventContent: React.FC<EventContentProps> = ({ 
     event, 
     eventTags, 
@@ -178,8 +179,8 @@ const EventContent: React.FC<EventContentProps> = ({
                           {event.organizer_type === 'event_planner' && organizer && (
                             <OrganizerCard
                               title="Organizer"
-                              name={organizer.company_name}
-                              imageUrl={organizer.avatar_url}
+                              name={organizer.company_name || ''}
+                              imageUrl={organizer.avatar_url || fallbackAvatarUrl}
                               fallbackImageUrl={fallbackAvatarUrl}
                               subtitle={organizer.role}
                               profileUrl={`/Event-Planner/${organizer.profile_id}/Profile`}
@@ -192,7 +193,7 @@ const EventContent: React.FC<EventContentProps> = ({
                           <OrganizerCard
                             title="Organizer"
                             name={companyProfile.company_name}
-                            imageUrl={companyProfile.company_logo_url}
+                            imageUrl={companyProfile.company_logo_url || fallbackAvatarUrl}
                             fallbackImageUrl={fallbackAvatarUrl}
                             profileUrl={`/Venue-Manager/${companyProfile.id}/Company-Profile`}
                           />
@@ -200,14 +201,15 @@ const EventContent: React.FC<EventContentProps> = ({
 
                         {/* Supplier Organizer */}
                         {event.organizer_type === 'supplier' && organizer && (
-                          <OrganizerCard
-                            title="Organizer"
-                            name={organizer.name}
-                            imageUrl={companyProfile.company_logo_url}
-                            fallbackImageUrl={fallbackAvatarUrl}
-                            profileUrl={`/supplier/${organizer.id}`}
-                          />
-                        )}
+                            <OrganizerCard
+                                title="Organizer"
+                                name={organizer.company_name || ''} // ✅ correct field
+                                imageUrl={organizer.company_logo_url || fallbackAvatarUrl} // ✅ correct field
+                                fallbackImageUrl={fallbackAvatarUrl}
+                                profileUrl={`/supplier/${organizer.id}`}
+                            />
+                            )}
+
                     </div>
                 </div>
             </main>

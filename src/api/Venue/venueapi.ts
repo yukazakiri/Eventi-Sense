@@ -1,9 +1,17 @@
 // api/venueApi.js
 import supabase from '../supabaseClient';
-import { Venue } from '../../types/venue';
+// Add this interface at the top of the file after the imports
+import { Venue, CompanyProfile } from '../../types/venue';
 
 interface VenueTypes {
   [key: string]: string;
+}
+
+interface VenueWithCompany extends Venue {
+  company_info?: CompanyProfile;
+  venue_types: Array<{ id: string; name: string }>;
+  venue_accessibilities: Array<{ id: string; name: string }>;
+  venue_pricing_models: Array<{ id: string; name: string }>;
 }
 
 export const fetchVenueTypes = async (): Promise<VenueTypes> => {
@@ -194,5 +202,40 @@ export const deleteVenue = async (venueId: string): Promise<void> => {
   } catch (err: any) {
     console.error('Error deleting venue:', err);
     throw new Error(err?.message || 'An error occurred while deleting the venue.');
+  }
+};
+
+
+export const fetchAllVenues = async (): Promise<VenueWithCompany[]> => {
+  try {
+    const { data: venuesData, error: venuesError } = await supabase
+      .from('venues')
+      .select(`
+        *,
+        company_profiles(
+          company_name,
+          company_address,
+          company_email,
+          company_phone,
+          company_website,
+          company_logo_url
+        )
+      `)
+      .order('created_at', { ascending: false });
+
+    if (venuesError) throw venuesError;
+
+    const formattedVenues: VenueWithCompany[] = venuesData?.map(venue => ({
+      ...venue,
+      venue_types: [],
+      venue_accessibilities: [],
+      venue_pricing_models: [],
+      company_info: venue.company_profiles
+    }));
+
+    return formattedVenues || [];
+  } catch (err) {
+    console.error('Error fetching all venues:', err);
+    throw new Error('An error occurred while fetching all venues.');
   }
 };

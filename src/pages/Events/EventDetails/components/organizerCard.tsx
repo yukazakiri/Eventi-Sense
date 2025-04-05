@@ -1,5 +1,6 @@
 // OrganizerCard.tsx
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 interface OrganizerCardProps {
   title: string;
@@ -19,7 +20,10 @@ const OrganizerCard: React.FC<OrganizerCardProps> = ({
   profileUrl
 }) => {
   return (
-    <a href={profileUrl} className="w-full mb-6 cursor-pointer block mt-6">
+    <div>
+    <Link to={profileUrl}>
+     
+    <div  className="w-full mb-6 cursor-pointer block mt-6">
       <div className="w-full">
         <h3 className="text-2xl md:text-3xl font-semibold font-bonanova p-2 text-white">
           {title}
@@ -43,16 +47,18 @@ const OrganizerCard: React.FC<OrganizerCardProps> = ({
               <span className="text-2xl font-semibold">{name}</span>
               {subtitle && <p>{subtitle}</p>}
             </div>
-            <a 
-              href={profileUrl} 
+            <div>
+            <button
+           
               className="bg-blue-700 px-4 py-1 text-slate-50 group-hover:text-white-400 z-10 group-hover:scale-125 transition-all duration-500 hover:bg-sky-500/20"
             >
               Visit
-            </a>
+            </button></div>
           </div>
         </div>
       </div>
-    </a>
+    </div>
+    </Link></div>
   );
 };
 

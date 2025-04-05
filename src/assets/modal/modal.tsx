@@ -156,11 +156,11 @@ export const Modal: React.FC<ModalProps> = ({
         );
       case "error":
         return (
-          <CgDanger className="text-{4rem} " />
+          <CgDanger className="w-6 h-6" />
         );
       case "warning":
         return (
-          <CgDanger />
+          <CgDanger className="w-6 h-6" />
         );
       case "info":
         return (
@@ -170,7 +170,7 @@ export const Modal: React.FC<ModalProps> = ({
         );
       case "confirmation":
         return (
-          <CgDanger className="text-[2rem]" />
+          <CgDanger className="w-6 h-6" />
         );
       default:
         return null;
@@ -179,83 +179,80 @@ export const Modal: React.FC<ModalProps> = ({
 
   return (
     <div className={`fixed inset-0 ${theme.overlay} flex justify-center items-center z-50 transition-all duration-300 ease-in-out`}>
-   <div 
-  className={`relative backdrop-blur-sm border text-gray-800 dark:text-white bg-white dark:bg-gray-900  rounded-xl overflow-hidden w-full max-w-md transform transition-all duration-300 ease-in-out scale-95 hover:scale-100`}
-  style={{ 
-    animation: 'modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-    boxShadow: isDarkMode 
-      ? '0 25px 50px -12px rgba(0, 0, 0, 0.5)' 
-      : '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
-  }}
->
-<div className="absolute right-2 top-2">
-    <button
-      onClick={onClose}
-      className={`p-1.5 rounded-full flex justify-end items-end hover:${typeStyles.headerBg}  transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50`}
-      aria-label="Close"
-    >
-      <svg
-        className="w-6 h-6 transform transition-transform hover:rotate-90"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    </button>
-  </div>
-  {/* Header */}
-
-  <div className={` px-6 py-4 flex flex-col items-center `}>
-    <div className="flex flex-col items-center space-x-3 ">
-      <span   className={` rounded-full p-2 ${typeStyles.headerText} ${typeStyles.headerBg} `} >
-        {getIcon()}
-      </span>
-      <h3 className="text-xl font-sofia  tracking-widest">{title}</h3>
-    </div>
-    <div className="flex justify-center items-center">
-    {message && (
-      <p className="text-gray-600 dark:text-gray-300 leading-6 text-base">
-        {message}
-      </p>
-    )}
-    {children && <div className="text-gray-800 dark:text-gray-200">{children}</div>}
-</div>
-
-  </div>
-
-  {/* Content */}
-  <div className="px-6 pb-6 bg-white/95 dark:bg-gray-900/95 space-y-4 ">
- 
-    {/* Actions */}
-    <div className="grid grid-cols-2 space-x-3 mt-6">
-      {type === "confirmation" && (
-        <button
-          onClick={onClose}
-          className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200
-            ${theme.cancelButton} 
-            hover:opacity-90 focus:ring-2 focus:ring-blue-500/50
-            border border-gray-200 dark:border-gray-700`}
-        >
-          {cancelText}
-        </button>
-      )}
-      <button
-        onClick={onConfirm || onClose}
-        className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200
-          ${typeStyles.button}
-          hover:shadow-md focus:ring-2 focus:ring-blue-500/50
-          ${isDarkMode ? 'shadow-blue-900/30' : 'shadow-blue-500/20'}`}
-        style={{
-          boxShadow: `${isDarkMode ? '0 3px 12px -1px rgba(0, 0, 0, 0.3)' : '0 3px 12px -1px rgba(59, 130, 246, 0.3)'}`
+      <div 
+        className={`relative backdrop-blur-sm border text-gray-800 dark:text-white bg-white dark:bg-gray-900 rounded-xl overflow-hidden w-full max-w-md transform transition-all duration-300 ease-in-out scale-95 hover:scale-100`}
+        style={{ 
+          animation: 'modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          boxShadow: isDarkMode 
+            ? '0 25px 50px -12px rgba(0, 0, 0, 0.5)' 
+            : '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
         }}
       >
-        {confirmText}
-      </button>
-    </div>
-  </div>
-</div>
+        <div className="absolute right-2 top-2">
+          <button
+            onClick={onClose}
+            className={`p-1.5 rounded-full flex justify-end items-end hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50`}
+            aria-label="Close"
+          >
+            <svg
+              className="w-6 h-6 transform transition-transform hover:rotate-90"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        {/* Header */}
+
+        <div className={`px-6 py-4 flex flex-col items-center`}>
+          <div className="flex flex-col items-center space-x-3">
+            <span className={`rounded-full p-2 ${typeStyles.headerText} ${typeStyles.headerBg}`}>
+              {getIcon()}
+            </span>
+            <h3 className="text-xl font-sofia tracking-widest mt-2">{title}</h3>
+          </div>
+          <div className="flex justify-center items-center mt-4">
+            {message && (
+              <p className="text-gray-600 dark:text-gray-300 leading-6 text-base text-center">
+                {message}
+              </p>
+            )}
+            {children && <div className="text-gray-800 dark:text-gray-200">{children}</div>}
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="px-6 pb-6 bg-white/95 dark:bg-gray-900/95 space-y-4">
+          {/* Actions */}
+          <div className={`flex justify-center gap-3 mt-6 ${type === "confirmation" ? "justify-between" : "justify-center"}`}>
+            {type === "confirmation" && (
+              <button
+                onClick={onClose}
+                className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200
+                  ${theme.cancelButton} 
+                  hover:opacity-90 focus:ring-2 focus:ring-blue-500/50
+                  border border-gray-200 dark:border-gray-700 w-full`}
+              >
+                {cancelText}
+              </button>
+            )}
+            <button
+              onClick={onConfirm || onClose}
+              className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200
+                ${typeStyles.button}
+                hover:shadow-md focus:ring-2 focus:ring-blue-500/50 w-full
+                ${isDarkMode ? 'shadow-blue-900/30' : 'shadow-blue-500/20'}`}
+              style={{
+                boxShadow: `${isDarkMode ? '0 3px 12px -1px rgba(0, 0, 0, 0.3)' : '0 3px 12px -1px rgba(59, 130, 246, 0.3)'}`
+              }}
+            >
+              {confirmText}
+            </button>
+          </div>
+        </div>
       </div>
+    </div>
   );
 };
-

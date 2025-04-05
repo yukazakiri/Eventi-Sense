@@ -13,6 +13,7 @@ export const useEventDetails = (id: string) => {
         const fetchEventDetails = async () => {
             try {
                 if (!id || id === 'undefined') {
+                    console.log('Invalid event ID provided:', id);
                     setLoading(false);
                     setError('Invalid event ID.');
                     return;
@@ -25,13 +26,18 @@ export const useEventDetails = (id: string) => {
                     .eq('id', id)
                     .single();
 
-                if (eventError) throw eventError;
+                if (eventError) {
+                    console.error('Error fetching event data:', eventError);
+                    throw eventError;
+                }
                 setEvent(eventData);
 
                 // Fetch organizer details based on organizer_type
                 if (eventData.organizer_id && eventData.organizer_type) {
                     let tableName: string;
                     let queryField: string;
+                    console.log('Organizer Type:', eventData.organizer_type);
+
 
                     switch (eventData.organizer_type) {
                         case 'supplier':
@@ -57,12 +63,16 @@ export const useEventDetails = (id: string) => {
                         .eq(queryField, eventData.organizer_id)
                         .single();
 
-                    if (organizerError) throw organizerError;
+                    if (organizerError) {
+                        console.error('Error fetching organizer data:', organizerError);
+                        throw organizerError;
+                    }
 
                     // Set organizer or company profile based on organizer_type
                     if (eventData.organizer_type === 'supplier') {
                         setOrganizer(organizerData); // Set as organizer
                         setCompanyProfile(null); // Clear company profile
+                        console.log('Organizer Data:', organizerData);
                     } else if (eventData.organizer_type === 'venue_manager') {
                         setCompanyProfile(organizerData); // Set as company profile
                         setOrganizer(null); // Clear organizer
@@ -85,7 +95,10 @@ export const useEventDetails = (id: string) => {
                     .eq('event_id', id)
                     .eq('is_confirmed', true);
 
-                if (tagError) throw tagError;
+                if (tagError) {
+                    console.error('Error fetching event tags:', tagError);
+                    throw tagError;
+                }
 
                 // Separate venue and supplier IDs
                 const venueIds = tagData
@@ -106,8 +119,14 @@ export const useEventDetails = (id: string) => {
                         : { data: [], error: null }
                 ]);
 
-                if (venueData.error) throw venueData.error;
-                if (supplierData.error) throw supplierData.error;
+                if (venueData.error) {
+                    console.error('Error fetching venue data:', venueData.error);
+                    throw venueData.error;
+                }
+                if (supplierData.error) {
+                    console.error('Error fetching supplier data:', supplierData.error);
+                    throw supplierData.error;
+                }
 
                 // Match tags with their corresponding names
                 const processedTags = tagData.map(tag => {  
@@ -131,7 +150,8 @@ export const useEventDetails = (id: string) => {
                 setEventTags(processedTags);
 
             } catch (error) {
-                console.error('Error fetching event details:', error);
+                console.error('Error in fetchEventDetails:', error);
+                console.error('Stack trace:', error instanceof Error ? error.stack : 'No stack trace available');
                 setError('Failed to load event details. Please try again later.');
             } finally {
                 setLoading(false);

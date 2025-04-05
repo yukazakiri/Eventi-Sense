@@ -1,4 +1,5 @@
 export interface CompanyProfile{
+  id: string; // UUID
     company_name: string;
     company_address: string;
     company_email: string;

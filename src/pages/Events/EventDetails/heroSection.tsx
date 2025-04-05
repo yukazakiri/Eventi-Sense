@@ -17,18 +17,31 @@ interface HeroSectionProps {
 }
 
 const HeroSection: React.FC<HeroSectionProps> = ({ event, onOpenModal }) => {
+  const [imageError, setImageError] = React.useState(false);
+
+  // Preload the image to check if it loads correctly
+  React.useEffect(() => {
+    const img = new Image();
+    img.src = event.image_url;
+    img.onerror = () => setImageError(true);
+  }, [event.image_url]);
+console.log(event.image_url);
   return (
     <div className="relative h-[50vh]">
       {/* Background Image */}
       <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${event.image_url})` }}
+        className="absolute inset-0 bg-cover bg-center bg-gray-800"
+        style={{ 
+          backgroundImage: !imageError ? `url(${event.image_url})` : 'none',
+          backgroundRepeat: 'no-repeat'
+        }}
       />
-      <div className="absolute inset-0 bg-gray-900/60"></div>
+      <div className="absolute inset-0 bg-gray-900/10"></div>
       <div className="absolute inset-2 sm:inset-4 md:inset-6 border border-white/20 pointer-events-none"></div>
 
       {/* Main Content */}
       <div className="relative h-full flex items-center">
+   
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl xl:max-w-4xl">
             <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl font-semibold text-white mb-3 sm:mb-4 md:mb-6 font-bonanova uppercase leading-tight">
