@@ -42,8 +42,8 @@ const ROUTES = [
     icon: GiPartyPopper
   },
   {
-    path: "/Admin-Dashboard/Analytics",
-    name: "Analytics",
+    path: "/Admin-Dashboard/Survey-Response",
+    name: "Survey-Response",
     icon: TbReportAnalytics
   },
   {

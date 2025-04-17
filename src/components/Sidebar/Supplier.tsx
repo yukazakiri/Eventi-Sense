@@ -2,11 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
     MdOutlineManageAccounts,
-    MdSettings,
-    MdHelpOutline,
-    MdMail,
-    MdChat,
-    MdReceipt,
+  
 } from 'react-icons/md';
 import { IoIosArrowBack, IoIosArrowDown, IoIosArrowUp, IoIosMenu } from 'react-icons/io';
 import { RiHome9Line } from "react-icons/ri";
@@ -40,41 +36,60 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ to, icon, label, isCollapsed,
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     
     const handleClick = () => {
-        if (!dropdownItems) {
-            setTimeout(() => {
-                window.location.reload();
-            }, 100);
-        } else {
+        if (dropdownItems) {
             setIsDropdownOpen(!isDropdownOpen);
         }
     };
 
     return (
         <li className="relative">
-            <NavLink
-                to={dropdownItems ? "#" : to}
-                className={({ isActive }) =>
-                    `flex items-center p-2 mx-5 font-medium rounded-lg relative group ${
-                        (isActive && !dropdownItems) || (dropdownItems && isDropdownOpen)
+            {dropdownItems ? (
+                <div
+                    className={`flex items-center p-2 mx-5 font-medium rounded-lg relative group cursor-pointer ${
+                        isDropdownOpen
                         ? 'bg-indigo-50 dark:bg-sky-400/10 text-sky-500 dark:text-sky-400 transition-colors duration-200 shadow-sky-500/20 dark:shadow-sky-400/20' 
                         : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400'
-                    }`
-                }
-                onClick={handleClick}
-            >
-                {icon}
-                {!isCollapsed && <span className="ml-5">{label}</span>}
-                {!isCollapsed && dropdownItems && (
-                    <span className="ml-auto">
-                        {isDropdownOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                    </span>
-                )}
-                {isCollapsed && (
-                    <div className="hidden group-hover:block z-50 absolute left-14 bg-gray-900 text-gray-100 px-3 py-1 border border-gray-700 rounded-lg shadow-lg whitespace-nowrap">
-                        {label}
-                    </div>
-                )}
-            </NavLink>
+                    }`}
+                    onClick={handleClick}
+                >
+                    {icon}
+                    {!isCollapsed && <span className="ml-5">{label}</span>}
+                    {!isCollapsed && (
+                        <span className="ml-auto">
+                            {isDropdownOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                        </span>
+                    )}
+                    {isCollapsed && (
+                        <div className="hidden group-hover:block z-50 absolute left-14 bg-gray-900 text-gray-100 px-3 py-1 border border-gray-700 rounded-lg shadow-lg whitespace-nowrap">
+                            {label}
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <NavLink
+                    to={to}
+                    className={({ isActive }) =>
+                        `flex items-center p-2 mx-5 font-medium rounded-lg relative group ${
+                            isActive
+                            ? 'bg-indigo-50 dark:bg-sky-400/10 text-sky-500 dark:text-sky-400 transition-colors duration-200 shadow-sky-500/20 dark:shadow-sky-400/20' 
+                            : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400'
+                        }`
+                    }
+                    onClick={() => {
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 100);
+                    }}
+                >
+                    {icon}
+                    {!isCollapsed && <span className="ml-5">{label}</span>}
+                    {isCollapsed && (
+                        <div className="hidden group-hover:block z-50 absolute left-14 bg-gray-900 text-gray-100 px-3 py-1 border border-gray-700 rounded-lg shadow-lg whitespace-nowrap">
+                            {label}
+                        </div>
+                    )}
+                </NavLink>
+            )}
             
             {dropdownItems && isDropdownOpen && !isCollapsed && (
                 <ul className="ml-8 mt-4 space-y-1">
@@ -281,18 +296,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setSidebarOpen }) => {
                                         label="Services" 
                                         isCollapsed={isCollapsed} 
                                     />
-                                    <SidebarItem 
-                                        to="/Supplier-Dashboard/Settings" 
-                                        icon={<MdSettings className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} 
-                                        label="Settings" 
-                                        isCollapsed={isCollapsed} 
-                                    />
-                                    <SidebarItem 
-                                        to="/Supplier-Dashboard/Support-Help" 
-                                        icon={<MdHelpOutline className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} 
-                                        label="Support & Help" 
-                                        isCollapsed={isCollapsed} 
-                                    />
+                                 
                                 </>
                             )}
                         </ul>
@@ -309,7 +313,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setSidebarOpen }) => {
                             <h2 className={`text-sm uppercase my-4 ml-4 ${isCollapsed ? 'hidden' : 'block'} text-gray-600 dark:text-gray-400`}>
                                 form
                             </h2>
-
+                            {/* Navigation section for support and communication tools
                             <nav>
                                 <ul className="space-y-4 text-gray-800">
                                     <SidebarItem 
@@ -337,7 +341,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setSidebarOpen }) => {
                                         isCollapsed={isCollapsed} 
                                     />
                                 </ul>
-                            </nav>
+                            </nav> */}
                             
                             {isCollapsed &&
                                 <div className='flex justify-center my-4'>

@@ -62,7 +62,7 @@ const CreateEventForm: React.FC = () => {
     // New states for tracking event limits
     const [createdEventsCount, setCreatedEventsCount] = useState<number>(0);
     const [remainingEvents, setRemainingEvents] = useState<number>(0);
-    const [userId, setUserId] = useState<string>('');
+    const [_userId, setUserId] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(true);
     
     // Maximum events a user can create
@@ -278,7 +278,7 @@ const CreateEventForm: React.FC = () => {
 
                 alert('Event created successfully!');
                 // Create Notification
-                const notificationMessage = "A new event has been created.";
+                const notificationMessage = "You just created a new event.";
                 const { error: notificationError } = await supabase
                     .from('notifications')
                     .insert([

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { PulseLoader } from 'react-spinners';
+import { motion, AnimatePresence } from 'framer-motion'; // Import framer-motion
 import Modal from '../pages/EventPlanner/components/profileupdate/modal';
 import { EventPlannerProfile, ModalData, fetchUserProfileById, fetchSocialMediaById } from '../pages/EventPlanner/components/profileupdate/api';
 import ProfileForm from '../pages/publivEventComponents/profileData';
@@ -31,6 +32,36 @@ export default function UpdateProfile() {
   ];
 
   const fallbackAvatarUrl = '/images/istockphoto-1207942331-612x612.jpg';
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { 
+        when: "beforeChildren",
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { 
+      y: 0, 
+      opacity: 1,
+      transition: { 
+        type: "spring",
+        stiffness: 80
+      }
+    }
+  };
+
+  const tabContentVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+    exit: { opacity: 0, y: -20, transition: { duration: 0.3 } }
+  };
 
   // Fetch profile data on component mount
   useEffect(() => {
@@ -102,7 +133,13 @@ export default function UpdateProfile() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <PulseLoader color="#0000ff" />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <PulseLoader color="#0000ff" />
+        </motion.div>
       </div>
     );
   }
@@ -112,14 +149,35 @@ export default function UpdateProfile() {
       <MainNavbar />
       <div className="bg-cover">
         <div>
-          {/* Avatar Card */}
-          <div
+          {/* Avatar Card with Framer Motion */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
             className="transition-all duration-300"
             style={{ backgroundImage: `url(${bgimage})`, backgroundSize: 'cover' }}
           >
             <div className="p-6 lg:mx-16 md:mx-8 mx-4 pt-36">
-              <div className="flex flex-col gap-4 p-8 h-full w-auto bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100/40">
-                <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white">
+              <motion.div 
+                initial={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 50, 
+                  damping: 15 
+                }}
+                className="flex flex-col gap-4 p-8 h-full w-auto bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100/40"
+              >
+                <motion.div 
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ 
+                    type: "spring", 
+                    stiffness: 200, 
+                    delay: 0.3 
+                  }}
+                  className="w-24 h-24 rounded-full overflow-hidden border-4 border-white"
+                >
                   <img
                     src={profile?.avatar_url || fallbackAvatarUrl}
                     alt="Profile"
@@ -129,10 +187,18 @@ export default function UpdateProfile() {
                       target.src = fallbackAvatarUrl;
                     }}
                   />
-                </div>
+                </motion.div>
 
-                <div className="flex-1">
-                  <h3 className="text-lg font-medium text-green-300 mb-2">
+                <motion.div 
+                  className="flex-1"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  <motion.h3 
+                    variants={itemVariants}
+                    className="text-lg font-medium text-green-300 mb-2"
+                  >
                     <div className="flex items-center">
                       <svg
                         className="mr-2 flex-shrink-0"
@@ -150,36 +216,63 @@ export default function UpdateProfile() {
                       </svg>
                       <span className="truncate">Event Planner</span>
                     </div>
-                  </h3>
-                  <h1 className="text-4xl font-bold text-white mb-4">{profile?.company_name}</h1>
+                  </motion.h3>
+                  <motion.h1 
+                    variants={itemVariants}
+                    className="text-4xl font-bold text-white mb-4"
+                  >
+                    {profile?.company_name}
+                  </motion.h1>
 
-                  <div className="flex space-x-4 text-sm text-gray-500 mb-4">
+                  <motion.div 
+                    variants={itemVariants}
+                    className="flex space-x-4 text-sm text-gray-500 mb-4"
+                  >
                     <span>54,792 followers</span>
                     <span>1,054 following</span>
                     <span>107,082 likes</span>
-                  </div>
+                  </motion.div>
 
-                  <div className="flex items-center space-x-2">
-                    <button className="bg-gray-900 text-white px-4 py-2 rounded-full text-sm font-medium">Get in touch</button>
-                    <button className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full text-sm font-medium">Follow</button>
-                    <button className="p-2 border border-gray-300 rounded-full">
+                  <motion.div 
+                    variants={itemVariants}
+                    className="flex items-center space-x-2"
+                  >
+                    <motion.button 
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="bg-gray-900 text-white px-4 py-2 rounded-full text-sm font-medium"
+                    >
+                      Get in touch
+                    </motion.button>
+                    <motion.button 
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-full text-sm font-medium"
+                    >
+                      Follow
+                    </motion.button>
+                    <motion.button 
+                      whileHover={{ scale: 1.1, rotate: 15 }}
+                      whileTap={{ scale: 0.9 }}
+                      className="p-2 border border-gray-300 rounded-full"
+                    >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
                       </svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
+                    </motion.button>
+                  </motion.div>
+                </motion.div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
 
           <div className="flex flex-col gap-8 pb-8 lg:mx-16 md:mx-8 mx-4 p-6">
             <div className="h-full w-full">
-              {/* Tabs navigation */}
+              {/* Tabs navigation with motion */}
               <div className="border-b border-gray-200">
                 <nav className="flex space-x-8" aria-label="Tabs">
                   {tabs.map((tab) => (
-                    <button
+                    <motion.button
                       key={tab.id}
                       onClick={() => {
                         setActiveTab(tab.id);
@@ -190,49 +283,88 @@ export default function UpdateProfile() {
                           ? 'border-green-500 text-green-600'
                           : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                       }`}
+                      whileHover={{ y: -2 }}
+                      whileTap={{ y: 0 }}
                       aria-current={activeTab === tab.id ? 'page' : undefined}
                     >
                       {tab.name}
                       {tab.badge && (
-                        <span className="ml-2 bg-green-100 text-green-600 py-0.5 px-2.5 rounded-full text-xs">
+                        <motion.span 
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="ml-2 bg-green-100 text-green-600 py-0.5 px-2.5 rounded-full text-xs"
+                        >
                           {tab.badge}
-                        </span>
+                        </motion.span>
                       )}
-                    </button>
+                    </motion.button>
                   ))}
                 </nav>
               </div>
 
-              {/* Content based on active tab */}
-              <div className="py-10">
-                {activeTab === 'events' && id && <Events eventPlannerId={id.toString()} />}
-                {activeTab === 'profile' && <ProfileForm fallbackAvatarUrl={fallbackAvatarUrl} profile={profile} />}
-                {activeTab === 'socialmedia' && (
-                  <div>
-                    <h2 className="text-2xl font-bold mb-4">Social Media</h2>
-                    {socialMedia.length > 0 ? (
-                      <ul className="space-y-4">
-                        {socialMedia.map((item) => (
-                          <li key={item.id} className="flex items-center">
-                            <span className="font-medium text-gray-700">{item.platform}:</span>
-                            <a
-                              href={item.link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="ml-2 text-blue-500 hover:underline"
+              {/* Content based on active tab with AnimatePresence for smooth transitions */}
+              <AnimatePresence mode="wait">
+                <motion.div 
+                  key={activeTab}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  variants={tabContentVariants}
+                  className="py-10"
+                >
+                  {activeTab === 'events' && id && <Events eventPlannerId={id.toString()} />}
+                  {activeTab === 'profile' && <ProfileForm fallbackAvatarUrl={fallbackAvatarUrl} profile={profile} />}
+                  {activeTab === 'socialmedia' && (
+                    <div>
+                      <motion.h2 
+                        initial={{ x: -20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ duration: 0.3 }}
+                        className="text-2xl font-bold mb-4"
+                      >
+                        Social Media
+                      </motion.h2>
+                      {socialMedia.length > 0 ? (
+                        <motion.ul 
+                          className="space-y-4"
+                          variants={containerVariants}
+                          initial="hidden"
+                          animate="visible"
+                        >
+                          {socialMedia.map((item, index) => (
+                            <motion.li 
+                              key={item.id} 
+                              className="flex items-center"
+                              variants={itemVariants}
+                              custom={index}
                             >
-                              {item.link}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p>No social media links available.</p>
-                    )}
-                  </div>
-                )}
-                {activeTab === 'gallery' && id && <EPGallery eventPlannerId={id.toString()} />}
-              </div>
+                              <span className="font-medium text-gray-700">{item.platform}:</span>
+                              <motion.a
+                                whileHover={{ scale: 1.02, x: 5 }}
+                                href={item.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="ml-2 text-blue-500 hover:underline"
+                              >
+                                {item.link}
+                              </motion.a>
+                            </motion.li>
+                          ))}
+                        </motion.ul>
+                      ) : (
+                        <motion.p
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 0.2 }}
+                        >
+                          No social media links available.
+                        </motion.p>
+                      )}
+                    </div>
+                  )}
+                  {activeTab === 'gallery' && id && <EPGallery eventPlannerId={id.toString()} />}
+                </motion.div>
+              </AnimatePresence>
             </div>
 
             {/* Modal for notifications */}

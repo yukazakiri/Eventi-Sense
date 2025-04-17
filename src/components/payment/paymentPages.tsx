@@ -126,8 +126,13 @@ const PaymentPage: React.FC = () => {
       if (userError) throw userError;
       if (!user) throw new Error('User not authenticated');
 
-      // Only validate card details for paid events
-      if (event?.ticket_price !== 0 && paymentMethod === 'credit_card') {
+      // Validate inputs
+      if (!ticket || !event) {
+        throw new Error('Missing ticket or event information');
+      }
+
+      // Validate card details for paid events
+      if (event.ticket_price !== 0 && paymentMethod === 'credit_card') {
         if (!cardDetails.cardNumber || !cardDetails.cardHolder || !cardDetails.expiryDate || !cardDetails.cvv) {
           throw new Error('Please fill in all card details');
         }
@@ -141,11 +146,7 @@ const PaymentPage: React.FC = () => {
         }
       }
 
-      if (!ticket || !event) {
-        throw new Error('Missing ticket or event information');
-      }
-
-      // Verify ticket ownership before proceeding
+      // Verify ticket ownership
       const { data: ticketOwnership, error: ticketOwnershipError } = await supabase
         .from('tickets')
         .select('user_id')
@@ -157,161 +158,54 @@ const PaymentPage: React.FC = () => {
         throw new Error('Unauthorized: You do not own this ticket');
       }
 
-      // Try a different approach for updating the order
-      if (order) {
-        console.log("Updating existing order:", order.id, "Current status:", order.payment_status);
-        
-        // First, try with RPC if available (more direct database access)
-        try {
-          // Use a direct SQL query via RPC if you have one set up
-          // This is just a placeholder - you would need to create this function in Supabase
-          const { data: rpcResult, error: rpcError } = await supabase.rpc('update_order_status', {
-            order_id: order.id,
-            new_status: 'completed',
-            payment_date: new Date().toISOString()
-          });
-          
-          console.log("RPC update result:", rpcResult);
-          
-          if (rpcError) {
-            console.warn("RPC update failed, falling back to standard update:", rpcError);
-            // Fall through to standard update
-          } else {
-            console.log("Order updated via RPC successfully");
-          }
-        } catch (rpcErr) {
-          console.warn("RPC method not available, using standard update");
-        }
-        
-        // Standard update as fallback
-        const { error: orderError } = await supabase
+      // Handle order creation/update
+      if (order?.id) {
+        // Update existing order
+        const { error: updateError } = await supabase
           .from('orders')
-          .update({ 
-            payment_status: 'completed', 
-            payment_date: new Date().toISOString() 
+          .update({
+            payment_status: 'completed',
+            payment_date: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           })
-          .eq('id', order.id);
-          
-        if (orderError) {
-          console.error("Order update error:", orderError);
-          throw orderError;
-        }
-        
-        console.log("Order update completed without errors");
-        
-        // Update local state to reflect the change even if we don't get data back
-        setOrder({
-          ...order,
-          payment_status: 'completed',
-          payment_date: new Date().toISOString()
-        });
-        
-        // Try a more specific query to verify the update
-        const { data: verifyOrder, error: verifyError } = await supabase
-          .from('orders')
-          .select('*')
           .eq('id', order.id)
-          .eq('ticket_id', ticket.id) // Add this to be more specific
-          .single();
-          
-        console.log("Verification query result:", verifyOrder);
-        
-        if (verifyError) {
-          console.warn("Order verification error (non-fatal):", verifyError);
-        } else if (verifyOrder) {
-          // If verification still shows pending, try one more direct update
-          if (verifyOrder.payment_status === 'pending') {
-            console.log("Order still pending after update, trying one more time with different approach");
-            
-            // Try with a different approach - create a new order and delete the old one
-            const { data: newOrder, error: createError } = await supabase
-              .from('orders')
-              .insert([{
-                ticket_id: ticket.id,
-                amount: order.amount,
-                payment_status: 'completed',
-                created_at: new Date().toISOString(),
-                payment_date: new Date().toISOString(),
-                updated_at: new Date().toISOString()
-              }])
-              .select();
-              
-            if (createError) {
-              console.warn("Failed to create replacement order:", createError);
-            } else if (newOrder && newOrder.length > 0) {
-              console.log("Created replacement order:", newOrder[0]);
-              setOrder(newOrder[0]);
-              
-              // Try to delete the old order (non-critical)
-              const { error: deleteError } = await supabase
-                .from('orders')
-                .delete()
-                .eq('id', order.id);
-                
-              if (deleteError) {
-                console.warn("Failed to delete old order (non-critical):", deleteError);
-              }
-            }
-          } else {
-            // Update with the latest data from the database
-            setOrder(verifyOrder);
-          }
-        }
+          .eq('payment_status', 'pending'); // Only update if still pending
+
+        if (updateError) throw updateError;
       } else {
-        // If no order exists, create one
-        console.log("Creating new order for ticket:", ticket.id);
-        const { data: newOrder, error: createOrderError } = await supabase
+        // Create new order
+        const { data: newOrder, error: createError } = await supabase
           .from('orders')
-          .insert([{
+          .insert({
             ticket_id: ticket.id,
             amount: event.ticket_price * ticket.quantity,
             payment_status: 'completed',
+            payment_date: new Date().toISOString(),
             created_at: new Date().toISOString(),
-            payment_date: new Date().toISOString()
-          }])
-          .select();
-          
-        console.log("New order created:", newOrder);
-        
-        if (createOrderError) {
-          console.error("Order creation error:", createOrderError);
-          throw createOrderError;
-        }
-        
-        // Update local state with the new order
-        if (newOrder && newOrder.length > 0) {
-          setOrder(newOrder[0]);
-        }
+            updated_at: new Date().toISOString()
+          })
+          .select()
+          .single();
+
+        if (createError) throw createError;
+        setOrder(newOrder);
       }
 
       // Update ticket status
-      console.log("Updating ticket status for ticket:", ticket.id);
       const { error: ticketError } = await supabase
         .from('tickets')
-        .update({ 
-          status: 'purchased', 
-          purchase_date: new Date().toISOString() 
+        .update({
+          status: 'purchased',
+          purchase_date: new Date().toISOString()
         })
         .eq('id', ticket.id);
 
-      if (ticketError) {
-        console.error("Ticket update error:", ticketError);
-        throw ticketError;
-      }
-      
-      // Update local ticket state
-      setTicket({
-        ...ticket,
-        status: 'purchased',
-        purchase_date: new Date().toISOString()
-      });
+      if (ticketError) throw ticketError;
 
-      // Create notifications with appropriate messaging based on event price
+      // Create notifications
       const notificationType = event.ticket_price === 0 ? 'booking_success' : 'payment_success';
-      const userMessage = event.ticket_price === 0
-        ? `Booking confirmed for ${ticket.quantity} ticket(s) to ${event.name}.`
-        : `Payment successful for ${ticket.quantity} ticket(s) to ${event.name}.`;
-        
+      const userMessage = `${event.ticket_price === 0 ? 'Booking' : 'Payment'} confirmed for ${ticket.quantity} ticket(s) to ${event.name}.`;
+
       await supabase.from('notifications').insert([{
         user_id: user.id,
         sender_id: user.id,
@@ -322,33 +216,14 @@ const PaymentPage: React.FC = () => {
       }]);
 
       if (event.organizer_id) {
-        const creatorNotificationType = event.ticket_price === 0 ? 'ticket_booking' : 'ticket_sale';
-        const creatorMessage = `${user.email} ${event.ticket_price === 0 ? 'booked' : 'purchased'} ${ticket.quantity} ticket(s) for ${event.name}.`;
-          
         await supabase.from('notifications').insert([{
           user_id: event.organizer_id,
           sender_id: user.id,
-          type: creatorNotificationType,
-          message: creatorMessage,
+          type: event.ticket_price === 0 ? 'ticket_booking' : 'ticket_sale',
+          message: `${user.email} ${event.ticket_price === 0 ? 'booked' : 'purchased'} ${ticket.quantity} ticket(s) for ${event.name}.`,
           link: `/events/${event.id}`,
           is_read: false,
         }]);
-      }
-
-      // Double-check the order status before showing success
-      if (order && order.payment_status !== 'completed') {
-        console.log("Verifying order status after update...");
-        const { data: verifyOrder, error: verifyError } = await supabase
-          .from('orders')
-          .select('payment_status')
-          .eq('id', order.id)
-          .single();
-          
-        console.log("Verified order status:", verifyOrder);
-        
-        if (verifyError) {
-          console.error("Order verification error:", verifyError);
-        }
       }
 
       setIsModalOpen(true);

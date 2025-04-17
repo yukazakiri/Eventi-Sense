@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { Navigate, NavLink } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import supabase from '../../api/supabaseClient'; // Adjust the import path as needed
 
 interface ProfileAvatarProps {
@@ -9,12 +10,28 @@ interface ProfileAvatarProps {
 
 function ProfileAvatar({ user, profile }: ProfileAvatarProps) {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
       console.log('User updated:', user);
     }
   }, [user]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (isDropdownOpen && !target.closest('.profile-dropdown-container')) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   // Determine profile link based on user role
   const getProfileLink = () => {
@@ -36,76 +53,140 @@ function ProfileAvatar({ user, profile }: ProfileAvatarProps) {
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
-      console.error('Error logging out:', error);
+      console.error('Error logging out:', error.message);
     } else {
-      window.location.href = "/"; // Redirect to home page
-      setTimeout(() => {
-        window.location.reload(); // Reload after redirection
-      }, 100); // Small delay to ensure redirection happens smoothly
+      localStorage.removeItem('userRole'); // Clear cached role
+      return <Navigate to="/" />; // Redirect using React Router
     }
   };
 
+  // Gold gradient border for avatar
+  const goldBorderStyle = {
+    background: `
+      linear-gradient(#08233E, #08233E) padding-box,
+      linear-gradient(45deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c) border-box
+    `,
+    border: '1px solid transparent',
+    borderRadius: '9999px', // Full rounded for circle
+    padding: '2px' // Border thickness
+  };
+
   return (
-    <div className="relative font-Monserrat group font-sofia">
-      <div 
-        className='flex items-center space-x-4 group-hover:opacity-100'
+    <div className="relative font-Monserrat group font-sofia profile-dropdown-container">
+      <motion.div 
+        className='flex items-center space-x-4 cursor-pointer'
         onClick={() => setDropdownOpen(!isDropdownOpen)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        whileHover={{ scale: 1.05 }}
+        transition={{ duration: 0.2 }}
       >
-        <button
-          type="button"
-          className="flex items-center focus:outline-none"
+        <motion.div
+          whileHover={{ rotate: [-5, 5, -5, 5, 0] }}
+          transition={{ duration: 0.5 }}
+          style={goldBorderStyle}
+          className="rounded-full"
         >
-          <img
+          <motion.img
             src={profile?.avatar_url || 'https://www.gravatar.com/avatar/?d=mp'} // Use profile picture or placeholder
             alt="Profile"
-            className="w-8 h-8 rounded-full"  
+            className="w-9 h-9 rounded-full object-cover"
+            animate={{ 
+              scale: isHovered ? 1.05 : 1,
+              borderColor: isHovered ? "#fcf6ba" : "#bf953f" 
+            }}
+            transition={{ duration: 0.3 }}
           />
-        </button> 
-        <h1 className='text-sm cursor-pointer text-white'>My Profile</h1>
-      </div>
-      {isDropdownOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-[#08233E] border border-gray-700 text-white shadow-2xl rounded-lg py-3 text-sm transform transition-all duration-200 ease-in-out">
-          <div className="px-4 py-2 border-b border-gray-700">
-            <p className="text-gray-400 text-xs">Signed in as</p>
-            <p className="font-medium truncate">{user?.email}</p>
-          </div>
-          
-          <div className="py-1">
-            <NavLink 
-              to={getProfileLink()} 
-              className="flex items-center px-4 py-2.5 text-white hover:bg-gray-700/50 transition-colors duration-150"
+        </motion.div> 
+        <motion.h1 
+          className='text-sm text-white'
+          animate={{ 
+            color: isHovered ? "#fcf6ba" : "#ffffff"
+          }}
+          transition={{ duration: 0.3 }}
+        >
+          My Profile
+        </motion.h1>
+      </motion.div>
+      
+      <AnimatePresence>
+        {isDropdownOpen && (
+          <motion.div 
+            className="absolute right-0 mt-2 w-56 bg-[#232f3f] border border-gray-700 text-white shadow-2xl rounded-lg py-3 text-sm z-50"
+            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            transition={{ duration: 0.2, type: "spring", stiffness: 300, damping: 30 }}
+          >
+            <motion.div 
+              className="px-4 py-2 border-b border-gray-700"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.1 }}
             >
-              <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-              View Profile
-            </NavLink>
+              <p className="text-gray-400 text-xs">Signed in as</p>
+              <p className="font-medium truncate">{user?.email}</p>
+            </motion.div>
             
-            <NavLink 
-              to="/settings" 
-              className="flex items-center px-4 py-2.5 text-white hover:bg-gray-700/50 transition-colors duration-150"
-            >
-              <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              Settings
-            </NavLink>
-          </div>
+            <div className="py-1">
+              <NavLink 
+                to={getProfileLink()} 
+                className="flex items-center px-4 py-2.5 text-white hover:bg-gray-700/50 transition-colors duration-150"
+              >
+                <motion.div
+                  whileHover={{ scale: 1.1, x: 2 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  className="flex items-center"
+                >
+                  <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  View Profile
+                </motion.div>
+              </NavLink>
+              
+              <NavLink 
+                to="/settings" 
+                className="flex items-center px-4 py-2.5 text-white hover:bg-gray-700/50 transition-colors duration-150"
+              >
+                <motion.div
+                  whileHover={{ scale: 1.1, x: 2 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  className="flex items-center"
+                >
+                  <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  Settings
+                </motion.div>
+              </NavLink>
+            </div>
 
-          <div className="border-t border-gray-700 py-1">
-            <button
-              onClick={handleLogout}
-              className="flex items-center w-full px-4 py-2.5 text-red-400 hover:bg-gray-700/50 transition-colors duration-150"
-            >
-              <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              Logout
-            </button>
-          </div>
-        </div>
-      )}
+            <div className="border-t border-gray-700 py-1">
+              <motion.button
+                onClick={handleLogout}
+                className="flex items-center w-full px-4 py-2.5 text-red-400 hover:bg-gray-700/50 transition-colors duration-150"
+                whileHover={{ 
+                  backgroundColor: "rgba(239, 68, 68, 0.2)",
+                  transition: { duration: 0.2 }
+                }}
+              >
+                <motion.div
+                  whileHover={{ scale: 1.1, x: 2 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  className="flex items-center"
+                >
+                  <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  Logout
+                </motion.div>
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

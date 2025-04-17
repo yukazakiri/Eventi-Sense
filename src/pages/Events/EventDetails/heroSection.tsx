@@ -1,7 +1,6 @@
 import React from 'react';
-
-import { HoverButton2 } from '../../../components/Button/button-hover';
-
+import { motion, useAnimation } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 
 interface HeroSectionProps {
   event: {
@@ -16,57 +15,133 @@ interface HeroSectionProps {
   onOpenModal: () => void;
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ({ event, onOpenModal }) => {
+const HeroSection: React.FC<HeroSectionProps> = ({ event }) => {
   const [imageError, setImageError] = React.useState(false);
+  const controls = useAnimation();
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.3,
+  });
 
-  // Preload the image to check if it loads correctly
   React.useEffect(() => {
     const img = new Image();
     img.src = event.image_url;
     img.onerror = () => setImageError(true);
   }, [event.image_url]);
-console.log(event.image_url);
+
+  React.useEffect(() => {
+    if (inView) {
+      controls.start({
+        opacity: 1,
+        y: 0,
+        transition: {
+          type: 'spring',
+          stiffness: 50,
+          damping: 15,
+          duration: 0.8,
+          delayChildren: 0.3,
+          staggerChildren: 0.1,
+        },
+      });
+    }
+  }, [controls, inView]);
+
+  const backgroundVariants = {
+    initial: { scale: 1.1, opacity: 0 },
+    animate: { 
+      scale: 1, 
+      opacity: 1, 
+      transition: { 
+        duration: 1.5,
+        ease: "easeOut"
+      } 
+    }
+  };
+
+  const textVariants = {
+    initial: { y: 50, opacity: 0 },
+    animate: { 
+      y: 0, 
+      opacity: 1, 
+      transition: { 
+        duration: 0.8,
+        ease: "easeOut"
+      } 
+    }
+  };
+
+  const containerVariants = {
+    initial: { opacity: 0 },
+    animate: { 
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3,
+        duration: 0.5
+      }
+    }
+  };
+
   return (
-    <div className="relative h-[50vh]">
-      {/* Background Image */}
-      <div
+    <motion.div
+      ref={ref}
+      initial="initial"
+      animate="animate"
+      variants={containerVariants}
+      className="relative h-[60vh] md:h-[65vh] lg:h-[65vh] overflow-hidden"
+    >
+      <motion.div
+        variants={backgroundVariants}
         className="absolute inset-0 bg-cover bg-center bg-gray-800"
-        style={{ 
+        style={{
           backgroundImage: !imageError ? `url(${event.image_url})` : 'none',
-          backgroundRepeat: 'no-repeat'
+          backgroundRepeat: 'no-repeat',
         }}
       />
-      <div className="absolute inset-0 bg-gray-900/10"></div>
-      <div className="absolute inset-2 sm:inset-4 md:inset-6 border border-white/20 pointer-events-none"></div>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+        className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm"
+      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1, delay: 0.5 }}
+        className="absolute inset-4 sm:inset-6 md:inset-8 lg:inset-10 border border-white/30 pointer-events-none"
+      />
 
-      {/* Main Content */}
-      <div className="relative h-full flex items-center">
-   
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl xl:max-w-4xl">
-            <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl font-semibold text-white mb-3 sm:mb-4 md:mb-6 font-bonanova uppercase leading-tight">
-              {event.name}
-            </h1>
-            <p className="text-sm xs:text-md sm:text-lg text-white leading-relaxed mb-4 sm:mb-6 md:mb-8 max-w-2xl font-sofia tracking-widest">
-              {event.description}
-            </p>
-            <div className="flex flex-wrap gap-3 sm:gap-4">
-              <HoverButton2 
-                className="text-xs xs:text-sm sm:text-base px-4 py-2 xs:px-6 xs:py-3"
-                onClick={onOpenModal}
-              >
-                {event.ticket_price === 0 ? 'Reserve Now' : 'Get Tickets'}
-              </HoverButton2>
-            </div>
-          </div>
-        </div>
+      <div className="relative h-full flex items-center justify-center">
+        <motion.div 
+          variants={containerVariants}
+          className="container mx-auto px-6 sm:px-8 lg:px-12 text-center"
+        >
+          <motion.h1
+            variants={textVariants}
+            className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold gradient-text font-bonanova uppercase leading-tight mb-4"
+          >
+            {event.name}
+          </motion.h1>
+          <motion.p
+            variants={textVariants}
+            className="text-lg sm:text-xl md:text-2xl text-white leading-relaxed mb-8 max-w-2xl mx-auto font-sofia tracking-wide"
+          >
+            {event.description}
+          </motion.p>
+          {/* Button component for booking tickets with hover and tap animations 
+          <motion.button
+            variants={textVariants}
+            whileHover={{ scale: 1.05, backgroundColor: "#4F46E5" }}
+            whileTap={{ scale: 0.98 }}
+            className="bg-indigo-600 text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:bg-indigo-700 transition-colors duration-200"
+            onClick={onOpenModal}
+          >
+            Book Tickets
+          </motion.button>*/}
+        </motion.div>
       </div>
-
-    
-    </div>
+    </motion.div>
   );
 };
-
-
 
 export default HeroSection;

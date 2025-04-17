@@ -11,11 +11,15 @@ type CardSuppliersProps = {
   filters?: SupplierFilters;
   showAll?: boolean;
   handleViewLess?: () => void;
+  loading?: boolean;  // Added loading prop
 };
 
-const CardSuppliers: React.FC<CardSuppliersProps> = ({ limit, filters = { searchQuery: '' }, showAll, handleViewLess }) => {
-  const { suppliers, loading, error } = useSuppliers(filters);
+const CardSuppliers: React.FC<CardSuppliersProps> = ({ limit, filters = { searchQuery: '' }, showAll, handleViewLess, loading: externalLoading }) => {
+  const { suppliers, loading: internalLoading, error } = useSuppliers(filters);
   const navigate = useNavigate();
+
+  // Use either external or internal loading state
+  const isLoading = externalLoading ?? internalLoading;
 
   const handleCardClick = (supplierId: string) => {
     navigate(`/supplier/${supplierId}`);
@@ -28,7 +32,37 @@ const CardSuppliers: React.FC<CardSuppliersProps> = ({ limit, filters = { search
     setCurrentPage(pageNumber);
   };
 
-  if (loading) return <div>Loading suppliers...</div>;
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {[...Array(limit || 9)].map((_, index) => (
+          <div key={index} className="bg-white rounded-lg shadow-md p-4 animate-pulse">
+            {/* Image skeleton */}
+            <div className="w-full h-48 bg-gray-200 rounded-lg mb-4"></div>
+            
+            {/* Supplier name skeleton */}
+            <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+            
+            {/* Company name skeleton */}
+            <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+            
+            {/* Services skeleton */}
+            <div className="flex gap-2 mb-2">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="h-4 bg-gray-200 rounded w-16"></div>
+              ))}
+            </div>
+            
+            {/* Location and rating skeleton */}
+            <div className="flex justify-between">
+              <div className="h-4 bg-gray-200 rounded w-24"></div>
+              <div className="h-4 bg-gray-200 rounded w-16"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
   if (error) return <div>Error: {error.message}</div>;
 
   let displayedSuppliers: SupplierWithCompanyProfile[] = suppliers;

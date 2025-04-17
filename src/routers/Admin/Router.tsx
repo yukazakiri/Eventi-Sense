@@ -6,6 +6,7 @@ import UserDetails from '../../pages/Admin/UserManagement/main';
 import Venues from '../../pages/Admin/Venues';
 import Supplier from '../../pages/Admin/Supplier';
 import EventPlanner from '../../pages/Admin/EventPlanner';
+import SurveyResponse from '../../pages/Admin/SurveyResponse';
 
 const routes: RouteObject[] = [
   { path: '/Home', element: <Home /> },
@@ -13,6 +14,7 @@ const routes: RouteObject[] = [
   {path : '/UserDetails/:userId', element: <UserDetails/>},
   {path : '/Venues', element: <Venues/>},
   // {path : '/VenueDetails/:venueId', element: <VenueDetails/>}
+  {path: '/Survey-Response', element: <SurveyResponse />},
   {path: '/Supplier', element: <Supplier />},
   {path: '/Event-Planner', element: <EventPlanner />}
 ];

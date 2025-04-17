@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import Button from '../../components/Button/button';
 import ProfileAvatar from '../../components/Profile/profileAvatar';
+import Notification from '../../components/NewNotification/usernotification';
 interface NavbarProps {
     user: any;
     profile: any;
@@ -126,9 +127,10 @@ interface NavbarProps {
                 </NavLink>
               </div>
             </div>
-            
+        
             {/* Profile/Auth buttons */}
-            <div className="hidden md:flex items-center">
+            <div className="hidden md:flex items-center gap-2">
+            <Notification userId={user?.id}/>
               {user ? (
                 <ProfileAvatar user={user} profile={profile} />
               ) : (

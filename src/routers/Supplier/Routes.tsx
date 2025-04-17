@@ -13,6 +13,7 @@ import EventListing from '../../components/EventsCards/Event-List';
 import TicketList from '../../pages/Events/TicketsList';
 import RequestTicket from '../../pages/Events/RequestTickets';
 import UserBookings from '../../pages/Booking/RequestBooking';
+import AttendeeManagementPage from '../../components/payment/EventCreator/attendee';
 
 
 const routes: RouteObject[] = [
@@ -30,6 +31,7 @@ const routes: RouteObject[] = [
   { path: '/TicketList', element: <TicketList  /> },
   { path: '/tickets', element: <RequestTicket   /> },
   { path: '/Requested-Bookings', element: <UserBookings/> },
+  {path: '/Events/:eventId/attendees', element: <AttendeeManagementPage/> },
 
 
 ];

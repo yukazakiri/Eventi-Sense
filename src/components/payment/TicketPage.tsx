@@ -7,7 +7,8 @@ import { RiVerifiedBadgeFill } from "react-icons/ri";
 import { GoHeartFill } from "react-icons/go";
 import { MdAccessTime, MdLocationOn } from 'react-icons/md';
 import { IoDownloadOutline } from "react-icons/io5";
-import confetti from 'canvas-confetti'; // Import canvas-confetti
+import confetti from 'canvas-confetti';
+import { motion } from "framer-motion";
 
 interface Event {
   id: string;
@@ -28,7 +29,7 @@ interface Ticket {
 
 interface Profile {
   id: string;
-first_name: string;
+  first_name: string;
   last_name: string;
   avatar_url: string;
   // Add other profile fields as needed
@@ -120,42 +121,147 @@ const TicketPage: React.FC = () => {
     }
   };
   
+  // Ticket animation variants
+  const ticketAnimationVariants = {
+    hidden: {
+      opacity: 0,
+      y: 50,
+      scale: 0.95,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring",
+        duration: 0.8,
+        bounce: 0.4,
+        delayChildren: 0.3,
+        staggerChildren: 0.1
+      }
+    }
+  };
+  
+  // Enhanced button animation variants
+  const buttonContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.8,
+        staggerChildren: 0.2
+      }
+    }
+  };
+  
+  const buttonVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: 20,
+      scale: 0.95
+    },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 15,
+        mass: 1
+      }
+    },
+    hover: {
+      scale: 1.05,
+      y: -5,
+      boxShadow: "0 10px 20px rgba(0,0,0,0.15)",
+      transition: {
+        type: "spring",
+        stiffness: 500,
+        damping: 10
+      }
+    },
+    tap: {
+      scale: 0.98,
+      boxShadow: "0 5px 10px rgba(0,0,0,0.1)",
+      y: 0
+    }
+  };
+
+  const fadeInVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { duration: 0.5 }
+    }
+  };
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <motion.div 
+      className="min-h-screen flex items-center justify-center bg-gray-50"
+      initial="hidden"
+      animate="visible"
+      variants={fadeInVariants}
+    >
       <div className="animate-pulse flex flex-col items-center">
         <div className="w-12 h-12 border-4 border-t-gold border-navy-600 rounded-full animate-spin mb-4"></div>
         <p className="text-navy-600 font-medium">Loading your premium ticket...</p>
       </div>
-    </div>
+    </motion.div>
   );
 
   if (error) {
     return (
-      <div className="max-w-lg mx-auto mt-8 p-6 bg-red-50 rounded-lg shadow">
+      <motion.div 
+        className="max-w-lg mx-auto mt-8 p-6 bg-red-50 rounded-lg shadow"
+        initial="hidden"
+        animate="visible"
+        variants={fadeInVariants}
+      >
         <h2 className="text-xl font-bold text-red-700 mb-4">Error</h2>
         <p className="text-red-600">{error}</p>
-        <button
+        <motion.button
           onClick={() => navigate('/')}
           className="mt-4 px-4 py-2 bg-blue-800 text-white bg-red-800/80 rounded hover:bg-blue-900"
+          variants={buttonVariants}
+          whileHover="hover"
+          whileTap="tap"
         >
           View My Tickets
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
     );
   }
+  
   return (
-    <div className="min-h-screen bg-stone-600/40 py-8 px-4 sm:py-12 flex items-center justify-center">
+    <motion.div 
+      className="min-h-screen bg-stone-600/40 py-8 px-4 sm:py-12 flex flex-col items-center justify-center"
+      initial="hidden"
+      animate="visible"
+      variants={fadeInVariants}
+    >
       <div className="w-full max-w-4xl mx-auto">
-        {/* Ticket Container */}
-        <div className="relative" id="ticket">
+        {/* Ticket container with motion */}
+        <motion.div
+          className="relative"
+          id="ticket"
+          initial="hidden"
+          animate="visible"
+          variants={ticketAnimationVariants}
+        >
           {/* Actual ticket */}
-          <div className="bg-white shadow-2xl overflow-hidden relative z-10 flex flex-col md:flex-row border-[1px] border-gray-100" 
-               style={{ 
-                 backgroundColor: cream,
-                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)" 
-               }}>
-            
+          <motion.div 
+            className="bg-white shadow-2xl overflow-hidden relative z-10 flex flex-col md:flex-row border-[1px] border-gray-100"
+            style={{ 
+              backgroundColor: cream,
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)" 
+            }}
+            whileHover={{ 
+              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
+              translateY: -5,
+              transition: { duration: 0.3 }
+            }}
+          >
             {/* Left Section - Ticket Details */}
             <div className="w-full md:w-3/4">
               <section className='border-[1px] border-navy-blue-3/50 m-4 sm:m-6 flex sm:flex-row flex-col '>
@@ -182,29 +288,29 @@ const TicketPage: React.FC = () => {
                       </h2>
                     </div>
                     <div className="relative flex justify-center items-center w-20 h-20 sm:mr-4 m-4 ">
-                {/* VERIFIED BADGE */}
-                <div className="absolute inset-0 w-full h-full animate-spin-slow ">
-                  <svg viewBox="0 0 100 100" className="w-full h-full">
-                    <path 
-                      id="textPath" 
-                      d="M50,10 a40,40 0 1,1 -0.1,0" 
-                      fill="none" 
-                    />
-                    <text className="text-xs fill-yellow-600/70">
-                      <textPath href="#textPath" startOffset="0%">
-                        VERIFIED • ES • VERIFIED • ES • VERIFIED • ES •
-                      </textPath>
-                    </text>
-                  </svg>
-                </div>
-                
-                {/* Badge container with dashed outline */}
-                <div className="flex justify-center items-center  w-14 h-14">
-                  <div className="outline-3 outline-offset-2 outline-double outline-yellow-600/60 rounded-full p-2 ">
-                    <RiVerifiedBadgeFill className="text-3xl text-yellow-600/50 rotate-12" />
-                  </div>
-                </div>
-              </div>
+                      {/* VERIFIED BADGE */}
+                      <div className="absolute inset-0 w-full h-full animate-spin-slow ">
+                        <svg viewBox="0 0 100 100" className="w-full h-full">
+                          <path 
+                            id="textPath" 
+                            d="M50,10 a40,40 0 1,1 -0.1,0" 
+                            fill="none" 
+                          />
+                          <text className="text-xs fill-yellow-600/70">
+                            <textPath href="#textPath" startOffset="0%">
+                              VERIFIED • ES • VERIFIED • ES • VERIFIED • ES •
+                            </textPath>
+                          </text>
+                        </svg>
+                      </div>
+                      
+                      {/* Badge container with dashed outline */}
+                      <div className="flex justify-center items-center  w-14 h-14">
+                        <div className="outline-3 outline-offset-2 outline-double outline-yellow-600/60 rounded-full p-2 ">
+                          <RiVerifiedBadgeFill className="text-3xl text-yellow-600/50 rotate-12" />
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Date section */}
@@ -311,21 +417,54 @@ const TicketPage: React.FC = () => {
                 Official
               </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        {/* Download Button */}
-        <div className="mt-8 sm:mt-12 flex justify-center">
-          <button
+        {/* Action Buttons with enhanced animations */}
+        <motion.div 
+          className="mt-8 sm:mt-12 flex justify-center gap-4 flex-wrap"
+          variants={buttonContainerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.button
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap="tap"
             onClick={handleDownload}
-            className="px-6 py-2 sm:px-8 sm:py-3 rounded-sm flex items-center gap-2 transition-all transform hover:translate-y-px shadow-lg bg-navy-blue-3 text-white font-sofia text-sm sm:text-base"
+            className="px-6 py-2 sm:px-8 sm:py-3 rounded-sm flex items-center gap-2 transition-all shadow-lg bg-navy-blue-3 text-white font-sofia text-sm sm:text-base"
           >
-            <IoDownloadOutline className="text-yellow-500/80 text-xl sm:text-2xl" />
+            <motion.span
+              initial={{ rotate: 0 }}
+              whileHover={{ rotate: 20, transition: { duration: 0.3 } }}
+            >
+              <IoDownloadOutline className="text-yellow-500/80 text-xl sm:text-2xl" />
+            </motion.span>
             Download Ticket
-          </button>
-        </div>
+          </motion.button>
+
+          <motion.button
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap="tap"
+            onClick={() => navigate('/Event-List')}
+            className="px-6 py-2 sm:px-8 sm:py-3 rounded-sm flex items-center gap-2 transition-all shadow-lg bg-yellow-600/50 text-white font-sofia text-sm sm:text-base"
+          >
+            View More Events
+          </motion.button>
+
+          <motion.button
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap="tap"
+            onClick={() => navigate('/profile')}
+            className="px-6 py-2 sm:px-8 sm:py-3 rounded-sm flex items-center gap-2 transition-all shadow-lg bg-navy-blue-3/80 text-white font-sofia text-sm sm:text-base"
+          >
+            Continue to Profile
+          </motion.button>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

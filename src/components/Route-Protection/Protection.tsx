@@ -1,6 +1,8 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import supabase from '../../api/supabaseClient';
+import { Session } from '@supabase/supabase-js';
+
 
 interface ProtectionProps {
     requiredRole: string;
@@ -17,7 +19,7 @@ const Protection = ({ requiredRole, children }: ProtectionProps) => {
         let isMounted = true; // Track component mount status
         let authSubscription: { subscription?: { unsubscribe: () => void } } = {};
 
-        const checkAuth = async (session: any) => {
+        const checkAuth = async (session: Session) => {
             console.log("Checking authentication...");
             console.log("Protection useEffect running, location:", location.pathname); // Add this line
             if (!isMounted) return; // Don't proceed if component is unmounted

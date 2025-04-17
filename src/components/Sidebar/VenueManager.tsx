@@ -35,42 +35,57 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ to, icon, label, isCollapsed,
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     
     const handleClick = () => {
-        if (!dropdownItems) {
-            setTimeout(() => {
-                window.location.reload();
-            }, 100);
-        } else {
+        if (dropdownItems) {
             setIsDropdownOpen(!isDropdownOpen);
         }
     };
 
     return (
         <li className="relative">
-            <NavLink
-                to={dropdownItems ? "#" : to}
-                className={({ isActive }) =>
-                    `flex items-center p-2 mx-5 font-medium rounded-lg relative group ${
-                        (isActive && !dropdownItems) || (dropdownItems && isDropdownOpen)
+            {dropdownItems ? (
+                <div
+                    className={`flex items-center p-2 mx-5 font-medium rounded-lg relative group cursor-pointer ${
+                        isDropdownOpen
                         ? 'bg-indigo-50 dark:bg-sky-400/10 text-sky-500 dark:text-sky-400 transition-colors duration-200 shadow-sky-500/20 dark:shadow-sky-400/20' 
                         : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400'
-                    }`
-                }
-                onClick={handleClick}
-            >
-                {icon}
-                {!isCollapsed && <span className="ml-5">{label}</span>}
-                {!isCollapsed && dropdownItems && (
-                    <span className="ml-auto">
-                        {isDropdownOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                    </span>
-                )}
-                {isCollapsed && (
-                    <div className="hidden group-hover:block z-50 absolute left-14 bg-gray-900 text-gray-100 px-3 py-1 border border-gray-700 rounded-lg shadow-lg whitespace-nowrap">
-                        {label}
-                    </div>
-                )}
-            </NavLink>
+                    }`}
+                    onClick={handleClick}
+                >
+                    {icon}
+                    {!isCollapsed && <span className="ml-5">{label}</span>}
+                    {!isCollapsed && (
+                        <span className="ml-auto">
+                            {isDropdownOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                        </span>
+                    )}
+                    {isCollapsed && (
+                        <div className="hidden group-hover:block z-50 absolute left-14 bg-gray-900 text-gray-100 px-3 py-1 border border-gray-700 rounded-lg shadow-lg whitespace-nowrap">
+                            {label}
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <NavLink
+                    to={to}
+                    className={({ isActive }) =>
+                        `flex items-center p-2 mx-5 font-medium rounded-lg relative group ${
+                            isActive
+                            ? 'bg-indigo-50 dark:bg-sky-400/10 text-sky-500 dark:text-sky-400 transition-colors duration-200 shadow-sky-500/20 dark:shadow-sky-400/20' 
+                            : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400'
+                        }`
+                    }
+                    onClick={() => {
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 100);
+                    }}
+                >
+                    {icon}
+                    {!isCollapsed && <span className="ml-5">{label}</span>}
+                </NavLink>
+            )}
             
+            {/* Rest of the component remains the same */}
             {dropdownItems && isDropdownOpen && !isCollapsed && (
                 <ul className="ml-8 mt-4 space-y-1">
                     {dropdownItems.map((item, index) => (

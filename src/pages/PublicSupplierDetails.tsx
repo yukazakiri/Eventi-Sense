@@ -19,6 +19,8 @@ import { CgWebsite } from "react-icons/cg";
 import { TbAddressBook } from "react-icons/tb";
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import { IoLogoBuffer } from "react-icons/io";
+import { useScroll, useTransform, useInView,motion } from 'framer-motion';
+import { MoonLoader } from "react-spinners";
 
 
 
@@ -29,6 +31,68 @@ interface AvailabilityEvent {
   start: string;
   end: string;
 }
+const ScrollReveal = ({ children, delay = 0, className }: { children: React.ReactNode, delay?: number, className?: string }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.1 });
+  
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 30 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+      transition={{ duration: 0.8, delay: delay, ease: "easeOut" }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+// Create a parallax component
+const ParallaxSection = ({ children, baseVelocity = 0.05 }: { children: React.ReactNode, baseVelocity?: number }) => {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
+  
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", `${baseVelocity * 100}%`]);
+  
+  return (
+    <motion.div
+      ref={ref}
+      style={{ y }}
+      className="relative"
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+// StaggeredReveal for grid items
+const StaggeredReveal = ({ children, staggerDelay = 0.1 }: { children: React.ReactNode, staggerDelay?: number }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.1 });
+  
+  return (
+    <motion.div
+      ref={ref}
+      initial="hidden"
+      animate={isInView ? "visible" : "hidden"}
+      variants={{
+        hidden: { opacity: 0 },
+        visible: {
+          opacity: 1,
+          transition: {
+            staggerChildren: staggerDelay
+          }
+        }
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+};
 
 const PublicSupplierDetails: React.FC = () => {
   const [expandedService, setExpandedService] =  useState<any | null>(null);
@@ -49,6 +113,23 @@ const PublicSupplierDetails: React.FC = () => {
   const [events, setEvents] = useState<AvailabilityEvent[]>([]);
   const [currentView] = useState('dayGridMonth');
   const calendarRef = useRef<FullCalendar>(null);
+
+  const targetSectionRef = useRef(null);
+    const headerRef = useRef(null);
+    const { scrollYProgress } = useScroll();
+// Remove the opacity transformation
+const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 1]); // Keep opacity at 1
+    const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.98]);
+    const [scrollY, setScrollY] = useState(0);
+
+    useEffect(() => {
+      const handleScroll = () => {
+        setScrollY(window.scrollY);
+      };
+      
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -218,7 +299,14 @@ const PublicSupplierDetails: React.FC = () => {
 
 
   if (error) return <div>{error}</div>;
-  if (loading) return <div>Loading...</div>;
+
+  
+  // With this:
+  if (loading) return (
+    <div className="h-screen w-full flex justify-center items-center bg-[#2F4157]">
+      <MoonLoader color="#ffffff" size={60} />
+    </div>
+  );
 
   if (!supplier) return <div>supplier not found.</div>;
   const toggleService = (index:any) => {
@@ -237,131 +325,191 @@ const PublicSupplierDetails: React.FC = () => {
     return (
       <>
       <MainNavbar />
-      <div className= "">
+  
         <div className="bg-[#2F4157]">
      {/* Venue Cover Image Section */}
-<div className="relative w-full h-screen  ">
-{/* Background Image with Blur Effect */}
-<div className="absolute inset-0 w-full h-screen ">
-  {supplier?.cover_image_url ? (
-    <>
-      {/* Blurred main background image */}
-      <img
-        src={supplier.cover_image_url}
-        alt={supplier?.name || "Spa facilities"}
-        className="w-full h-screen object-cover "
-      />
-      
-   
-    </>
+     <motion.div 
+          style={{ opacity, scale }}
+          className="relative w-full h-screen"
+        >
+
+<div className="absolute inset-0 w-full h-screen">
+    {supplier?.cover_image_url ? (
+      <>
+        <motion.img
+          initial={{ scale: 1.1, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1.2 }}
+          src={supplier.cover_image_url}
+          alt={supplier?.name || "Spa facilities"}
+          className="w-full h-screen object-cover"
+        />
+        <motion.div 
+          className="absolute inset-0 bg-black/70"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.5 }}
+        />
+      </>
   ) : (
     <>
-      {/* Default blurred background image */}
-      <img
+      <motion.img
+        initial={{ scale: 1.1 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 1.2 }}
         src="/path/to/default-spa-image.jpg"
         alt="Spa facilities"
         className="w-full h-screen object-cover filter blur-md"
       />
-      
- 
+      <div className="absolute inset-0 bg-black/70" /> {/* Consistent darkness */}
     </>
   )}
 </div>
-<div className='grid grid-cols-1 md:grid-cols-2'>
-  {/* Content */}
-  <div className=" z-10 w-full  h-screen flex flex-col justify-center items-start  to-transparent text-white    bg-gray-600  bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-10 border-r-[1px] border-gray-100
-">
-  
-  <div className="p-10">
-    <div className="max-w-2xl text-left">
-      <h1 className="font-serif text-4xl lg:text-6xl mb-4">
-        <span className="font-bonanova capitalize text-orange-50 font-semibold">{supplier?.name}</span>
-      </h1>
-      
-      <div className='flex'>
-      <div className="w-auto md:py-10 py-6 ">
-        <HoverButton2 onClick={() => navigate(`/suppliers/${supplier.id}/book`)}>
-          Book now
-        </HoverButton2>
-      
-      </div>
-      <div className="p-10 md:hidden block ">
-      <button    onClick={scrollToTarget} className="w-auto  h-14 px-4 py-2 rounded-full  hover:rounded-full transform transition-all duration-500 ease-in-out
-                        hover:bg-[#2F4157] bg-[#2F4157] hover:w-36 hover:h-36 text-white relative group">
-            <span className="group-hover:opacity-0 transition-opacity duration-300 font-sofia tracking-widest ease-in-out">More Details</span>
-            <   GoArrowDown 
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"
-              size={24}
-            />
-          </button>
-    </div>
-    </div>
-      
-    </div>
-    <div>
-            {/* Non-blurred image positioned at bottom left (not at edge) */}
-            
-        <img
-          src={supplier.cover_image_url}
-          alt={supplier?.name || "Spa facilities"}
-          className="w-auto md:h-[300px] h-[300px] object-cover rounded-md shadow-lg"
-        />
-      </div>
-    </div>
-  </div>
-  <div className='text-white h-screen md:flex hidden flex-col justify-center items-center z-50'>
-  <div className="p-10">
-  <button     onClick={scrollToTarget} className="w-auto  h-14 px-4 py-2 rounded-full  hover:rounded-full transform transition-all duration-500 ease-in-out
-                     hover:bg-[#2F4157] bg-[#2F4157] hover:w-36 hover:h-36 text-white relative group">
-        <span className="group-hover:opacity-0 transition-opacity duration-300 font-sofia tracking-widest ease-in-out">More Details</span>
-        <    GoArrowDown 
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"
-          size={24}
-        />
-      </button>
+          
+          {/* Centered Content Container */}
+          <div className="absolute inset-0 flex justify-center items-center mt-4">
+            <motion.div 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+              className="z-10 text-white text-center px-4"
+            >
+              <motion.h1 
+                ref={headerRef}
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.8, duration: 0.8 }}
+                className="text-4xl lg:text-[4rem] mb-8 gradient-text font-bonanova"
+              >
+                <span>{supplier?.name}</span>
+              </motion.h1>
+              
+              <motion.div 
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 1, duration: 0.8 }}
+                className="flex justify-center items-center gap-6 mt-4"
+              >
+                {/* Enhanced Button with hover effects */}
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="relative"
+                >
+                  <motion.div 
+                    initial={{ opacity: 0.6 }}
+                    whileHover={{ opacity: 0.9 }}
+                    className="h-full w-full bg-gray-200 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100 absolute inset-0"
+                  ></motion.div>
+                  <HoverButton2  onClick={() => navigate(`/suppliers/${supplier.id}/book`)} className="relative z-10">
+                    Book now
+                  </HoverButton2>
+                </motion.div>
+                
+                {/* More Details Button with enhanced hover effects */}
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="relative"
+                >
+                  <motion.div 
+                    initial={{ opacity: 0.6 }}
+                    whileHover={{ opacity: 0.9 }}
+                    className="h-full w-full bg-gray-200 rounded-full bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100 absolute inset-0"
+                  ></motion.div>
+                  <button onClick={scrollToTarget} className="w-auto h-14 px-4 py-2 rounded-full hover:rounded-full transform transition-all duration-500 ease-in-out
+                    bg-transparent hover:w-36 hover:h-36 text-white relative group z-10">
+                    <span className="group-hover:opacity-0 transition-opacity duration-300 font-sofia tracking-widest ease-in-out text-sm">More Details</span>
+                    <motion.div
+                      initial={{ rotate: 0 }}
+                      animate={{ rotate: scrollY > 50 ? 180 : 0 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <GoArrowDown 
+                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"
+                        size={24}
+                      />
+                    </motion.div>
+                  </button>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          </div>
 
-
-
-</div>
-
-  </div>
-  </div>
-  {/* Border effect */}
-  <div className="absolute inset-2 sm:inset-4 md:inset-6 border border-white/20 pointer-events-none z-20"></div>
-</div>
-<section className='w-full  h-full'>
-            <div id="targetSection" className='max-w-6xl mx-auto flex flex-col justify-center items-center py-10 h-[20rem] '>  
-            <div>
-<h2 className="md:text-6xl text-4xl  font-bold font-bonanova gradient-text uppercase"> {supplier?.name}</h2>
-</div>
-    <p className='md:text-xl text-md font-sofia text-[#D9DACD] text-center py-8'>{supplier?.description}</p>
-            </div>
+          {/* Animated border effect */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1.2, duration: 1 }}
+            className="absolute inset-2 sm:inset-4 md:inset-6 border border-white/40 pointer-events-none z-20"
+          ></motion.div>
+        </motion.div>
+   {/* Description section with scroll reveal */}
+   <div id="targetSection" ref={targetSectionRef} className='max-w-6xl mx-auto flex flex-col justify-center items-center py-10'>  
+     <ScrollReveal delay={0.2}>
+       <h2 className="md:text-6xl text-4xl font-bold font-bonanova gradient-text uppercase">{supplier?.name}</h2>
+     </ScrollReveal>
+     
+     <ScrollReveal delay={0.4} className='md:text-xl text-lg font-sofia text-[#D9DACD] text-center py-8'>
+       <p>{supplier?.description}</p>
+     </ScrollReveal>
+   </div>
+   
+   {/* Enhanced wave section */}
+   <section className='relative mt-12'>
+     <div className="ocean">
+       <div>
+         <svg className="waves" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
+         viewBox="0 24 150 28" preserveAspectRatio="none" shapeRendering="auto">
+         <defs>
+           <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+         </defs>
+         <g className="parallax">
+           <motion.use 
+             xlinkHref="#gentle-wave" 
+             x="48" 
+             y="0" 
+             fill="rgba(255,255,255,0.5)" 
+             animate={{ x: ["-100%", "100%"] }}
+             transition={{ repeat: Infinity, duration: 25, ease: "linear" }}
+           />
+           <motion.use 
+             xlinkHref="#gentle-wave" 
+             x="48" 
+             y="3" 
+             fill="rgba(146, 163, 177,0.5)" 
+             animate={{ x: ["0%", "200%"] }}
+             transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
+           />
+           <motion.use 
+             xlinkHref="#gentle-wave" 
+             x="48" 
+             y="5" 
+             fill="rgba(59, 96, 124,0.5)" 
+             animate={{ x: ["-120%", "80%"] }}
+             transition={{ repeat: Infinity, duration: 18, ease: "linear" }}
+           />
+           <motion.use 
+             xlinkHref="#gentle-wave" 
+             x="48" 
+             y="7" 
+             fill="#FFFFFF" 
+             animate={{ x: ["-50%", "150%"] }}
+             transition={{ repeat: Infinity, duration: 15, ease: "linear" }}
+           />
+         </g>
+       </svg>
+     </div>
+   </div>
 </section>
 
-<section className='relative '>
-<div className="ocean">
-
-<div>
-    <svg className="waves" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
-    viewBox="0 24 150 28" preserveAspectRatio="none" shapeRendering="auto">
-    <defs>
-      <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
-    </defs>
-      <g className="parallax">
-        <use xlinkHref="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.5)" />
-        <use xlinkHref="#gentle-wave" x="48" y="3" fill="rgba(146, 163, 177,0.5)" />
-        <use xlinkHref="#gentle-wave" x="48" y="5" fill="rgba(59, 96, 124,0.5)" />
-        <use xlinkHref="#gentle-wave" x="48" y="7" fill="#FFFFFF" />
-      </g>
-    </svg>
-    </div>
-    </div>
-</section>
 <div className="relative w-full min-h-screen bg-white">
   <section className='pt-10'>
   <div className='border-[1px] border-navy-blue-3/40 max-w-7xl mx-auto ' >
     <div className=' bg-[#2F4157]/80   m-4 flex flex-col justify-center items-center border-[1px] border-navy-blue-3/40   '>
     <div className=" w-full max-w-4xl text-white font-sofia flex flex-col gap-10  my-14">
+    <ScrollReveal>
     <div className="border-b-[1px] border-gray-400 ">
       <div className="flex items-center py-4 px-6">
         <div className=" mr-4 text-xl">
@@ -370,165 +518,314 @@ const PublicSupplierDetails: React.FC = () => {
         <div className="font-serif text-xl gradient-text">About</div>
       </div>
     </div>
-
-    <div className="border-b border-gray-400">
-      <div className="flex items-center justify-between py-4 px-6">
-        <div className="flex items-center">
-          <div className=" mr-4 text-xl">
+    </ScrollReveal>
+<ScrollReveal delay={0.1}>
+  <motion.div 
+    whileHover={{ backgroundColor: "rgba(255,255,255,0.05)" }}
+    className="border-b border-gray-400"
+  >
+    <div className="flex items-center justify-between py-4 px-6">
+      <div className="flex items-center">
+        <motion.div 
+          whileHover={{ rotate: 15, scale: 1.2 }}
+          className="mr-4 text-xl"
+        >
           <RiMoneyDollarCircleLine />
-          </div>
-          <div className="font-medium ">Starting Price</div>
-        </div>
-        <div className="">PHP {supplier?.price_range}</div>
+        </motion.div>
+        <div className="font-medium">Starting Price</div>
       </div>
+      <motion.div 
+        initial={{ x: 20, opacity: 0 }}
+        whileInView={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        PHP {supplier?.price_range}
+      </motion.div>
     </div>
+  </motion.div>
+</ScrollReveal>
 
-    <div className="border-b border-gray-400">
-      <div className="flex items-center justify-between py-4 px-6">
-        <div className="flex items-center">
-          <div className=" mr-4 text-xl">
-          <CgWebsite />
+<ScrollReveal delay={0.2}>
+      <motion.div 
+        whileHover={{ backgroundColor: "rgba(255,255,255,0.05)" }}
+        className="border-b border-gray-400"
+      >
+        <div className="flex items-center justify-between py-4 px-6">
+          <div className="flex items-center">
+            <motion.div 
+              whileHover={{ rotate: 15, scale: 1.2 }}
+              className="mr-4 text-xl"
+            >
+              <CgWebsite />
+            </motion.div>
+            <div className="font-medium">Website</div>
           </div>
-          <div className="font-medium ">Website</div>
+          <motion.div 
+            initial={{ x: 20, opacity: 0 }}
+            whileInView={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            {supplier?.website}
+          </motion.div>
         </div>
-        <div className="">{supplier?.website}</div>
-      </div>
-    </div>
+      </motion.div>
+    </ScrollReveal>
 
-    <div className="border-b border-gray-400">
-      <div className="flex items-center justify-between py-4 px-6">
-        <div className="flex items-center">
-          <div className=" mr-4 text-xl">
-          <FiPhoneOutgoing />
+    <ScrollReveal delay={0.3}>
+      <motion.div 
+        whileHover={{ backgroundColor: "rgba(255,255,255,0.05)" }}
+        className="border-b border-gray-400"
+      >
+        <div className="flex items-center justify-between py-4 px-6">
+          <div className="flex items-center">
+            <motion.div 
+              whileHover={{ rotate: 15, scale: 1.2 }}
+              className="mr-4 text-xl"
+            >
+              <FiPhoneOutgoing />
+            </motion.div>
+            <div className="font-medium">Phone</div>
           </div>
-          <div className="font-medium ">Phone</div>
+          <motion.div 
+            initial={{ x: 20, opacity: 0 }}
+            whileInView={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            {supplier?.phone_number}
+          </motion.div>
         </div>
-        <div className="">{supplier?.phone_number}</div>
-      </div>
-    </div>
-    <div className="border-b border-gray-400">
-      <div className="flex items-center justify-between py-4 px-6">
-        <div className="flex items-center">
-          <div className=" mr-4 text-2xl">
-          <TbAddressBook />
+      </motion.div>
+    </ScrollReveal>
+
+    <ScrollReveal delay={0.4}>
+      <motion.div 
+        whileHover={{ backgroundColor: "rgba(255,255,255,0.05)" }}
+        className="border-b border-gray-400"
+      >
+        <div className="flex items-center justify-between py-4 px-6">
+          <div className="flex items-center">
+            <motion.div 
+              whileHover={{ rotate: 15, scale: 1.2 }}
+              className="mr-4 text-2xl"
+            >
+              <TbAddressBook />
+            </motion.div>
+            <div className="font-medium">Address</div>
           </div>
-          <div className="font-medium ">Address</div>
+          <motion.div 
+            initial={{ x: 20, opacity: 0 }}
+            whileInView={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            {supplier?.address_street}, {supplier?.address_city}, {supplier?.address_state} {supplier?.address_zip}
+          </motion.div>
         </div>
-        <div className="">{supplier?.address_street}, {supplier?.address_city}, {supplier?.address_state} {supplier?.address_zip}</div>
-      </div>
-    </div>
+      </motion.div>
+    </ScrollReveal>
   
       <section className='mb-4'>
   <div className="flex flex-col font-sofia gap-4 text-white">
-  <div className="border-b-[1px] border-gray-400 ">
+  <ScrollReveal>
+    <div className="border-b-[1px] border-gray-400">
       <div className="flex items-center py-4 px-6">
-        <div className=" mr-4 text-xl">
-        <IoLogoBuffer className='text-yellow-500/70' />
-        </div>
+        <motion.div 
+          whileHover={{ rotate: 15, scale: 1.2 }}
+          className="mr-4 text-xl"
+        >
+          <IoLogoBuffer className='text-yellow-500/70' />
+        </motion.div>
         <div className="font-serif text-xl gradient-text">Services Offered</div>
       </div>
     </div>
-    {services.map((service, index) => (
-      <div key={index} className="border-b border-gray-400 overflow-hidden">
-        {/* Service header with name and dropdown arrow */}
-        <div 
-          className="flex items-center justify-between p-4 cursor-pointer"
-          onClick={() => toggleService(index)}
-        >
-          <div className="flex items-center text-white">
-            <div className="mr-4 ml-2">
-              {index % 2 === 0 ? (
-                <MdOutlineDesignServices className="text-xl text-white" />
-              ) : (
-                <MdOutlineMiscellaneousServices className="text-xl text-white" />
-              )}
-            </div>
-            <div className="font-medium text-white">
-              {service.service_name}
-            </div>
-          </div>
-          <div className="text-white">
-            {expandedService === index ? (
-              <MdKeyboardArrowUp className="text-xl" />
-            ) : (
-              <MdKeyboardArrowDown className="text-xl" />
-            )}
-          </div>
-        </div>
+    </ScrollReveal>
 
-        {/* Expandable content with transition */}
-        <div className={`
-          px-4
-         
-          transition-all
-          duration-300
-          ease-in-out
-          overflow-hidden
-          ${expandedService === index ? 'max-h-[500px] pb-3' : 'max-h-0'}
-        `}>
-          <div className="mb-2">
-            <div className="text-sm text-white mb-1">Price</div>
-            <div className="text-white">{service.price}</div>
+    {services.map((service, index) => (
+      <ScrollReveal delay={0.1 * (index + 1)} key={index}>
+        <motion.div 
+          whileHover={{ backgroundColor: "rgba(255,255,255,0.05)" }}
+          className="border-b border-gray-400 overflow-hidden"
+        >
+          <div 
+            className="flex items-center justify-between p-4 cursor-pointer"
+            onClick={() => toggleService(index)}
+          >
+            <div className="flex items-center text-white">
+              <motion.div 
+                whileHover={{ rotate: 15, scale: 1.2 }}
+                className="mr-4 ml-2"
+              >
+                {index % 2 === 0 ? (
+                  <MdOutlineDesignServices className="text-xl text-white" />
+                ) : (
+                  <MdOutlineMiscellaneousServices className="text-xl text-white" />
+                )}
+              </motion.div>
+              <div className="font-medium text-white">
+                {service.service_name}
+              </div>
+            </div>
+            <motion.div 
+              animate={{ rotate: expandedService === index ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+              className="text-white"
+            >
+              <MdKeyboardArrowDown className="text-xl" />
+            </motion.div>
           </div>
-          <div>
-            <div className="text-sm text-white mb-1">Description</div>
-            <div className="text-white text-sm">{service.description}</div>
-          </div>
-        </div>
-      </div>
+
+          <motion.div 
+            animate={{ 
+              height: expandedService === index ? "auto" : 0,
+              opacity: expandedService === index ? 1 : 0
+            }}
+            transition={{ duration: 0.3 }}
+            className="px-4 overflow-hidden"
+          >
+            <div className="mb-2">
+              <div className="text-sm text-white mb-1">Price</div>
+              <motion.div 
+                initial={{ x: 20, opacity: 0 }}
+                animate={{ x: expandedService === index ? 0 : 20, opacity: expandedService === index ? 1 : 0 }}
+                transition={{ delay: 0.1 }}
+                className="text-white"
+              >
+                {service.price}
+              </motion.div>
+            </div>
+            <div>
+              <div className="text-sm text-white mb-1">Description</div>
+              <motion.div 
+                initial={{ x: 20, opacity: 0 }}
+                animate={{ x: expandedService === index ? 0 : 20, opacity: expandedService === index ? 1 : 0 }}
+                transition={{ delay: 0.2 }}
+                className="text-white text-sm"
+              >
+                {service.description}
+              </motion.div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </ScrollReveal>
     ))}
   </div>
 </section>
-  
-  <section>
-  <div className="p-10">
-  <button onClick={() => navigate(`/suppliers/${supplier.id}/book`)}
-   className="w-auto  h-14 px-4 py-2 rounded-full  hover:rounded-full transform transition-all duration-500 ease-in-out
-                     hover:bg-[#2F4157] bg-[#2F4157] hover:w-36 hover:h-36 text-white relative group">
-        <span className="group-hover:opacity-0 transition-opacity duration-300 font-sofia tracking-widest ease-in-out">Book Now</span>
-        <    GoArrowUpRight
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"
-          size={24}
-        />
-      </button>
-
-
-
-</div>
-
-  </section>
+<ScrollReveal delay={0.6}>
+                      <section>
+                          <div className="p-10">
+                            <motion.button 
+                             onClick={() => navigate(`/suppliers/${supplier.id}/book`)}
+                              className="w-auto h-14 px-4 py-2 rounded-full hover:rounded-full transform transition-all duration-500 ease-in-out
+                                hover:bg-[#2F4157] bg-[#2F4157] hover:w-36 hover:h-36 text-white relative group"
+                              whileHover={{ scale: 1.05, boxShadow: "0px 0px 15px rgba(255,255,255,0.3)" }}
+                              whileTap={{ scale: 0.98 }}
+                            >
+                              <span className="group-hover:opacity-0 transition-opacity duration-300 font-sofia tracking-widest ease-in-out">Book Now</span>
+                              <div
+                                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white z-50"
+                              >
+                                <GoArrowUpRight size={24} />
+                              </div>
+                            </motion.button>
+                          </div>
+                        </section>
+                      </ScrollReveal>
+ 
   </div>
   
     </div>
 </div>
 </section>
 
-<section  >
-     {/* supplier Gallery */}
-     <div className="px-8 sm:px-12 lg:mx-16 my-10">
-     
-     <div className="masonry columns-2 md:columns-3">
-       {supplierImages.length > 0 ? (
-
-         supplierImages.map((supplierImage) => (
-           <div key={supplierImage.id} className="relative group break-inside-avoid mb-8">
-             <img src={supplierImage.image_url} className="w-full h-auto " />
-           </div>
-         ))
-       ) : (
-         <div className="bg-gray-200 rounded-md p-4 flex items-center justify-center ">
-           <p className="text-gray-600">No images found</p>
-         </div>
-       )}
-     </div>
-   </div>
-   <div >
-            {supplierId ? (
-                <PublicSocialLinks supplierId={supplierId} />
-            ) : (
-                <div>Supplier ID not found.</div> // Or any other fallback UI
-            )}
-            </div>
+<section>
+  <ScrollReveal>
+    <div className="px-8 sm:px-12 lg:mx-16 my-24">
+      <StaggeredReveal staggerDelay={0.2}>
+      <div className="w-full">
+  {supplierImages.length > 0 ? (
+    <div className="masonry columns-2 md:columns-3">
+      {supplierImages.map((supplierImage, index) => (
+        <motion.div 
+          key={supplierImage.id} 
+          className="relative group break-inside-avoid mb-4"
+          variants={{
+            hidden: { opacity: 0, scale: 0.8 },
+            visible: { 
+              opacity: 1, 
+              scale: 1,
+              transition: { duration: 0.6 }
+            }
+          }}
+          whileHover={{ 
+            scale: 1.02, 
+            transition: { duration: 0.2 } 
+          }}
+        >
+          <motion.img 
+            src={supplierImage.image_url} 
+            className="w-full h-auto rounded-lg"
+            layoutId={`image-${supplierImage.id}`}
+          />
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileHover={{ opacity: 1 }}
+            className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent rounded-lg flex items-end justify-center p-4"
+          >
+            <p className="text-white text-sm font-sofia">Gallery Image {index + 1}</p>
+          </motion.div>
+        </motion.div>
+      ))}
+    </div>
+  ) : (
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="min-h-[300px] bg-gradient-to-br from-[#2F4157]/5 to-[#2F4157]/20 rounded-xl p-8 flex flex-col items-center justify-center gap-6"
+    >
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+        className="w-20 h-20 rounded-full bg-[#2F4157]/10 flex items-center justify-center"
+      >
+        <svg 
+          className="w-10 h-10 text-[#2F4157]/40" 
+          fill="none" 
+          viewBox="0 0 24 24" 
+          stroke="currentColor"
+        >
+          <path 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            strokeWidth={1.5} 
+            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" 
+          />
+        </svg>
+      </motion.div>
+      <motion.p 
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.3 }}
+        className="text-[#2F4157]/70 text-lg font-sofia text-center"
+      >
+       The supplier hasn't uploaded any gallery images yet. Check back later for visual updates of their services.
+      </motion.p>
+    </motion.div>
+  )}
+</div>
+      </StaggeredReveal>
+    </div>
+  </ScrollReveal>
+  
+  <ScrollReveal>
+    <div>
+      {supplierId ? (
+        <PublicSocialLinks supplierId={supplierId} />
+      ) : (
+        <div>Supplier ID not found.</div>
+      )}
+    </div>
+  </ScrollReveal>
 </section>
 
             {/* Availability Calendar Section */}
@@ -567,11 +864,7 @@ const PublicSupplierDetails: React.FC = () => {
        
   
         </div>
-       
-    
-      
-      </div>
-    
+
     </>
     );
 };

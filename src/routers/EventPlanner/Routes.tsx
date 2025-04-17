@@ -16,6 +16,8 @@ import EPCalendar from '../../pages/EventPlanner/EPCalendar';
 import ExampleProfile from '../../pages/EventPlanner/exampleProfile';
 
 import AttendeeManagementPage from '../../components/payment/EventCreator/attendee';
+import Venues from '../../pages/List/Venues';
+import Supplier from '../../pages/List/Supplier';
 
 
   const routes: RouteObject[] = [
@@ -27,6 +29,8 @@ import AttendeeManagementPage from '../../components/payment/EventCreator/attend
   { path: '/UpdateInfo', element: <UpdateInfo /> },
   { path: '/Calendar', element: <EPCalendar /> },
   { path: '/exampleProfile', element: <ExampleProfile /> },
+  { path: '/Venue-List', element: <Venues /> },
+  { path: '/Supplier-List', element: <Supplier /> },
 
 
   { path: '/EventList', element: <EventListing /> },

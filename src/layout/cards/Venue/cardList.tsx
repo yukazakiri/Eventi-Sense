@@ -4,18 +4,71 @@ import Card from './cardDesign';
 import { useNavigate } from 'react-router-dom';
 import imagefallback from '../../../assets/images/fallback.png';
 import { HoverButton4 } from '../../../components/Button/button-hover';
+import { motion } from 'framer-motion';
 
 type CardVenuesProps = {
     venues?: any[];
     limit?: number;
     showAll?: boolean;
     handleViewLess?: () => void;
+    loading?: boolean; // Add loading prop
 };
 
-const CardVenues: React.FC<CardVenuesProps> = ({ venues = [], limit, showAll = false, handleViewLess }) => {
+const VenueSkeleton = () => (
+  <motion.div
+    initial={{ opacity: 0.6 }}
+    animate={{ opacity: 1 }}
+    transition={{ repeat: Infinity, duration: 1, repeatType: "reverse" }}
+    className="overflow-hidden h-full rounded-xl shadow-2xl flex flex-col bg-gray-100"
+  >
+    {/* Image Skeleton */}
+    <div className="w-full h-48 bg-gray-200 animate-pulse" />
+    
+    {/* Content Skeleton */}
+    <div className="p-4 space-y-4">
+      {/* Venue Name */}
+      <div className="h-6 bg-gray-200 rounded w-3/4 animate-pulse" />
+      
+      {/* Location and Capacity */}
+      <div className="flex justify-between">
+        <div className="h-4 bg-gray-200 rounded w-1/3 animate-pulse" />
+        <div className="h-4 bg-gray-200 rounded w-1/4 animate-pulse" />
+      </div>
+      
+      {/* Price */}
+      <div className="h-5 bg-gray-200 rounded w-1/4 animate-pulse" />
+      
+      {/* Venue Types */}
+      <div className="flex gap-2">
+        {[1, 2].map((tag) => (
+          <div key={tag} className="h-6 w-16 bg-gray-200 rounded-full animate-pulse" />
+        ))}
+      </div>
+    </div>
+  </motion.div>
+);
+
+const CardVenues: React.FC<CardVenuesProps> = ({ 
+  venues = [], 
+  limit, 
+  showAll = false, 
+  handleViewLess,
+  loading = false // Default to false
+}) => {
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
     const venuesPerPage = 9;
+
+    // If loading, show skeletons
+    if (loading) {
+      return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {Array.from({ length: limit || 6 }).map((_, index) => (
+            <VenueSkeleton key={index} />
+          ))}
+        </div>
+      );
+    }
 
     const handleCardClick = (venueId: number) => {
         navigate(`/venue/${venueId}`);

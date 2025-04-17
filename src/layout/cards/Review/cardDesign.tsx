@@ -83,7 +83,7 @@ const ReviewSection: React.FC = () => {
     <section className="pb-12">
       <div className="container mx-auto px-4">
         {/* Section title */}
-        <h2 className="text-4xl font-bold text-center py-[5rem] gradient-text flex justify-center">
+        <h2 className="text-4xl font-bold text-center py-[5rem] text-gray-800/50 font-bonanova flex justify-center uppercase">
           What Our Customers Say
         </h2>
         {/* Review cards grid */}

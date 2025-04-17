@@ -58,7 +58,10 @@ const Card: React.FC<CardProps> = ({ id, title, description, image,  role }) => 
     {/* Button */}
     <button
       className="relative h-fit w-fit px-[1.4em] py-[0.7em] mt-2 border-[1px] border-sky-300/30 rounded-full flex justify-center items-center gap-[0.7em] overflow-hidden group/btn hover:border-sky-300/50 hover:shadow-lg hover:shadow-sky-500/20 active:scale-95 transition-all duration-300 backdrop-blur-[12px] bg-sky-500/10"
-      onClick={() => navigate(`/Event-Planner-Dashboard/Events/${id}/attendees`)}
+      onClick={() => {
+        const basePath = role === 'supplier' ? '/Supplier-Dashboard' : role === 'event_planner' ? '/Event-Planner-Dashboard' : '/Venue-Manager-Dashboard';
+        navigate(`${basePath}/Events/${id}/attendees`);
+      }}
     >
       <div className="absolute inset-0 bg-gradient-to-r from-sky-600/40 via-sky-400/50 to-sky-600/40 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700"></div>
       <p className="relative z-10 font-medium tracking-wide">Manage Attendees</p>

@@ -4,6 +4,7 @@ import supabase from '../api/supabaseClient';
 import Sidebar from '../components/Sidebar/EventPlanner';
 import routes from '../routers/EventPlanner/Routes';
 import { getCurrentUser, fetchProfile } from '../api/utiilty/profiles';
+import Notification from '../components/NewNotification/notification';
 import UserProfile from '../components/Profile/StockHoldersProfileAvatar';
 import { Profile } from '../types/profile';
 import { FiMoon, FiSun } from 'react-icons/fi';
@@ -104,10 +105,14 @@ function EventPlannerDashboard() {
 
   return (
     <div className="flex h-screen bg-blue-light-1 dark:bg-gray-950">
+      
       <Sidebar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="flex justify-end items-center p-4 bg-white dark:border-b-[1px] border-gray-500 dark:bg-gray-950 dark:border-gray-700 shadow-md z-10 font-sofia text-gray-800">
           <div className="flex items-center gap-2">
+          <div >
+        <Notification userId={user?.id}/>
+       </div>
             <div>
               <button
                 onClick={(e) => {

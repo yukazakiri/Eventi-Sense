@@ -118,7 +118,7 @@ function Notification({ userId }: NotificationProps) {
             {/* Notification Bell Icon with Badge */}
             <button
                 onClick={toggleNotifications}
-                className="p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-300 relative"
+                className="p-2 rounded-full hover:bg-gray-100/10  text-gray-600 dark:text-gray-200 focus:outline-none dark:border-gray-700 border-[1px] border-gray-700 focus:ring-2 focus:ring-blue-300 relative"
                 aria-label="Toggle notifications"
             >
                 <Bell size={24} />
@@ -133,7 +133,7 @@ function Notification({ userId }: NotificationProps) {
             
             {/* Notification Panel (conditionally rendered) */}
             {showNotifications && (
-                <div className="absolute right-0 mt-2  bg-white z-10 dark:bg-gray-800 rounded-xl w-auto">
+                <div className="absolute right-0 mt-2  bg-white z-10 dark:bg-gray-800  rounded-xl w-auto">
                     <div className="">
                
                         <NotificationsComponent userId={userId} />
