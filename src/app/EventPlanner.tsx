@@ -8,6 +8,7 @@ import Notification from '../components/NewNotification/notification';
 import UserProfile from '../components/Profile/StockHoldersProfileAvatar';
 import { Profile } from '../types/profile';
 import { FiMoon, FiSun } from 'react-icons/fi';
+import { MoonLoader } from "react-spinners";
 
 function EventPlannerDashboard() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -97,8 +98,12 @@ function EventPlannerDashboard() {
 
   if (loading) {
     return (
-      <div className="loader-container">
-        <div className="loader"></div>
+      <div className="loader-container flex items-center justify-center h-screen bg-gray-950">
+        <MoonLoader
+          color="#ffffff"
+          size={60}
+          speedMultiplier={1}
+        />
       </div>
     );
   }
@@ -107,7 +112,7 @@ function EventPlannerDashboard() {
     <div className="flex h-screen bg-blue-light-1 dark:bg-gray-950">
       
       <Sidebar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col ">
         <header className="flex justify-end items-center p-4 bg-white dark:border-b-[1px] border-gray-500 dark:bg-gray-950 dark:border-gray-700 shadow-md z-10 font-sofia text-gray-800">
           <div className="flex items-center gap-2">
           <div >

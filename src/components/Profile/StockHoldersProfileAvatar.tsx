@@ -41,6 +41,15 @@ function ProfileAvatar({ user, profile }: ProfileAvatarProps) {
       // Record logout activity
       const { data: { user: currentUser } } = await supabase.auth.getUser();
       if (currentUser) {
+        // Update last_online and online status in profiles table
+        await supabase
+          .from('profiles')
+          .update({
+            last_online: new Date().toISOString(),
+            online: false
+          })
+          .eq('id', currentUser.id);
+
         const { error: activityError } = await supabase
           .from('user_activity')
           .update({ logout_time: new Date().toISOString() })

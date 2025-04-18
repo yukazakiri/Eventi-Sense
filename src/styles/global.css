@@ -1,6 +1,11 @@
 /* src/styles/global.css */
 @import url('https://fonts.googleapis.com/css2?family=Sofia+Sans:ital@0;1&display=swap');
+
+
 /* Prevent layout shift during transitions */
+:root {
+  overscroll-behavior: none;
+}
 html, body {
   overflow-x: hidden;
 }

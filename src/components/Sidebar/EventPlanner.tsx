@@ -11,10 +11,12 @@ import { TbLayoutDashboardFilled } from 'react-icons/tb';
 import { HiOutlineDotsHorizontal } from 'react-icons/hi';
 import { PiConfetti, PiListPlus } from 'react-icons/pi';
 import { IoTicketOutline } from 'react-icons/io5';
-import { LuCalendarCheck } from 'react-icons/lu';
+import { LuCalendarCheck, LuMessageCircleMore } from 'react-icons/lu';
 import { PulseLoader } from 'react-spinners';
 import { getCurrentUser } from '../../api/utiilty/profiles';
 import { fetchEventPlanner } from '../../api/utiilty/eventplanner';
+import { HiOutlineUserGroup } from 'react-icons/hi'; // Add this import at the top with other icons
+import { useUnreadMessages } from '../messenger/hooks/unreadMessage'; // <-- Add this import
 
 interface SidebarProps {
     isSidebarOpen: boolean;
@@ -73,7 +75,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ to, icon, label, isCollapsed,
                     className={({ isActive }) =>
                         `flex items-center p-2 mx-5 font-medium rounded-lg relative group ${
                             isActive
-                            ? 'bg-indigo-50 dark:bg-sky-400/10 text-sky-500 dark:text-sky-400 transition-colors duration-200 shadow-sky-500/20 dark:shadow-sky-400/20' 
+                            ? 'bg-indigo-50 dark:bg-sky-400/10 text-sky-500 dark:text-sky-400 transition-colors duration-200 shadow-sky-500/20 dark:shadow-sky-400/20 shadow-lg' 
                             : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400'
                         }`
                     }
@@ -144,6 +146,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setSidebarOpen }) => {
     const [error, setError] = useState<string | null>(null);
     const [hasEventPlanner, setHasEventPlanner] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [currentUserId, setCurrentUserId] = useState<string | null>(null); // <-- Add this state
+
+    // Get unread messages (returns array of sender IDs with unread messages)
+    const unreadFromUsers = useUnreadMessages(currentUserId);
+
+    // Calculate total unread count (if you want the total, not just per-user)
+    const unreadCount = unreadFromUsers?.length || 0;
 
     // Auto-expand sidebar on hover
     const expandSidebar = () => {
@@ -165,6 +174,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setSidebarOpen }) => {
         const fetchData = async () => {
             const user = await getCurrentUser();
             if (user) {
+                setCurrentUserId(user.id); // <-- Set current user ID for unread hook
                 try {
                     const eventPlanner = await fetchEventPlanner(user.id);
                     if (eventPlanner) {
@@ -305,14 +315,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setSidebarOpen }) => {
                             <HiOutlineDotsHorizontal className='flex justify-center text-[1.6rem] text-gray-400'/>
                         </div>
                     }
-                            <h2 className={`text-sm uppercase my-4 ml-4 ${isCollapsed ? 'hidden' : 'block'} text-gray-600`}>events</h2>
+                            <h2 className={`text-sm uppercase my-4 ml-4 ${isCollapsed ? 'hidden' : 'block'} text-gray-600`}>Management</h2>
                             <nav>
                                 <ul className="space-y-2 text-gray-800">
                                     <SidebarItem
                                         to="#"
                                       
                                         icon={<PiConfetti className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} 
-                                        label="Events " 
+                                        label="Events Management " 
                                         isCollapsed={isCollapsed} 
                                         dropdownItems={[
                                             {
@@ -325,10 +335,75 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setSidebarOpen }) => {
                                             }
                                         ]}
                                     />
+                                 
+                                </ul>
+                            </nav>
+                         
+                            <nav className='my-4'>
+                                <ul className="space-y-2 text-gray-800">
+                                    <SidebarItem 
+                                        to="/Event-Planner-Dashboard/EventList" 
+                                        icon={<HiOutlineUserGroup className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} 
+                                        label="Attendee Management" 
+                                        isCollapsed={isCollapsed} 
+                                    />
+                                </ul>
+                            </nav>
+                     
+                            <nav>
+                                <ul className="space-y-2 text-gray-800">
+                                 
                                     <SidebarItem 
                                         to="/Event-Planner-Dashboard/TicketList" 
                                         icon={<IoTicketOutline className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} 
-                                        label="Ticket List" 
+                                        label="Ticket Management" 
+                                        isCollapsed={isCollapsed} 
+                                    />
+                                </ul>
+                            </nav>
+                            {isCollapsed &&
+                        <div className='flex justify-center my-4'>
+                            <HiOutlineDotsHorizontal className='flex justify-center text-[1.6rem] text-gray-400'/>
+                        </div>
+                    }
+                            <h2 className={`text-sm uppercase my-4 ml-4 ${isCollapsed ? 'hidden' : 'block'} text-gray-600`}>Budget Management</h2>
+                            <nav>
+                                <ul className="space-y-2 text-gray-800">
+                                 
+                                    <SidebarItem 
+                                        to="/Event-Planner-Dashboard/BudgetTracker" 
+                                        icon={<IoTicketOutline className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} 
+                                        label="Budget Tracker" 
+                                        isCollapsed={isCollapsed} 
+                                    />
+                                </ul>
+                            </nav>
+                            {isCollapsed &&
+                        <div className='flex justify-center my-4'>
+                            <HiOutlineDotsHorizontal className='flex justify-center text-[1.6rem] text-gray-400'/>
+                        </div>
+                    }
+                    
+                            <h2 className={`text-sm uppercase my-4 ml-4 ${isCollapsed ? 'hidden' : 'block'} text-gray-600`}>Messages</h2>
+                            <nav>
+                                <ul className="space-y-2 text-gray-800">
+                                 
+                                    <SidebarItem 
+                                        to="/Event-Planner-Dashboard/messenger" 
+                                        icon={
+                                            <div className="relative">
+                                                <LuMessageCircleMore className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />
+                                                {unreadCount > 0 && (
+                                                    <span
+                                                        className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-1.5 py-0.5 min-w-[18px] flex items-center justify-center"
+                                                        style={{ minWidth: 18, height: 18 }}
+                                                    >
+                                                        {unreadCount}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        }
+                                        label="Chat" 
                                         isCollapsed={isCollapsed} 
                                     />
                                 </ul>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+
 import { NavLink } from 'react-router-dom';
 import {
     MdOutlineManageAccounts,
@@ -10,8 +10,12 @@ import { TbLayoutDashboardFilled } from 'react-icons/tb';
 import { HiOutlineDotsHorizontal } from 'react-icons/hi';
 import { PiConfetti } from 'react-icons/pi';
 import { IoTicketOutline } from 'react-icons/io5';
-import { LuCalendarCheck } from 'react-icons/lu';
+import { LuCalendarCheck,  LuMessageCircleMore } from 'react-icons/lu';
 import { PulseLoader } from 'react-spinners';
+import { useEffect, useState } from 'react';
+import { getCurrentUser } from '../../api/utiilty/profiles';
+import { useUnreadMessages } from '../messenger/hooks/unreadMessage';
+
 
 interface SidebarProps {
     isSidebarOpen: boolean;
@@ -46,8 +50,8 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ to, icon, label, isCollapsed,
                 <div
                     className={`flex items-center p-2 mx-5 font-medium rounded-lg relative group cursor-pointer ${
                         isDropdownOpen
-                        ? 'bg-indigo-50 dark:bg-sky-400/10 text-sky-500 dark:text-sky-400 transition-colors duration-200 shadow-sky-500/20 dark:shadow-sky-400/20' 
-                        : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400'
+                        ? 'bg-indigo-50 dark:bg-sky-400/10 text-sky-500 dark:text-sky-400 transition-colors duration-200 shadow-sky-500/20 dark:shadow-sky-400/20 shadow-lg' 
+                        : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 transition-all duration-200'
                     }`}
                     onClick={handleClick}
                 >
@@ -70,8 +74,8 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ to, icon, label, isCollapsed,
                     className={({ isActive }) =>
                         `flex items-center p-2 mx-5 font-medium rounded-lg relative group ${
                             isActive
-                            ? 'bg-indigo-50 dark:bg-sky-400/10 text-sky-500 dark:text-sky-400 transition-colors duration-200 shadow-sky-500/20 dark:shadow-sky-400/20' 
-                            : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400'
+                            ? 'bg-indigo-50 dark:bg-sky-400/10 text-sky-500 dark:text-sky-400 transition-colors duration-200 shadow-sky-500/20 dark:shadow-sky-400/20 shadow-lg' 
+                            : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 transition-all duration-200'
                         }`
                     }
                     onClick={() => {
@@ -137,6 +141,19 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ to, icon, label, isCollapsed,
 const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setSidebarOpen }) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isLoading, _setIsLoading] = useState(false);
+    const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+    // Get unread messages for this user
+    const unreadFromUsers = useUnreadMessages(currentUserId);
+    const unreadCount = unreadFromUsers?.length || 0;
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const user = await getCurrentUser();
+            if (user) setCurrentUserId(user.id);
+        };
+        fetchUser();
+    }, []);
 
     // Auto-expand sidebar on hover
     const expandSidebar = () => {
@@ -288,6 +305,25 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setSidebarOpen }) => {
                                 icon={<IoTicketOutline className={`text-xl ${isCollapsed ? 'mx-auto' : ''}`} />} 
                                 label="Ticket List" 
                                 isCollapsed={isCollapsed} 
+                            />
+                            {/* Add Messages sidebar item with unread badge */}
+                            <SidebarItem 
+                                to="/Venue-Manager-Dashboard/messenger"
+                                icon={
+                                    <div className="relative ">
+                                        <LuMessageCircleMore className={` text-xl ${isCollapsed ? 'mx-auto' : ''}`} />
+                                        {unreadCount > 0 && (
+                                            <span
+                                                className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-1.5 py-0.5 min-w-[18px] flex items-center justify-center"
+                                                style={{ minWidth: 18, height: 18 }}
+                                            >
+                                                {unreadCount}
+                                            </span>
+                                        )}
+                                    </div>
+                                }
+                                label="Chat"
+                                isCollapsed={isCollapsed }
                             />
                         </ul>
                     </nav>

@@ -1,9 +1,10 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import EventPlannerinfo from "./Register";
 import HomeDetails from "./HomeDetails";
 import { getCurrentUser } from "../../api/utiilty/profiles";
 import { fetchEventPlanner } from "../../api/utiilty/eventplanner";
-import { PulseLoader } from 'react-spinners';
+import { MoonLoader } from "react-spinners";
+
 
 interface EventPlannerProfile {
   id: string;
@@ -46,10 +47,14 @@ export default function Home() {
   if (isLoading) {
     return (
       <div className="dark:bg-gray-950 scrollbar-hide">
-      <div className="flex justify-center items-center h-screen">
-        <PulseLoader color="#0000ff" />
+        <div className="flex justify-center items-center h-screen">
+          <MoonLoader
+            color="#ffffff"
+            size={60}
+            speedMultiplier={1}
+          />
+        </div>
       </div>
-    </div>
     );
   }
 

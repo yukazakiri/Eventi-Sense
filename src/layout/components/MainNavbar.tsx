@@ -8,6 +8,7 @@ import UserFloatingActionButton from './UserFloating';
 import { RiMenu4Fill } from "react-icons/ri";
 
 
+
 function MainNavbar() {
   const navigate = useNavigate();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -17,7 +18,7 @@ function MainNavbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [visible, setVisible] = useState(true);
   // Force isLoading to false initially to ensure navbar displays
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, _setIsLoading] = useState(false);
 
   // Memoize profile with deep comparison
   const memoizedProfile = useMemo(() => profile, [JSON.stringify(profile)]);

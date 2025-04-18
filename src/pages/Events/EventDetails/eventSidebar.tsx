@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaCheckCircle, FaHourglassHalf, FaCalendarAlt, FaTimesCircle } from 'react-icons/fa';
+
 
 interface EventSidebarProps {
     event: any;

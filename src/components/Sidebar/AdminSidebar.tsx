@@ -13,6 +13,8 @@ import { RiUserSettingsLine } from 'react-icons/ri';
 import { TbReportAnalytics } from 'react-icons/tb';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
+import { useUnreadMessages } from '../messenger/hooks/unreadMessage';
+import { getCurrentUser } from '../../api/utiilty/profiles';
 
 // Define route configuration for easy management
 const ROUTES = [
@@ -66,6 +68,19 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setSidebarOpen }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const navigate = useNavigate();
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  // Unread messages
+  const unreadFromUsers = useUnreadMessages(currentUserId);
+  const unreadCount = unreadFromUsers?.length || 0;
+
+  React.useEffect(() => {
+    const fetchUser = async () => {
+      const user = await getCurrentUser();
+      if (user) setCurrentUserId(user.id);
+    };
+    fetchUser();
+  }, []);
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
@@ -139,13 +154,20 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setSidebarOpen }) => {
                 }
               >
                 <route.icon className={`text-2xl ${isCollapsed ? 'mx-auto' : ''} transition-all duration-300 ease-in-out group-hover:text-blue-500 dark:group-hover:text-sky-400`} />
-                
                 {!isCollapsed && (
                   <span className="ml-3 font-medium transition-all duration-300 ease-in-out group-hover:translate-x-1">
                     {route.name}
+                    {/* Only show badge for Support & Help */}
+                    {route.name === "Support & Help" && unreadCount > 0 && (
+                      <span
+                        className="ml-2 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5 min-w-[18px] flex items-center justify-center"
+                        style={{ minWidth: 18, height: 18 }}
+                      >
+                        {unreadCount}
+                      </span>
+                    )}
                   </span>
                 )}
-                
                 {isCollapsed && (
                   <div className="hidden group-hover:block absolute left-16 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 border-l-4 border-blue-500 dark:border-sky-500 rounded-r-lg shadow-xl whitespace-nowrap z-50 transition-all duration-300 ease-in-out opacity-0 group-hover:opacity-100 transform -translate-x-3 group-hover:translate-x-0">
                     {route.name}

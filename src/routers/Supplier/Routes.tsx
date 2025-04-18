@@ -14,7 +14,7 @@ import TicketList from '../../pages/Events/TicketsList';
 import RequestTicket from '../../pages/Events/RequestTickets';
 import UserBookings from '../../pages/Booking/RequestBooking';
 import AttendeeManagementPage from '../../components/payment/EventCreator/attendee';
-
+import Main from '../../components/messenger/Main'
 
 const routes: RouteObject[] = [
   { path: '/', element: <Home /> },
@@ -32,6 +32,7 @@ const routes: RouteObject[] = [
   { path: '/tickets', element: <RequestTicket   /> },
   { path: '/Requested-Bookings', element: <UserBookings/> },
   {path: '/Events/:eventId/attendees', element: <AttendeeManagementPage/> },
+  {path: '/messenger', element: <Main/> },
 
 
 ];

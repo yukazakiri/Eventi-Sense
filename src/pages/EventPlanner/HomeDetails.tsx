@@ -1,140 +1,80 @@
-
-
 import { useEffect, useState } from 'react';
 import { fetchEventPlanner, EventPlannerFormData } from '../../api/utiilty/eventplanner';
+import { fetchTicketStats, TicketStats } from '../../api/utiilty/ticketsData';
+import { getBudgetStats, BudgetStats } from '../../components/Budget/budgetService';
 import supabase from '../../api/supabaseClient';
-import { Line } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-} from 'chart.js';
+import { MoonLoader } from "react-spinners";
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { ChartOptions } from 'chart.js';
+import { 
+  Building2,  
+  Users, 
+  PieChart,
+  DollarSign,
+  Wallet,
+  CalendarPlus,
 
-// Register ChartJS components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+} from 'lucide-react';
 
-// Add new state for view type
+// Add this to your imports at the top
+import EventsTable from './EventsTable';
+
+
+
+ChartJS.register(ArcElement, Tooltip, Legend);
+
 function Home() {
   const [user, setUser] = useState<any>(null);
   const [eventPlanner, setEventPlanner] = useState<EventPlannerFormData | null>(null);
-  const [eventCount, setEventCount] = useState(0);
-  const [ticketCount, setTicketCount] = useState(0);
-  const [completedOrdersCount, setCompletedOrdersCount] = useState(0);
+  const [ticketStats, setTicketStats] = useState<TicketStats>({
+    eventCount: 0,
+    ticketCount: 0,
+    completedOrdersCount: 0
+  });
   const [loading, setLoading] = useState(true);
-  const [viewType, setViewType] = useState<'month' | 'week'>('month');
-  const [revenueData, setRevenueData] = useState<{ labels: string[], data: number[] }>({
-    labels: [],
-    data: []
+  const [budgetStats, setBudgetStats] = useState<BudgetStats>({
+    totalBudgets: 0,
+    totalBudgetAmount: 0,
+    totalExpenses: 0
   });
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-  // Move isDarkMode state to the top with other state declarations
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('darkMode') === 'true';
-    }
-    return false;
-  });
-
-  // Keep all useEffect hooks together
+  // Check for dark mode on mount and when theme changes
   useEffect(() => {
-    localStorage.setItem('darkMode', isDarkMode.toString());
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDarkMode]);
+    const checkDarkMode = () => {
+      setIsDarkMode(document.documentElement.classList.contains('dark'));
+    };
+    
+    // Check initial state
+    checkDarkMode();
+    
+    // Set up observer to detect theme changes
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, { 
+      attributes: true, 
+      attributeFilter: ['class'] 
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Get current user
         const { data: { user: currentUser } } = await supabase.auth.getUser();
         
         if (currentUser) {
           setUser(currentUser);
+          const [plannerData, ticketData, budgetData] = await Promise.all([
+            fetchEventPlanner(currentUser.id),
+            fetchTicketStats(currentUser.id),
+            getBudgetStats(currentUser.id)
+          ]);
           
-          // Fetch event planner details
-          const plannerData = await fetchEventPlanner(currentUser.id);
           setEventPlanner(plannerData);
-          
-          // First fetch all events created by this organizer
-          const { data: events, error: eventsError } = await supabase
-            .from('events')
-            .select('id')
-            .eq('organizer_id', currentUser.id);
-            
-          if (eventsError) throw eventsError;
-          
-          setEventCount(events?.length || 0);
-          
-          // If there are events, fetch tickets and orders
-          if (events && events.length > 0) {
-            const eventIds = events.map(event => event.id);
-            
-            // Fetch tickets for these events
-            const { data: tickets, error: ticketsError } = await supabase
-              .from('tickets')
-              .select('id, quantity')
-              .in('event_id', eventIds);
-              
-            if (!ticketsError && tickets) {
-              // Calculate total tickets
-              const totalTickets = tickets.reduce((sum, ticket) => sum + (ticket.quantity || 0), 0);
-              setTicketCount(totalTickets);
-  
-              // Get ticket IDs to fetch orders
-              const ticketIds = tickets.map(ticket => ticket.id);
-              
-              // Fetch completed orders with amount for revenue calculation
-              const { data: orders, error: ordersError } = await supabase
-                .from('orders')
-                .select('created_at, amount')
-                .in('ticket_id', ticketIds)
-                .eq('payment_status', 'completed')
-                .order('created_at');
-  
-              if (!ordersError && orders) {
-                setCompletedOrdersCount(orders.length);
-  
-                // Process orders for revenue chart based on view type
-                const revenueByPeriod: { [key: string]: number } = {};
-                
-                orders.forEach(order => {
-                  const date = new Date(order.created_at);
-                  let periodKey;
-                  
-                  if (viewType === 'month') {
-                    periodKey = date.toLocaleString('default', { month: 'short', year: 'numeric' });
-                  } else {
-                    // Get week number and year
-                    const weekNumber = getWeekNumber(date);
-                    periodKey = `Week ${weekNumber}, ${date.getFullYear()}`;
-                  }
-                  
-                  revenueByPeriod[periodKey] = (revenueByPeriod[periodKey] || 0) + (order.amount || 0);
-                });
-
-                setRevenueData({
-                  labels: Object.keys(revenueByPeriod),
-                  data: Object.values(revenueByPeriod)
-                });
-              }
-            }
-          }
+          setTicketStats(ticketData);
+          setBudgetStats(budgetData);
         }
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
@@ -144,125 +84,191 @@ function Home() {
     };
 
     fetchData();
-  }, [viewType]); // Add viewType to dependency array
+  }, []); 
 
-  // Add helper function for week calculation
-  const getWeekNumber = (date: Date) => {
-    const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-    const pastDaysOfYear = (date.getTime() - firstDayOfYear.getTime()) / 86400000;
-    return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
-  };
-
-  if (loading) {
-    return <div>Loading dashboard...</div>;
-  }
-
-  if (!user) {
-    return <div>Please log in to view your dashboard</div>;
-  }
-
-  // Remove isDarkMode state and effect
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-        labels: {
-          color: isDarkMode ? '#fff' : '#000',
-        }
-      },
-      title: {
-        display: true,
-        text: `${viewType === 'month' ? 'Monthly' : 'Weekly'} Revenue`,
-        color: isDarkMode ? '#fff' : '#000',
-      },
-    },
-    scales: {
-      y: {
-        ticks: { color: isDarkMode ? '#fff' : '#000' },
-        grid: { color: isDarkMode ? '#374151' : '#e5e7eb' },
-      },
-      x: {
-        ticks: { color: isDarkMode ? '#fff' : '#000' },
-        grid: { color: isDarkMode ? '#374151' : '#e5e7eb' },
-      },
-    },
-  };
-
-  const chartData = {
-    labels: revenueData.labels,
+  const budgetChartData = {
+    labels: ['Total Budget', 'Total Expenses'],
     datasets: [
       {
-        label: 'Revenue',
-        data: revenueData.data,
-        borderColor: 'rgb(75, 192, 192)',
-        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+        data: [budgetStats.totalBudgetAmount, budgetStats.totalExpenses],
+        backgroundColor: [
+          'rgba(14, 165, 233, 0.7)', // sky-500
+          'rgba(255, 99, 132, 0.7)',
+        ],
+        borderColor: [
+          'rgba(14, 165, 233, 1)', // sky-500
+          'rgba(255, 99, 132, 1)',
+        ],
+        borderWidth: 1,
       },
     ],
   };
 
+  const chartOptions: ChartOptions<'pie'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          color: isDarkMode ? '#e5e7eb' : '#1f2937',
+          font: {
+            size: 12,
+          },
+          padding: 5, // Add padding to push legend down and give pie more space
+        },
+      },
+ 
+      tooltip: {
+        backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+        titleColor: isDarkMode ? '#e5e7eb' : '#1f2937',
+        bodyColor: isDarkMode ? '#e5e7eb' : '#1f2937',
+        borderColor: isDarkMode ? '#4b5563' : '#e5e7eb',
+        borderWidth: 1,
+        padding: 12,
+        displayColors: true,
+        callbacks: {
+          label: function (context) {
+            const value = context.raw;
+            return `$${(value as number).toLocaleString()}`;
+          },
+        },
+        
+      },
+      
+    },
+  };
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen dark:bg-gray-950 scrollbar-hide">
+        <div className="flex justify-center items-center h-screen">
+          <MoonLoader
+            color={isDarkMode ? "#ffffff" : "#1f2937"}
+            size={60}
+            speedMultiplier={1}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center dark:bg-gray-950">
+        <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+          <p className="text-lg text-gray-800 dark:text-gray-200">Please log in to view your dashboard</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen p-6 ">
+    <div className="min-h-screen p-4 md:p-6 dark:bg-gray-950">
       <div className="">
-        {/* Header Section */}
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Event Planner Dashboard</h1>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="p-6 rounded-xl bg-white dark:bg-gray-800 shadow-lg transition-all hover:shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-600 dark:text-gray-300">Welcome</h3>
-            <p className="text-xl font-bold text-gray-900 dark:text-white mt-2">
-              {eventPlanner?.company_name || user?.email}
-            </p>
+    
+        
+        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-4 font-sofia">
+          {/* Welcome Card */}
+               <div className="md:col-span-2 lg:col-span-4 md:row-span-3">
+            <div className="p-4 md:p-6 rounded-xl bg-white dark:bg-gray-900 dark:border-gray-800 border-[1px] border-gray-200 shadow-lg transition-all hover:shadow-xl h-full flex flex-col">
+              <div className="flex items-center gap-3 mb-2">
+                <div className='bg-sky-400/20 rounded-lg shadow-sky-500/20 border-sky-300/10 inline-block my-4 shrink-0  border shadow-lg'>
+                  <Building2 className="text-2xl text-sky-500  m-4" />
+              </div>
+              </div>
+              <div className="flex flex-col items-left justify-center flex-grow">
+              <h3 className="text-lg font-medium tracking-wide text-gray-600 dark:text-gray-300 mb-2 ">Welcome</h3>
+              <p className="text-2xl font-bold text-gray-800 dark:text-sky-400 capitalize font-bonanova mt-2">
+                {eventPlanner?.company_name || user?.email}
+              </p>
+              </div>
+            </div>
           </div>
           
-          <div className="p-6 rounded-xl bg-white dark:bg-gray-800 shadow-lg transition-all hover:shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-600 dark:text-gray-300">Events Created</h3>
-            <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-2">{eventCount}</p>
+          {/* Events Created Card */}
+        
+          {/* Events Created Card */}
+          <div className="md:col-span-1 lg:col-span-2 ">
+            <div className="p-4 md:p-6 rounded-xl bg-white dark:bg-gray-900 dark:border-gray-800 border-[1px] border-gray-200 shadow-lg transition-all hover:shadow-xl h-full flex flex-col">
+              <div className="flex items-center gap-3 mb-2">
+                <div className='bg-indigo-400/20 rounded-lg shadow-indigo-500/20 border-indigo-300/10 inline-block my-4 shrink-0  border shadow-lg'>
+                  <CalendarPlus className="text-2xl text-indigo-500  m-4" />
+              </div>
+              </div>
+              <div className="flex flex-col items-left justify-center flex-grow">
+              <h3 className="text-lg font-medium tracking-wide text-gray-600 dark:text-gray-300 mb-2">Total Events </h3>
+                <p className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-gray-300">{ticketStats.eventCount}</p>
+              </div>
+            </div>
           </div>
-
-          <div className="p-6 rounded-xl bg-white dark:bg-gray-800 shadow-lg transition-all hover:shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-600 dark:text-gray-300">Total Tickets</h3>
-            <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">{ticketCount}</p>
+          <div className="md:col-span-1 lg:col-span-2 ">
+            <div className="p-4 md:p-6 rounded-xl bg-white dark:bg-gray-900 dark:border-gray-800 border-[1px] border-gray-200 shadow-lg transition-all hover:shadow-xl h-full flex flex-col">
+            <div className="flex items-center gap-3 mb-2">
+                <div className='bg-green-400/20 rounded-lg shadow-green-500/20 border-green-300/10 inline-block my-4 shrink-0  border shadow-lg'>
+                  <Users className="text-2xl text-green-500  m-4" />
+              </div>
+              </div>
+         
+              <div className="flex flex-col items-left justify-center flex-grow">
+              <h3 className="text-lg font-medium tracking-wide text-gray-600 dark:text-gray-300 mb-2">Total Attendees</h3>
+              <p className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-gray-300">{ticketStats.ticketCount}</p>
+              </div>
+            </div>
           </div>
-
-          <div className="p-6 rounded-xl bg-white dark:bg-gray-800 shadow-lg transition-all hover:shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-600 dark:text-gray-300">Completed Orders</h3>
-            <p className="text-3xl font-bold text-purple-600 dark:text-purple-400 mt-2">{completedOrdersCount}</p>
-          </div>
+                    {/* Add the EventsTable component */}
+        <div className="md:col-span-1 lg:col-span-7">
+          {user && <EventsTable userId={user.id} />}
         </div>
-
-        {/* Chart Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-          <div className="flex justify-center space-x-4 mb-6">
-            <button
-              onClick={() => setViewType('month')}
-              className={`px-4 py-2 rounded-lg transition-all ${
-                viewType === 'month'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-              }`}
-            >
-              Monthly View
-            </button>
-            <button
-              onClick={() => setViewType('week')}
-              className={`px-4 py-2 rounded-lg transition-all ${
-                viewType === 'week'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-              }`}
-            >
-              Weekly View
-            </button>
-          </div>
+     
           
-          <div className="h-[400px]">
-            <Line options={chartOptions} data={chartData} />
+          {/* Budget Overview */}
+          <div className="md:col-span-2 lg:col-span-3 md:row-span-4 md:col-start-3 lg:col-start-5 md:row-start-1">
+            <div className="bg-white dark:bg-gray-900 dark:border-gray-800 border-[1px] border-gray-200 rounded-xl shadow-lg p-4 md:p-6 h-full flex flex-col">
+      
+              <div className="flex items-center gap-3 mb-2">
+                <div className='bg-pink-400/20 rounded-lg shadow-pink-500/20 border-pink-300/10 inline-block my-4 shrink-0  border shadow-lg'>
+                  <PieChart className="text-2xl text-pink-500  m-4" />
+              </div>
+              <h3 className="text-lg md:text-xl font-medium tracking-wide text-gray-800 dark:text-gray-200">Budget Overview</h3>
+              </div>
+             
+            
+          
+              
+              <div className="h-64 flex items-center justify-center my-2">
+  <div className="w-full max-w-2xl h-full"> {/* Increase max-width and allow full height */}
+    <Pie data={budgetChartData} options={chartOptions} />
+  </div>
+</div>
+
+              
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
+                <div className="p-3 md:p-4 bg-sky-50 dark:bg-sky-900/20 rounded-lg">
+                  <div className="flex items-center justify-center gap-2 mb-1">
+                    <DollarSign className="w-5 h-5 text-sky-600 dark:text-sky-400" />
+                    <p className="text-sm text-gray-600 dark:text-gray-300">Total Budget</p>
+                  </div>
+                  <p className="text-base md:text-lg font-medium tracking-wide text-sky-600 dark:text-sky-400">
+                    ${budgetStats.totalBudgetAmount.toLocaleString()}
+                  </p>
+                </div>
+                <div className="p-3 md:p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                  <div className="flex items-center justify-center gap-2 mb-1">
+                    <Wallet className="w-5 h-5 text-red-600 dark:text-red-400" />
+                    <p className="text-sm text-gray-600 dark:text-gray-300">Total Expenses</p>
+                  </div>
+                  <p className="text-base md:text-lg font-medium tracking-wide text-red-600 dark:text-red-400">
+                    ${budgetStats.totalExpenses.toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
+    
         </div>
+        
+    
       </div>
     </div>
   );

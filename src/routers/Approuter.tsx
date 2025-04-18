@@ -56,6 +56,7 @@ import TicketPage from '../components/payment/TicketPage';
 import ApplicationProcess from '../pages/PartnerApplication/Home';
 import ApplicationForm from '../pages/PartnerApplication/Form';
 import BusinessPlan from '../pages/ProPlan/home';
+import Messenger from '../pages/messenger';
 
 
 // Page Transition Animation Component
@@ -171,7 +172,8 @@ const AppRouter = () => {
           <Route path="/partner-application" element={<PageTransition><ApplicationProcess /></PageTransition>} />
           <Route path="/partner-application-form" element={<PageTransition><ApplicationForm /></PageTransition>} />
           <Route path="/upgrade-business" element={<PageTransition><BusinessPlan/></PageTransition>} />
-    
+          <Route path="/Messenger" element={<PageTransition><Messenger/></PageTransition>} />
+        
         </Routes>
       </AnimatePresence>
       

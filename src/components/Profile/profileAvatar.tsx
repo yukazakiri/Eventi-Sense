@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Navigate, NavLink } from 'react-router-dom';
+import {  NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import supabase from '../../api/supabaseClient'; // Adjust the import path as needed
 
@@ -48,17 +48,32 @@ function ProfileAvatar({ user, profile }: ProfileAvatarProps) {
         return "/profile"; // Fallback to generic profile page
     }
   };
+  console.log("Logging out, profile:", profile);
+
 
   // Handle logout
   const handleLogout = async () => {
+    if (profile?.id) {
+      await supabase
+        .from('profiles')
+        .update({
+          last_online: new Date().toISOString(),
+      
+        })
+        .eq('id', profile.id);
+    }
+
     const { error } = await supabase.auth.signOut();
+    
     if (error) {
-      console.error('Error logging out:', error.message);
+      console.error('Failed to update last_online:', error.message);
     } else {
-      localStorage.removeItem('userRole'); // Clear cached role
-      return <Navigate to="/" />; // Redirect using React Router
+   
+      localStorage.removeItem('userRole');
+      window.location.href = "/";
     }
   };
+
 
   // Gold gradient border for avatar
   const goldBorderStyle = {

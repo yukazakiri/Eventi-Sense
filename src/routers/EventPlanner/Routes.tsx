@@ -18,6 +18,8 @@ import ExampleProfile from '../../pages/EventPlanner/exampleProfile';
 import AttendeeManagementPage from '../../components/payment/EventCreator/attendee';
 import Venues from '../../pages/List/Venues';
 import Supplier from '../../pages/List/Supplier';
+import BudgetTracker from '../../components/Budget/Home'
+import Main from '../../components/messenger/Main'
 
 
   const routes: RouteObject[] = [
@@ -40,9 +42,11 @@ import Supplier from '../../pages/List/Supplier';
   { path: '/tickets', element: <RequestTicket   /> },
 
   { path: '/Profile', element: <ProfilePage /> },
+  {path: '/messenger', element: <Main/>},
   
 
  {path: '/Events/:eventId/attendees', element: <AttendeeManagementPage/> },
+ {path: '/BudgetTracker', element: <BudgetTracker/> },
 
 ];
 

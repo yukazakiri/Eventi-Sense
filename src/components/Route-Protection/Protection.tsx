@@ -2,6 +2,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import supabase from '../../api/supabaseClient';
 import { Session } from '@supabase/supabase-js';
+import { MoonLoader } from "react-spinners";
 
 
 interface ProtectionProps {
@@ -91,7 +92,17 @@ const Protection = ({ requiredRole, children }: ProtectionProps) => {
     }, [location.pathname, requiredRole]);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="dark:bg-gray-950 scrollbar-hide">
+                <div className="flex justify-center items-center h-screen">
+                    <MoonLoader
+                        color="#ffffff"
+                        size={60}
+                        speedMultiplier={1}
+                    />
+                </div>
+            </div>
+        );
     }
 
     if (!isAuthenticated) {
