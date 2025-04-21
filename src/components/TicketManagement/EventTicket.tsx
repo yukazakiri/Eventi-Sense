@@ -1,8 +1,8 @@
 // EventAttendees.tsx
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import supabase from '../../api/supabaseClient';
-import { getCurrentUser, fetchProfile } from '../../api/utiilty/profiles';
+import { getCurrentUser } from '../../api/utiilty/profiles';
 
 interface Attendee {
   id: string;
@@ -17,7 +17,7 @@ interface Attendee {
 const EventAttendees = () => {
     
   const { eventId } = useParams();
-  const navigate = useNavigate();
+ 
   const [attendees, setAttendees] = useState<Attendee[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

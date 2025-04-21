@@ -1,7 +1,7 @@
 import React from 'react';
 import { Booking, Venue } from '../../../types/venue';
 import { Booking as SupplierBooking, Supplier } from '../../../types/supplier';
-import { Calendar, Clock, Package, MapPin, X, DollarSign, User } from 'react-feather';
+import { Calendar, Clock, Package, MapPin, X,  User } from 'react-feather';
 
 interface BookingDetailsModalProps {
   isOpen: boolean;

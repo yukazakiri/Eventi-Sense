@@ -19,7 +19,7 @@ const TicketsList: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<{ [eventId: string]: Event }>({});
   const [profiles, setProfiles] = useState<{ [userId: string]: Profile }>({});
-  const [orders, setOrders] = useState<{ [ticketId: string]: Order }>({});
+  const [_orders, setOrders] = useState<{ [ticketId: string]: Order }>({});
 
   // Filter states
   const [statusFilter, setStatusFilter] = useState<string>('');

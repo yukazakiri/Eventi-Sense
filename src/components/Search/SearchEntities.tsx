@@ -6,7 +6,7 @@ interface SearchEntitiesProps {
   onTag: (entityId: string, entityType: 'venue' | 'supplier') => void;
 }
 
-const SearchEntities = ({ eventId, onTag }: SearchEntitiesProps) => {
+const SearchEntities = ({ onTag }: SearchEntitiesProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState<any[]>([]);
 
