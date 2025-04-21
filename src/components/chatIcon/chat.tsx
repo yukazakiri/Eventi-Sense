@@ -1,11 +1,12 @@
 
 
-import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { useUnreadMessages } from "../messenger/hooks/unreadMessage";
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "../messenger/services/supabaseService";
 import { motion } from "framer-motion";
+
+import { PiChatCircleDots } from "react-icons/pi";
 
 function Chat() {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ function Chat() {
   return (
     <div className="flex items-center justify-center  ">
       <motion.button
-        className="relative flex items-center justify-center p-2 text-gray-400 rounded-full shadow-lg hover:bg-gray-800 transition"
+        className="relative flex items-center justify-center  text-gray-400 rounded-full shadow-lg hover:text-white transition"
         onClick={() => navigate("/Messenger")}
         aria-label="Open Messenger"
         onMouseEnter={() => setIsHovered(true)}
@@ -35,11 +36,7 @@ function Chat() {
           scale: 1.1,
           transition: { duration: 0.2 }
         }}
-        animate={{
-          background: isHovered
-            ? "linear-gradient(#1a2940, #1a2940) padding-box, linear-gradient(45deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c) border-box"
-            : "linear-gradient(#152131, #152131) padding-box, linear-gradient(45deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c) border-box"
-        }}
+     
         style={{
           border: '1px solid transparent',
           borderRadius: '2rem'
@@ -54,7 +51,7 @@ function Chat() {
             repeat: isHovered && unreadCount > 0 ? 1 : 0
           }}
         >
-          <IoChatbubbleEllipsesOutline size={24} strokeWidth={2}/>
+          <PiChatCircleDots size={24} strokeWidth={1}/>
         </motion.div>
         {unreadCount > 0 && (
           <motion.div

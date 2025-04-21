@@ -246,7 +246,7 @@ const AllEventList = () => {
                     </span>
                     <motion.div
                       initial={{ rotate: 180 }}
-                      animate={{ rotate: scrollY.get() > 50 ? 0 : 180 }}
+                      animate={{ rotate: scrollY.get() > 50 ? 0 : 0 }}
                       transition={{ duration: 0.5 }}
                     >
                       <GoArrowDown 

@@ -71,7 +71,7 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
     ${positionClasses}
     top-6
     md:top-2
-    mr-16
+    md:mr-16
     w-10 h-10
     md:w-14 md:h-14
     rounded-lg
@@ -88,7 +88,7 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
     px-3 py-2
     md:px-5 md:py-3
     flex items-center justify-center
-    rounded-full 
+    md:rounded-full  rounded-lg
     bg-navy-blue-2
     border-[1px]
     border-gray-500/90
@@ -113,7 +113,7 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
       >
         <div className={contentClasses}>
           <span className="relative z-10 transform group-hover:rotate-90 duration-500 ">{icon}</span>
-          {label && <span className="relative z-10 ml-2 ">{label}</span>}
+          {label && <span className="relative z-10 ml-2 md:block hidden ">{label}</span>}
         </div>
       </button>
 

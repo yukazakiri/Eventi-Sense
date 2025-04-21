@@ -4,6 +4,8 @@ import Image2 from "../assets/images/Session_Road___Baguio_City__Philippines-rem
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { NavLink } from "react-router-dom";
+import logo from "../assets/images/logoES.png";
 
 function AboutUs() {
   const [isExpanded, setIsExpanded] = useState(false); // State to manage expansion
@@ -64,7 +66,7 @@ function AboutUs() {
             variants={fadeIn}
             className="uppercase text-4xl lg:text-5xl font-bold font-bonanova gradient-text leading-snug md:leading-normal lg:leading-relaxed text-shadow"
           >
-            About EventiSense
+            About Us
           </motion.h1>
           <motion.div 
             variants={staggerContainer}
@@ -79,23 +81,27 @@ function AboutUs() {
                 user-friendly tools to create an effortless planning experience.
               </p>
             </motion.section>
-            <motion.section 
-              variants={fadeIn}
-              className="hidden xl:flex justify-center items-center relative"
-            >
-              <div className="gradient-backgroundsimple rounded-full flex items-center justify-center md:w-[6.9rem] md:h-[7rem] lg:w-[16rem] lg:h-[16rem] relative">
-                <motion.div 
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  className="absolute -top-1/6 -left-1/6 w-[25rem] h-[25rem] rounded-full border-[1px] border-yellow-400" 
-                />
-                <button className="absolute top-0 left-0 w-full h-full">
-                  <h1 className="font-bold font-bonanova gradient-text text-[1.3rem] md:text-[2.2rem]">
-                    EventiSense
-                  </h1>
-                </button>
-              </div>
-            </motion.section>
+            <div className="justify-center items-center relative lg:flex hidden">
+            <div className="gradient-backgroundsimple rounded-full flex items-center justify-center md:w-[6.9rem] md:h-[7rem] lg:w-[16rem] lg:h-[16rem] relative">
+              <motion.div 
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                className="absolute -top-1/6 -left-1/6 w-[25rem] h-[25rem] rounded-full border-[1px] border-yellow-500/70" 
+              />
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <div className="flex-shrink-0">
+                  <NavLink to="/">
+                    <div className="h-24 w-24">
+                      <img src={logo} alt="Background" className="h-full w-full object-contain" />
+                    </div>
+                  </NavLink>
+                </div>
+              </motion.button>
+            </div>
+          </div>
             <motion.section variants={fadeIn}>
               <div className="pt-[2rem]">
                 <Link to={"/contact"}>

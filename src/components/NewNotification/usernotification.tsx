@@ -123,16 +123,12 @@ function Notification({ userId }: NotificationProps) {
                 onClick={toggleNotifications}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
-                className="p-2 rounded-full text-gray-400 relative"
+                className="p-2 rounded-full text-gray-300 hover:text-white relative"
                 whileHover={{ 
                     scale: 1.1,
                     transition: { duration: 0.2 }
                 }}
-                animate={{
-                    background: isHovered 
-                        ? "linear-gradient(#1a2940, #1a2940) padding-box, linear-gradient(45deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c) border-box"
-                        : "linear-gradient(#152131, #152131) padding-box, linear-gradient(45deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c) border-box"
-                }}
+                
                 style={{
                     border: '1px solid transparent',
                     borderRadius: '2rem'
@@ -149,7 +145,7 @@ function Notification({ userId }: NotificationProps) {
                         repeat: isHovered && unreadCount > 0 ? 1 : 0
                     }}
                 >
-                    <Bell size={24} strokeWidth={2} />
+                    <Bell size={24} strokeWidth={1} />
                 </motion.div>
                 
          

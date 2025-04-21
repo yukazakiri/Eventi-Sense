@@ -36,11 +36,11 @@ html {
     display: inline;
 }
 
-  .gradient-backgroundsimple {
-    background: linear-gradient(to bottom, #1d305e 28%, #111d38 96%);
-   
-    
-  }
+.gradient-backgroundsimple {
+  background: linear-gradient(to bottom, #1F2937 28%, #121929 96%);
+}
+
+
   .gradient-background {
     background: linear-gradient(to bottom, #1d305e 28%, #111d38 96%);
    

@@ -4,11 +4,14 @@ import CardList from "../layout/cards/Event/landingList";
 import Cardvenues from "../layout/cards/Venue/cardListLanding";
 import CardSuppliers from "../layout/cards/Supplier/cardListLanding";
 import MainFooter from "../layout/MainFooter";
-import ReviewSection from "../layout/cards/Review/cardDesign";
+
 import { Link, NavLink } from "react-router-dom";
 import { HoverButton } from "../components/Button/button-hover";
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
+import myImage from '../assets/images/bg-landing.jpg';
+import logo from '../assets/images/logoES.png';
+import {  GoArrowRight } from 'react-icons/go';
 
 const content: { title: string; text: string }[] = [
   { title: "Event Planning Tools", text: "Effortlessly create and manage event schedules with tools designed for efficiency. From budget planning to task management, EventiSense ensures every detail is organized and on track." },
@@ -41,29 +44,7 @@ function HomePage() {
   const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
   const scale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1]);
 
-  const fadeInUp = {
-    initial: { y: 50, opacity: 0 },
-    animate: { 
-      y: 0, 
-      opacity: 1,
-      transition: { 
-        duration: 0.8,
-        ease: [0.6, -0.05, 0.01, 0.99],
-        type: "spring",
-        damping: 15
-      }
-    }
-  };
-
-  const staggerContainer = {
-    animate: {
-      transition: {
-        staggerChildren: 0.3,
-        delayChildren: 0.2
-      }
-    }
-  };
-
+  
 
   const featureCardVariants = {
     hidden: { opacity: 0, scale: 0.9 },
@@ -87,59 +68,78 @@ function HomePage() {
     > 
       <MainNavbar />
       <div className="bg-navy-blue-5/95">
-        <section className="noise-bg h-auto py-[6rem]">
-          <motion.div 
-            variants={staggerContainer}
-            initial="initial"
-            animate="animate"
-            className="grid grid-cols-1 md:grid-cols-2 items-center justify-center text-white mx-4 2xl:mx-[16rem] xl:mx-[8rem]"
-          >
-            <div className="p-6 md:py-[5rem] text-left">
-              <motion.p 
-                variants={fadeInUp}
-                className="text-5xl font-semibold font-bonanova leading-snug md:leading-normal lg:leading-relaxed"
-              >
-                Your dream event is just a click away with 
-              </motion.p>
-              <motion.h1 
-                variants={fadeInUp}
-                className="text-5xl md:text-4xl lg:text-[3rem] font-bold font-bonanova gradient-text leading-snug md:leading-normal lg:leading-relaxed uppercase"
-              >
-                EventiSense
-              </motion.h1>
-            </div>
-            <motion.div 
-              variants={fadeInUp}
-              className="p-6 lg:p-[5rem]"
-            >
-              <div className="font-sofia text-justify">
-                <p>
-                  EventiSense simplifies your event planning with powerful tools designed to help you coordinate smarter, manage faster, and connect deeper with trusted venues and suppliers.
-                </p>
-              </div>
-              <div className="pt-6 flex  md:flex-row gap-4">
-                <Link to="/Pricing">
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button
-                    label="Get Started for Free"
-                    gradientText={true}
-                    variant="secondary"
-                  />
+      <div className="relative h-[60vh] sm:h-[70vh] md:h-[85vh]">
+  
+  <motion.div
+    initial={{ scale: 1.05, opacity: 0.8 }}
+    animate={{ scale: 1, opacity: 1 }}
+    transition={{ duration: 2, ease: "easeOut" }}
+    className="absolute inset-0 bg-cover bg-center"
+    style={{ backgroundImage: `url(${myImage})` }}
+  />
+  <div className="absolute inset-0 bg-gray-950/70"></div>
+  
+  {/* Centered Text Container */}
+  <motion.div 
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 1, delay: 0.8 }}
+    className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 space-y-4"
+  > 
+    <div className="flex flex-col items-center space-y-6">
+      <div className="h-20 w-20 mb-2">
+        <img src={logo} alt="Background" className="h-full w-full object-contain" />
+      </div>
+      <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-bonanova text-white">
+        EventiSense
+      </h1>
+      <p className="text-lg text-white/80 font-sofia max-w-md">
+        Discover the perfect venues, suppliers, and tools for extraordinary experiences
+      </p>
+      <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="relative inline-block"
+                >
+                  <motion.div 
+                    initial={{ opacity: 0.6 }}
+                    whileHover={{ opacity: 0.9 }}
+                    className="absolute inset-0 bg-gray-200 rounded-full bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100"
+                  ></motion.div>
+                          <Link to="/Pricing">
+                  <button 
+                  
+                    className="px-6 h-14 rounded-full hover:rounded-full transform transition-all duration-500 ease-in-out
+                    bg-transparent hover:w-36 hover:h-36 text-white relative group z-10"
+                  >
+                    <span className="group-hover:opacity-0 transition-opacity duration-300 font-sofia tracking-widest ease-in-out text-sm whitespace-nowrap">
+                      Get Started 
+                    </span>
+                    <motion.div
+                      initial={{ rotate: 180 }}
+                      animate={{ rotate: window.scrollY > 50 ? 0 : 0 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <GoArrowRight
+                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"
+                        size={24}
+                      />
+                    </motion.div>
+                  </button>
+                  </Link>
                 </motion.div>
-                </Link>
-                <Link to="/contact">
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button
-                    label="Book a Demo"
-                    gradientText={true}
-                    variant="primary"
-                  />
-                </motion.div>
-                </Link>
-              </div>
-            </motion.div>
-          </motion.div>
-        </section>
+    </div>
+  </motion.div>
+
+  {/* Decorative Border with animation */}
+  <motion.div 
+    initial={{ opacity: 0, scale: 0.98 }}
+    animate={{ opacity: 1, scale: 1 }}
+    transition={{ duration: 1, delay: 0.5 }}
+    className="absolute inset-2 sm:inset-4 md:inset-6 border border-white/20 pointer-events-none"
+  />
+</div>
+
 
         <motion.section 
           initial={{ opacity: 0, y: 20 }}
@@ -338,8 +338,8 @@ function HomePage() {
                   whileHover={{ x: -5 }}
                   className="lg:space-y-2 text-white lg:text-end text-center"
                 >
-                  <h2 className="text-lg font-bold">{item.title}</h2>
-                  <p className="text-sm font-thin pb-10 lg:pb-[4rem]">
+                  <h2 className="text-lg font-meduim">{item.title}</h2>
+                  <p className="text-sm font-thin pb-10 lg:pb-[4rem] text-gray-300">
                     {item.text}
                   </p>
                 </motion.div>
@@ -352,21 +352,19 @@ function HomePage() {
               <motion.div 
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="absolute -top-1/6 -left-1/6 w-[25rem] h-[25rem] rounded-full border-[1px] border-yellow-400" 
+                className="absolute -top-1/6 -left-1/6 w-[25rem] h-[25rem] rounded-full border-[1px] border-yellow-500/70" 
               />
               <motion.button 
                 whileHover={{ scale: 1.05 }}
-                className="absolute top-0 left-0 w-full h-full"
+                className="absolute inset-0 flex items-center justify-center"
               >
-                <motion.h1 
-                  animate={{ 
-                    textShadow: ["0px 0px 5px rgba(255,255,255,0.5)", "0px 0px 15px rgba(255,255,255,0.8)", "0px 0px 5px rgba(255,255,255,0.5)"]
-                  }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="font-bold font-bonanova gradient-text text-[1.3rem] md:text-[2.2rem]"
-                >
-                  EventiSense
-                </motion.h1>
+                <div className="flex-shrink-0">
+                  <NavLink to="/">
+                    <div className="h-24 w-24">
+                      <img src={logo} alt="Background" className="h-full w-full object-contain" />
+                    </div>
+                  </NavLink>
+                </div>
               </motion.button>
             </div>
           </div>
@@ -395,8 +393,8 @@ function HomePage() {
                   whileHover={{ x: 5 }}
                   className="lg:space-y-2 text-white lg:text-start text-center"
                 >
-                  <h2 className="text-lg font-bold">{item.title}</h2>
-                  <p className="text-sm font-thin pb-10 lg:pb-[4rem]">
+                  <h2 className="text-lg font-meduim">{item.title}</h2>
+                  <p className="text-sm font-thin pb-10 lg:pb-[4rem] text-gray-300">
                     {item.text}
                   </p>
                 </motion.div>
@@ -405,16 +403,42 @@ function HomePage() {
           </motion.div>
         </div>
       </motion.section> 
-
       <motion.section 
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: true, amount: 0.1 }}
-        className="my-[4rem]"
+        style={{ opacity, scale }}
+        className="flex justify-center items-center my-[4rem]"
       >
-        <ReviewSection/>
+        <div className="text-center py-[4rem]">
+          <motion.h1 
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-4xl font-bold font-bonanova text-gray-800/50 uppercase"
+          >
+             Our goal is simple
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="text-gray-800/90 font-regular text-[1.2rem] w-auto md:w-[35rem] py-[2rem] mx-auto font-sofia"
+          >
+         To help you master the art of celebration, coordination, and unforgettable moments.
+         This is more than a directory—it’s your key to effortless event excellence. </motion.p>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+            className="flex justify-center"
+          >
+          
+          </motion.div>
+        </div>
       </motion.section>
+   
+
 
       <motion.div 
         initial={{ opacity: 0 }}

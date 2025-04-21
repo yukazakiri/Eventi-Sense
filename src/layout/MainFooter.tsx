@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import { GoArrowRight } from 'react-icons/go';
 import { FaFacebook, FaInstagram, FaYoutube } from 'react-icons/fa';
 import { FaTripadvisor } from 'react-icons/fa';
+import { NavLink } from 'react-router-dom';
+import logo from '../assets/images/logoES.png';
 
 function MainFooter() {
   // Animation variants
@@ -57,15 +59,20 @@ function MainFooter() {
                     Quick Links
                   </motion.span>
                   <ul className="list-none text-gray-400 text-lg">
-                    {['About Us', 'Contact Us', 'Help Center', 'Services'].map((item, index) => (
+                    {[
+                      { name: 'About Us', href: '/about' },
+                      { name: 'Contact Us', href: '/contact' },
+                
+                      { name: 'Services', href: '/services' }
+                    ].map((item, index) => (
                       <motion.li key={index} variants={itemVariants}>
                         <motion.a 
-                          className="font-semibold block pb-3 hover:text-white transition-colors flex items-center justify-center md:justify-start"
-                          href={`#${item.toLowerCase().replace(' ', '')}`}
+                          className="font-semibold pb-3 hover:text-white transition-colors flex items-center justify-center md:justify-start"
+                          href={item.href}
                           whileHover="hover"
                           variants={linkHoverVariants}
                         >
-                          {item}
+                          {item.name}
                         </motion.a>
                       </motion.li>
                     ))}
@@ -81,15 +88,19 @@ function MainFooter() {
                     Other Resources
                   </motion.span>
                   <ul className="list-none text-gray-400 text-lg">
-                    {['Terms & Conditions', 'Privacy Policy', 'Contact Us'].map((item, index) => (
+                    {[
+                      { name: 'Terms & Conditions', href: '/terms' },
+                      { name: 'Privacy Policy', href: '/privacy' },
+           
+                    ].map((item, index) => (
                       <motion.li key={index} variants={itemVariants}>
                         <motion.a 
-                          className="font-semibold block pb-3 hover:text-white transition-colors flex items-center justify-center md:justify-start"
-                          href={`#${item.toLowerCase().replace(/\s|&/g, '')}`}
+                          className="font-semibold pb-3 hover:text-white transition-colors flex items-center justify-center md:justify-start"
+                          href={item.href}
                           whileHover="hover"
                           variants={linkHoverVariants}
                         >
-                          {item}
+                          {item.name}
                         </motion.a>
                       </motion.li>
                     ))}
@@ -107,9 +118,15 @@ function MainFooter() {
                 className="mb-8 flex justify-center"
                 whileHover={{ rotate: 360, transition: { duration: 0.8 } }}
               >
-                <div className="w-12 h-12 rounded-full border border-white flex items-center justify-center text-white">
-                  <span>KH</span>
-                </div>
+                {/* Logo on left */}
+                <div className="flex-shrink-0">
+             <NavLink to="/" >
+            <div className="h-14 w-14 mb-2">
+          <img src={logo} alt="Background" className="h-full w-full object-contain" />
+         </div>
+         </NavLink>
+       
+            </div>
               </motion.div>
               
               <motion.div 
@@ -117,19 +134,20 @@ function MainFooter() {
                 variants={itemVariants}
               >
                 <motion.h2 
-                  className="text-xl md:text-2xl gradient-text uppercase font-bonanova"
+                  className="text-xl md:text-4xl  gradient-text uppercase font-bonanova"
                   whileHover={{ scale: 1.05 }}
                 >
                   EventiSense
                 </motion.h2>
-                
+                <div className='pt-'>
                 <p className="text-gray-300">2nd Floor, Building</p>
                 <p className="text-gray-300">Upper Bonifacio Street</p>
                 <p className="text-gray-300">Baguio City</p>
-                
+                <div className='py-6'>
                 <p className="text-gray-300">+421 45 530 00 00</p>
                 <p className="text-gray-300 mb-6">info@eventisense.com</p>
-                
+                </div>
+                </div>
                 <motion.div 
                   className="flex justify-center gap-6 mt-8"
                   variants={itemVariants}
@@ -242,14 +260,16 @@ function MainFooter() {
                   whileHover={{ opacity: 0.9 }}
                   className="h-full w-full bg-gray-200 rounded-full bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100 absolute inset-0"
                 />
-                <button  className="w-auto h-12 md:h-14 px-6 py-2 rounded-full hover:rounded-full transform transition-all duration-500 ease-in-out
-                  bg-transparent hover:w-28 md:hover:w-36 hover:h-28 md:hover:h-36 text-white relative group z-10 flex items-center justify-center">
-                  <span className="group-hover:opacity-0 transition-opacity duration-300 font-sofia tracking-widest ease-in-out text-sm">Sign Up</span>
-                  <GoArrowRight
-                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"
-                    size={24}
-                  />
-                </button>
+                <a href="/register">
+                  <button className="w-auto h-12 md:h-14 px-6 py-2 rounded-full hover:rounded-full transform transition-all duration-500 ease-in-out
+                    bg-transparent hover:w-28 md:hover:w-36 hover:h-28 md:hover:h-36 text-white relative group z-10 flex items-center justify-center">
+                    <span className="group-hover:opacity-0 transition-opacity duration-300 font-sofia tracking-widest ease-in-out text-sm">Sign Up</span>
+                    <GoArrowRight
+                      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"
+                      size={24}
+                    />
+                  </button>
+                </a>
               </motion.div>
             </div>
           </div>

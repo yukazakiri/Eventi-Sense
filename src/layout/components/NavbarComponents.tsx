@@ -3,6 +3,7 @@ import Button from '../../components/Button/button';
 import ProfileAvatar from '../../components/Profile/profileAvatar';
 import Notification from '../../components/NewNotification/usernotification';
 import ChatIconWithUnread from '../../components/chatIcon/chat';
+import logo from '../../assets/images/logoES.png';
 interface NavbarProps {
     user: any;
     profile: any;
@@ -26,12 +27,15 @@ interface NavbarProps {
     <div>
       <nav className="shadow-2xl w-full z-20 h-auto bg-white-400 bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-20 text-white">
         <div className="w-full border-b border-gray-700">
-          <div className="container mx-auto px-4 py-6 flex items-center justify-between">
+          <div className="container mx-auto px-4 py-3 flex items-center justify-between">
             {/* Logo on left */}
             <div className="flex-shrink-0">
-              <a href="#" className="text-[1.3rem] gradient-text font-bonanova uppercase">
-                EventiSense
-              </a>
+             <NavLink to="/" >
+            <div className="h-14 w-14 mb-2">
+          <img src={logo} alt="Background" className="h-full w-full object-contain" />
+         </div>
+         </NavLink>
+       
             </div>
   
             {/* Main navigation */}
@@ -128,9 +132,13 @@ interface NavbarProps {
                 </NavLink>
               </div>
             </div>
-        
+        <div className='md:hidden flex mr-16'>
+        <ChatIconWithUnread />
+        <Notification userId={user?.id}/>
+
+        </div>
             {/* Profile/Auth buttons */}
-            <div className="hidden md:flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-1">
             <ChatIconWithUnread />
             <Notification userId={user?.id}/>
               {user ? (
@@ -168,12 +176,15 @@ interface NavbarProps {
     <div>
       <nav className="shadow-2xl w-full z-20 h-auto bg-white-400 bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-20 text-white">
         <div className="w-full border-b border-gray-700">
-          <div className="container mx-auto px-4 py-6 flex items-center justify-between">
-            {/* Logo on left */}
-            <div className="flex-shrink-0">
-              <a href="#" className="text-[1.3rem] gradient-text font-bonanova uppercase">
-                EventiSense
-              </a>
+          <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+             {/* Logo on left */}
+             <div className="flex-shrink-0">
+             <NavLink to="/" >
+            <div className="h-14 w-14 mb-2">
+          <img src={logo} alt="Background" className="h-full w-full object-contain" />
+         </div>
+         </NavLink>
+       
             </div>
   
             {/* Main navigation */}
