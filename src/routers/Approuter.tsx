@@ -57,6 +57,7 @@ import ApplicationProcess from '../pages/PartnerApplication/Home';
 import ApplicationForm from '../pages/PartnerApplication/Form';
 import BusinessPlan from '../pages/ProPlan/home';
 import Messenger from '../pages/messenger';
+import EmailVerification from '../pages/email-verification-sucess'; 
 
 
 // Page Transition Animation Component
@@ -173,6 +174,7 @@ const AppRouter = () => {
           <Route path="/partner-application-form" element={<PageTransition><ApplicationForm /></PageTransition>} />
           <Route path="/upgrade-business" element={<PageTransition><BusinessPlan/></PageTransition>} />
           <Route path="/Messenger" element={<PageTransition><Messenger/></PageTransition>} />
+          <Route path="/confirm-success" element={<PageTransition><EmailVerification /></PageTransition>} />
         
         </Routes>
       </AnimatePresence>

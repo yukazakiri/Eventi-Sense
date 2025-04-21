@@ -147,17 +147,22 @@ export default function Auth() {
         email: formData.email,
         password: formData.password,
         options: {
+          emailRedirectTo: 'https://eventi-sense-1b32-8dkkz517y-jays-projects-45cd8be1.vercel.app/confirm-success',
           data: {
             first_name: formData.firstName,
             last_name: formData.lastName,
           },
         },
       };
-      const {  error } = await supabase.auth.signUp(signUpData);
+      const { error } = await supabase.auth.signUp(signUpData);
       if (error) throw error;
-
+  
       setMessageType('success');
       setMessage('Check your email for the confirmation link.');
+      
+      setTimeout(() => {
+        setIsSignUp(false);
+      }, 2500);
     } catch (error: any) {
       setMessageType('error');
       setMessage(error.message);
@@ -165,7 +170,6 @@ export default function Auth() {
       setIsLoading(false);
     }
   };
-
   const toggleForm = () => {
     setMessage('');
     setIsSignUp(!isSignUp);
