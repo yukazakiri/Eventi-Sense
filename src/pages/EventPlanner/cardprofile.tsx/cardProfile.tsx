@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ChevronRight, Star, Building, ExternalLink, Edit, Settings } from 'lucide-react';
 import supabase from '../../../api/supabaseClient';
-import profileAvatar from '../../../components/Profile/profileAvatar';
+
 
 interface EventPlannerProfile {
   planner_id: number;

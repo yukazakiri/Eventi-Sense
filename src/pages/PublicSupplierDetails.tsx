@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { CompanyProfile, Supplier, SupplierImage, SupplierServices } from '../types/supplier';
 import MainNavbar from '../layout/components/MainNavbar'
 import { MdOutlineDesignServices, MdOutlineMiscellaneousServices } from 'react-icons/md';
-import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
+import { MdKeyboardArrowDown} from 'react-icons/md';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -49,25 +49,26 @@ const ScrollReveal = ({ children, delay = 0, className }: { children: React.Reac
 };
 
 // Create a parallax component
-const ParallaxSection = ({ children, baseVelocity = 0.05 }: { children: React.ReactNode, baseVelocity?: number }) => {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"]
-  });
+
+// const ParallaxSection = ({ children, baseVelocity = 0.05 }: { children: React.ReactNode, baseVelocity?: number }) => {
+//   const ref = useRef(null);
+//   const { scrollYProgress } = useScroll({
+//     target: ref,
+//     offset: ["start end", "end start"]
+//   });
   
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", `${baseVelocity * 100}%`]);
+//   const y = useTransform(scrollYProgress, [0, 1], ["0%", `${baseVelocity * 100}%`]);
   
-  return (
-    <motion.div
-      ref={ref}
-      style={{ y }}
-      className="relative"
-    >
-      {children}
-    </motion.div>
-  );
-};
+//   return (
+//     <motion.div
+//       ref={ref}
+//       style={{ y }}
+//       className="relative"
+//     >
+//       {children}
+//     </motion.div>
+//   );
+// };
 
 // StaggeredReveal for grid items
 const StaggeredReveal = ({ children, staggerDelay = 0.1 }: { children: React.ReactNode, staggerDelay?: number }) => {

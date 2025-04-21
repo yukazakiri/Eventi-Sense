@@ -66,7 +66,7 @@ const fetchEventPlannerData = async (profileId: string) => {
 };
 
 // Mock function to fetch gallery images (assuming you'll create this table later)
-const fetchGalleryImages = async (profileId: string) => {
+const fetchGalleryImages = async (_profileId: string) => {
   // This would be replaced with an actual Supabase query to your gallery table
   // For now, returning mock data
   return [

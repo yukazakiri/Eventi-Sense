@@ -6,7 +6,7 @@ interface FormErrors {
 
 // Validate the entire form (used for final submission)
 export const validateVenueForm = (formData: VenueFormData): FormErrors => {
-  const errors: FormErrors = {};
+
   
   // Combine all step validations
   return {
@@ -74,7 +74,7 @@ export const validateStep1 = (formData: VenueFormData): FormErrors => {
 };
 
 // Step 2: Cover Photo validation (optional in this implementation)
-export const validateStep2 = (formData: VenueFormData, selectedFile?: File | null): FormErrors => {
+export const validateStep2 = (_formData: VenueFormData, _selectedFile?: File | null): FormErrors => {
   const errors: FormErrors = {};
   
   // Cover photo is optional, but if validating file size/type is required:
@@ -125,7 +125,7 @@ export const validateStep4 = (formData: VenueFormData): FormErrors => {
   // Amenities are generally optional, but you could add specific validation if needed
   // For example, validation for quantity values:
   
-  formData.amenities.forEach((amenity, index) => {
+  formData.amenities.forEach((amenity, _index) => {
     if (amenity.quantity !== null && amenity.quantity < 0) {
       errors[`amenity_${amenity.id}_quantity`] = `Quantity for amenity cannot be negative`;
     }

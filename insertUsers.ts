@@ -165,7 +165,7 @@ function generateRandomUser() {
   };
 }
 
-async function createUsers(count = 122) {
+async function createUsers(count = 1) {
   console.log(`Creating ${count} users...`);
   
   for (let i = 0; i < count; i++) {

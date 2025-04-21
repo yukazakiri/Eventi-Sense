@@ -73,7 +73,7 @@ function ContactUs() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white bg-navy-blue-3  hover:bg-navy-blue-5  font-semibold py-3 px-6 rounded-2xl hover:bg-blue-700 transition duration-300"
+            className="w-full  text-white bg-navy-blue-3  hover:bg-navy-blue-5  font-semibold py-3 px-6 rounded-2xl hover:bg-blue-700 transition duration-300"
           >
             Send Message
           </button>

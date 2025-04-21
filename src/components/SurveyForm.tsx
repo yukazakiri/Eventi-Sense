@@ -40,6 +40,7 @@ interface FormData {
   responsiveness_performance: number;
   functionality: number;
   reliability: number;
+  data_security: number; // Added new field for data security
   user_satisfaction: number;
   comment: string;
 }
@@ -58,6 +59,7 @@ export default function EnhancedFeedbackSurvey({ userId, onClose }: SurveyFormPr
     responsiveness_performance: 3,
     functionality: 3,
     reliability: 3,
+    data_security: 3, // Initialize new field with default value
     user_satisfaction: 3,
     comment: ''
   });
@@ -65,7 +67,7 @@ export default function EnhancedFeedbackSurvey({ userId, onClose }: SurveyFormPr
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Questions configuration
+  // Questions configuration - added new question for data security
   const questions: Question[] = [
     {
       id: 'usability',
@@ -86,6 +88,11 @@ export default function EnhancedFeedbackSurvey({ userId, onClose }: SurveyFormPr
       id: 'reliability',
       label: 'Reliability',
       question: 'How stable is the system during use?'
+    },
+    {
+      id: 'data_security',
+      label: 'Data & Security',
+      question: 'How confident are you in the security and privacy of your data with Eventi-Sense?'
     },
     {
       id: 'user_satisfaction',
@@ -127,6 +134,7 @@ export default function EnhancedFeedbackSurvey({ userId, onClose }: SurveyFormPr
           responsiveness_performance: formData.responsiveness_performance,
           functionality: formData.functionality,
           reliability: formData.reliability,
+          data_security: formData.data_security, // Add new field to submission
           user_satisfaction: formData.user_satisfaction,
           comment: formData.comment
         });
@@ -140,22 +148,28 @@ export default function EnhancedFeedbackSurvey({ userId, onClose }: SurveyFormPr
       setIsSubmitting(false);
     }
   };
+  
   const predefinedComments = [
     "The interface is easy to use and very intuitive.",
-    "The system could perform better during busy times.",
-    "All the features I need work perfectly.",
-    "It would be great to have more options to customize the system.",
-    "The system is very stable and reliable.",
-    "Navigation is quick and easy to use.",
-    "Response time is very fast.",
-    "Some features are a bit hard to find.",
-    "I had a great experience using the platform overall.",
-    "It would help to have more detailed guides or instructions.",
-    "I love the modern look and design.",
-    "There are occasional glitches, but they don't affect my experience much.",
-    "I’m very happy with how the system works.",
-    "The mobile experience could use some improvements.",
-    "The customer support team is excellent and responsive."
+  "The system could perform better during busy times.",
+  "All the features I need work perfectly.",
+  "It would be great to have more options to customize the system.",
+  "The system is very stable and reliable.",
+  "Navigation is quick and easy to use.",
+  "Response time is very fast.",
+  "Some features are a bit hard to find.",
+  "I had a great experience using the platform overall.",
+  "It would help to have more detailed guides or instructions.",
+  "I love the modern look and design.",
+  "There are occasional glitches, but they don't affect my experience much.",
+  "I'm very happy with how the system works.",
+  "The mobile experience could use some improvements.",
+  "The customer support team is excellent and responsive.",
+  "I feel confident that my data is kept secure.",
+  "I would appreciate more transparency about data handling practices.",
+  "The privacy controls are easy to find and adjust.",
+  "I'm concerned about how my personal information is being used.",
+  "The security measures in place give me peace of mind."
   ];
   
 

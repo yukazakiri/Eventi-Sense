@@ -10,24 +10,28 @@ const recordUserActivity = async (userId: string) => {
       .from('user_activity')
       .insert([{ user_id: userId }]);
     
-    if (error) throw error;
-  } catch (error) {
-    console.error('Error recording user activity:', error);
+    if (error) {
+      console.error('Error recording user activity:', error);
+    }
+  } catch (err) {
+    console.error('Exception recording user activity:', err);
   }
 };
 
-// Add function to update logout time
+// Add function to record user logout
 const recordUserLogout = async (userId: string) => {
   try {
     const { error } = await supabase
       .from('user_activity')
-      .update({ logout_time: new Date().toISOString() })
+      .update({ logged_out_at: new Date().toISOString() })
       .eq('user_id', userId)
-      .is('logout_time', null);
-    
-    if (error) throw error;
-  } catch (error) {
-    console.error('Error recording user logout:', error);
+      .is('logged_out_at', null);
+
+    if (error) {
+      console.error('Error recording user logout:', error);
+    }
+  } catch (err) {
+    console.error('Exception recording user logout:', err);
   }
 };
 
@@ -56,23 +60,6 @@ export default function Auth() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Add cleanup effect for logout
-  useEffect(() => {
-    // Add event listener for page unload
-    const handleUnload = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await recordUserLogout(user.id);
-      }
-    };
-
-    window.addEventListener('beforeunload', handleUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleUnload);
-    };
-  }, []);
-
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
@@ -85,7 +72,9 @@ export default function Auth() {
       if (error) throw error;
 
       // Record user activity on successful login
-      await recordUserActivity(data.user.id);
+      if (data.user) {
+        await recordUserActivity(data.user.id);
+      }
 
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
@@ -106,7 +95,6 @@ export default function Auth() {
       // Redirect based on user role
       const redirectPath = role === 'admin' 
         ? '/admin-dashboard/Home'
-     
         : '/';
 
       setTimeout(() => {
@@ -122,7 +110,6 @@ export default function Auth() {
     }
   };
 
-  // Add logout handler
   const handleLogout = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -135,9 +122,18 @@ export default function Auth() {
     }
   };
 
-  // Add this to your component cleanup
+  // Add cleanup for user activity on page unload
   useEffect(() => {
+    const handleBeforeUnload = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await recordUserLogout(user.id);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
     return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
       handleLogout();
     };
   }, []);

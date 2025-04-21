@@ -23,34 +23,65 @@ const commentTemplates = [
   "There are occasional glitches, but they don't affect my experience much.",
   "I'm very happy with how the system works.",
   "The mobile experience could use some improvements.",
-  "The customer support team is excellent and responsive."
+  "The customer support team is excellent and responsive.",
+  "I feel confident that my data is kept secure.",
+  "I would appreciate more transparency about data handling practices.",
+  "The privacy controls are easy to find and adjust.",
+  "I'm concerned about how my personal information is being used.",
+  "The security measures in place give me peace of mind."
 ];
 
 function generateRandomRating() {
-  // Weighted random rating (only 3-5 ratings)
-  const weights = [0.3, 0.4, 0.3]; // Probabilities for ratings 3, 4, 5
+  // Weighted random rating (2-5 ratings, with 2 being very rare)
+  const weights = [0.001, 0.3, 0.4, 0.299]; // 0.1% for 2, 30% for 3, 40% for 4, 29.9% for 5
   const random = Math.random();
   let sum = 0;
   
   for (let i = 0; i < weights.length; i++) {
     sum += weights[i];
     if (random < sum) {
-      return i + 3; // Offset by 3 to get ratings 3-5
+      return i + 2; // Offset by 2 to get ratings 2-5
+    }
+  }
+  return 5;
+}
+
+// Generate slightly different weights for data security to reflect potential concerns
+function generateDataSecurityRating() {
+  const weights = [0.001, 0.2, 0.5, 0.299]; // 0.1% for 2, 20% for 3, 50% for 4, 29.9% for 5
+  const random = Math.random();
+  let sum = 0;
+  
+  for (let i = 0; i < weights.length; i++) {
+    sum += weights[i];
+    if (random < sum) {
+      return i + 2; // Offset by 2 to get ratings 2-5
     }
   }
   return 5;
 }
 
 function generateSurveyResponse(userId) {
+  const isDataSecurityComment = Math.random() < 0.4; // 40% chance of getting a data security related comment
+  let commentPool = commentTemplates;
+  
+  // If we want a data security comment, only use the last 5 comments which are related to security
+  if (isDataSecurityComment) {
+    commentPool = commentTemplates.slice(15); // Get only the data security comments
+  } else {
+    commentPool = commentTemplates.slice(0, 15); // Get the non-security comments
+  }
+
   return {
     user_id: userId,
     usability: generateRandomRating(),
     responsiveness_performance: generateRandomRating(),
     functionality: generateRandomRating(),
     reliability: generateRandomRating(),
+    data_security: generateDataSecurityRating(), // Using the specialized data security rating function
     user_satisfaction: generateRandomRating(),
     comment: Math.random() < 0.7 ? // 70% chance of having a comment
-      commentTemplates[Math.floor(Math.random() * commentTemplates.length)] :
+      commentPool[Math.floor(Math.random() * commentPool.length)] :
       null
   };
 }

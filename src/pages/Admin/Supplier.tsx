@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import supabase from '../../api/supabaseClient'
 import { Supplier as SupplierType } from '../../types/supplier'
 

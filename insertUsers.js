@@ -109,7 +109,7 @@ const nicknames = {
   'Marianne': ['anne', 'mari', 'marian', 'annie', 'manne']
 };
 
-const emailDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com'];
+const emailDomains = ['gmail.com'];
 
 function generateFilipinoEmail(first, last, birthYear) {
   const format = emailFormats[Math.floor(Math.random() * emailFormats.length)];
@@ -163,7 +163,7 @@ function generateRandomUser() {
   };
 }
 
-async function createUsers(count = 67) {
+async function createUsers(count = 200) {
   console.log(`Creating ${count} users...`);
   
   for (let i = 0; i < count; i++) {
@@ -187,7 +187,7 @@ async function createUsers(count = 67) {
         console.log(`User ${i+1} created:`, data.user.email);
       }
       
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
     } catch (err) {
       console.error(`Exception creating user ${i+1}:`, err);
@@ -198,4 +198,4 @@ async function createUsers(count = 67) {
 }
 
 // Create 122 users with realistic Filipino profiles
-createUsers();
+createUsers();///and if yes can you provide the sql

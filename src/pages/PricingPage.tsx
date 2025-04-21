@@ -216,17 +216,6 @@ const PricingPage = () => {
     }
   };
 
-  const shimmerEffect = {
-    initial: { backgroundPosition: "200% 0" },
-    animate: { 
-      backgroundPosition: "-200% 0",
-      transition: {
-        repeat: Infinity,
-        duration: 3,
-        ease: "linear"
-      }
-    }
-  };
 
   return (
     <div>

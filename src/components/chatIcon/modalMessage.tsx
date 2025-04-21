@@ -3,17 +3,16 @@ import { useState, useEffect } from 'react';
 import { User } from '../messenger/types';
 import { getCurrentUser } from '../messenger/services/supabaseService';
 import MessengerContainer from '../messenger/Messenger/MessengerContainer';
-import UserList from '../messenger/UserList';
-import { useUsers } from '../messenger/hooks/useUsers';
-import { useUnreadMessages } from '../messenger/hooks/unreadMessage';
+
+
 
 
 
 function Main() {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [selectedUser, _setSelectedUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
-    const unreadFromUsers = useUnreadMessages(currentUser?.id || '');
+   //const _unreadFromUsers = useUnreadMessages(currentUser?.id || '');
 
 
   

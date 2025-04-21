@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { motion, useAnimation, AnimatePresence, Variants } from 'framer-motion';
+
+import { motion,  AnimatePresence, Variants } from 'framer-motion';
 
 // Icon imports - grouped by source
 import { Calendar, Clock, MapPin, Users } from 'lucide-react';

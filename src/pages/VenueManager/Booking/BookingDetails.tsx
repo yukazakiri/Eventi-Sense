@@ -71,7 +71,7 @@ const breadcrumbItems = [
             // Use Promise.all to fetch all profiles in parallel
             const profilePromises = userIds.map(userId => fetchProfile(userId));
             const fetchedProfiles = await Promise.all(profilePromises);
-            setProfiles(fetchedProfiles.map((profile): Profile => profile!).filter(Boolean));
+            setProfiles(fetchedProfiles.map((profile): Profile => ({...profile!, id: Number(profile!.id)})).filter(Boolean));
           }
         } catch (err: any) {
           setError(err.message);
