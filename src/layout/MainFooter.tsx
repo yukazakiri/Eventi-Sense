@@ -62,18 +62,17 @@ function MainFooter() {
                     {[
                       { name: 'About Us', href: '/about' },
                       { name: 'Contact Us', href: '/contact' },
-                
                       { name: 'Services', href: '/services' }
                     ].map((item, index) => (
                       <motion.li key={index} variants={itemVariants}>
-                        <motion.a 
-                          className="font-semibold pb-3 hover:text-white transition-colors flex items-center justify-center md:justify-start"
-                          href={item.href}
-                          whileHover="hover"
-                          variants={linkHoverVariants}
-                        >
-                          {item.name}
-                        </motion.a>
+                        <motion.div whileHover="hover" variants={linkHoverVariants}>
+                          <NavLink 
+                            to={item.href}
+                            className="font-semibold pb-3 hover:text-white transition-colors flex items-center justify-center md:justify-start"
+                          >
+                            {item.name}
+                          </NavLink>
+                        </motion.div>
                       </motion.li>
                     ))}
                   </ul>
@@ -91,17 +90,16 @@ function MainFooter() {
                     {[
                       { name: 'Terms & Conditions', href: '/terms' },
                       { name: 'Privacy Policy', href: '/privacy' },
-           
                     ].map((item, index) => (
                       <motion.li key={index} variants={itemVariants}>
-                        <motion.a 
-                          className="font-semibold pb-3 hover:text-white transition-colors flex items-center justify-center md:justify-start"
-                          href={item.href}
-                          whileHover="hover"
-                          variants={linkHoverVariants}
-                        >
-                          {item.name}
-                        </motion.a>
+                        <motion.div whileHover="hover" variants={linkHoverVariants}>
+                          <NavLink 
+                            to={item.href}
+                            className="font-semibold pb-3 hover:text-white transition-colors flex items-center justify-center md:justify-start"
+                          >
+                            {item.name}
+                          </NavLink>
+                        </motion.div>
                       </motion.li>
                     ))}
                   </ul>
@@ -260,7 +258,7 @@ function MainFooter() {
                   whileHover={{ opacity: 0.9 }}
                   className="h-full w-full bg-gray-200 rounded-full bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100 absolute inset-0"
                 />
-                <a href="/register">
+                <NavLink to="/register">
                   <button className="w-auto h-12 md:h-14 px-6 py-2 rounded-full hover:rounded-full transform transition-all duration-500 ease-in-out
                     bg-transparent hover:w-28 md:hover:w-36 hover:h-28 md:hover:h-36 text-white relative group z-10 flex items-center justify-center">
                     <span className="group-hover:opacity-0 transition-opacity duration-300 font-sofia tracking-widest ease-in-out text-sm">Sign Up</span>
@@ -269,7 +267,7 @@ function MainFooter() {
                       size={24}
                     />
                   </button>
-                </a>
+                </NavLink>
               </motion.div>
             </div>
           </div>
