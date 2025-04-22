@@ -133,7 +133,7 @@ export default function PaymentPage({ selectedPlan, onBack, onSuccess }: Payment
   }
 
   return (
-    <div className="max-w-2xl mx-auto" 
+    <div className="max-w-6xl mx-auto" 
       style={{
         background: `
           linear-gradient(#152131, #152131) padding-box,

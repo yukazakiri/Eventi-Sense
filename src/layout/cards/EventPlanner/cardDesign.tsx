@@ -40,7 +40,11 @@ const Card: React.FC<CardProps> = ({ id, name, avatar, is_public}) => {
     <span className="text-2xl font-semibold text-gray-500 group-hover:bg-gradient-to-r group-hover:from-[#bf953f] group-hover:via-[#fcf6ba] group-hover:to-[#aa771c] group-hover:bg-clip-text group-hover:text-transparent transform transition-colors ease-in-out duration-700 font-bonanova">{name}</span>
     <p className='text-gray-400'>{is_public ? 'Public' : 'Private'}</p>
   </div>
-  <a className="bg-blue-700 px-4 py-1 text-slate-400  z-10 hover:scale-125 transition-all duration-500 hover:bg-sky-400/40 w-auto font-sofia group-hover:text-white" >Visit</a>
+  <button 
+    className="bg-blue-700 px-4 py-1 text-slate-400 z-10 hover:scale-125 transition-all duration-500 hover:bg-sky-400/40 w-auto font-sofia group-hover:text-white"
+  >
+    Visit
+  </button>
 </div>
   );
 };

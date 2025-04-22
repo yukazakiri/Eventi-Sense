@@ -4,6 +4,7 @@ import { Booking, Venue } from '../../../types/venue';
 import { Booking as SupplierBooking, Supplier } from '../../../types/supplier';
 import { Calendar, Clock, Package } from 'react-feather';
 import BookingDetailsModal from './UserbookingsModal';
+import { NavLink } from 'react-router-dom';
 
 export const useUserBookings = () => {
   const [bookings, setBookings] = useState<(Booking & { venue?: Venue })[]>([]);
@@ -239,9 +240,12 @@ export const UserBookings: React.FC<UserBookingsProps> = ({ userId }) => {
         ) : (
           <div className="bg-gray-800/50 rounded-lg p-6 text-center">
             <p className="text-gray-300">No venue bookings found.</p>
-            <a href="/venues" className="mt-3 inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+            <NavLink 
+              to="/venues" 
+              className="mt-3 inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
               Explore Venues
-            </a>
+            </NavLink>
           </div>
         )}
       </div>
@@ -260,9 +264,12 @@ export const UserBookings: React.FC<UserBookingsProps> = ({ userId }) => {
         ) : (
           <div className="bg-gray-800/50 rounded-lg p-6 text-center">
             <p className="text-gray-300">No supplier bookings found.</p>
-            <a href="/suppliers" className="mt-3 inline-block px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors">
+            <NavLink 
+              to="/suppliers" 
+              className="mt-3 inline-block px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
+            >
               Explore Suppliers
-            </a>
+            </NavLink>
           </div>
         )}
       </div>

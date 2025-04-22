@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import supabase from '../../api/supabaseClient';
+import { NavLink } from 'react-router-dom';
 
 
 interface DashboardStats {
@@ -247,18 +248,18 @@ const Home: React.FC = () => {
                     To access your dashboard and manage your events effectively, please complete your company profile. This will help us provide you with a personalized experience tailored to your business needs.
                   </p>
                   <div className="flex items-center space-x-4">
-                    <a 
-                      href="/Venue-Manager-Dashboard/Profiles"  
+                    <NavLink 
+                      to="/Venue-Manager-Dashboard/Profiles"  
                       className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900"
                     >
                       Complete Profile
-                    </a>
-                    <a 
-                      href="#"
+                    </NavLink>
+                    <NavLink 
+                      to="#"
                       className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900"
                     >
                       Learn More
-                    </a>
+                    </NavLink>
                   </div>
                 </div>
               </div>
@@ -347,7 +348,10 @@ const Home: React.FC = () => {
 <div className="mt-8">
   <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Quick Actions</h2>
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-    <a href="/Venue-Manager-Dashboard/Event/Create" className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-md border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+    <NavLink 
+      to="/Venue-Manager-Dashboard/Event/Create" 
+      className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-md border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+    >
       <div className="text-center">
         <div className="mx-auto w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
           <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -356,7 +360,7 @@ const Home: React.FC = () => {
         </div>
         <p className="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">Create Event</p>
       </div>
-    </a>
+    </NavLink>
     {/* Add more quick actions here */}
   </div>
 </div>

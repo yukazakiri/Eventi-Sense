@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
 import { ChevronRight, Star, Building, ExternalLink, Edit, Settings } from 'lucide-react';
 import supabase from '../../../api/supabaseClient';
 
@@ -130,12 +131,18 @@ const ProfileCard = () => {
         
         {/* Action buttons */}
         <div className="flex gap-2 mb-6">
-          <a href="/edit-profile" className="bg-gray-900 text-white px-4 py-2 rounded-full text-sm flex items-center gap-1">
+          <NavLink 
+            to="/edit-profile" 
+            className="bg-gray-900 text-white px-4 py-2 rounded-full text-sm flex items-center gap-1"
+          >
             <Edit size={14} /> Edit Profile
-          </a>
-          <a href="/settings" className="bg-white border border-gray-300 px-4 py-2 rounded-full text-sm flex items-center gap-1">
+          </NavLink>
+          <NavLink 
+            to="/settings" 
+            className="bg-white border border-gray-300 px-4 py-2 rounded-full text-sm flex items-center gap-1"
+          >
             <Settings size={14} /> Settings
-          </a>
+          </NavLink>
         </div>
         
         {/* Skills section */}

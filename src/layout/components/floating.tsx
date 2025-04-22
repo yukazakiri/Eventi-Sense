@@ -197,50 +197,50 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
               
               {/* Dropdown Menu - Using height transition for smooth push effect */}
               <div 
-                className={`w-auto  text-white text-xl  overflow-hidden transition-all duration-500 ease-in-out ${
+                className={`w-auto text-white text-xl overflow-hidden transition-all duration-500 ease-in-out ${
                   isDropdownOpen ? 'max-h-48 opacity-100 mt-2' : 'max-h-0 opacity-0'
                 }`}
               >
-                <a 
-                  href="/Event-List"
+                <NavLink 
+                  to="/Event-List"
                   className="block px-4 py-2 text-white hover:bg-gray-200/10 hover:text-yellow-500"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    window.location.href = '/Event-List';
+                  onClick={() => {
+                    setDropdownOpen?.(false);
+                    handleCloseMenu();
                   }}
                 >
                   Events
-                </a>
-                <a 
-                  href="/Event-Planner"
+                </NavLink>
+                <NavLink 
+                  to="/Event-Planner"
                   className="block px-4 py-2 text-white hover:bg-gray-200/10 hover:text-yellow-500"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    window.location.href = '/Event-Planner';
+                  onClick={() => {
+                    setDropdownOpen?.(false);
+                    handleCloseMenu();
                   }}
                 >
-                 Event Planners
-                </a>
-                <a 
-                  href="/venue-list"
+                  Event Planners
+                </NavLink>
+                <NavLink 
+                  to="/venue-list"
                   className="block px-4 py-2 text-white hover:bg-gray-200/10 hover:text-yellow-500"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    window.location.href = '/venue-list';
+                  onClick={() => {
+                    setDropdownOpen?.(false);
+                    handleCloseMenu();
                   }}
                 >
                   Venues
-                </a>
-                <a 
-                  href="/supplier-list"
+                </NavLink>
+                <NavLink 
+                  to="/supplier-list"
                   className="block px-4 py-2 text-white hover:bg-gray-200/10 hover:text-yellow-500"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    window.location.href = '/supplier-list';
+                  onClick={() => {
+                    setDropdownOpen?.(false);
+                    handleCloseMenu();
                   }}
                 >
                   Suppliers
-                </a>
+                </NavLink>
               </div>
             </div>
 
