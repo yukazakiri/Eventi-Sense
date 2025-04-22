@@ -68,77 +68,75 @@ function HomePage() {
     > 
       <MainNavbar />
       <div className="bg-navy-blue-5/95">
-      <div className="relative h-[60vh] sm:h-[70vh] md:h-[85vh]">
-  
-  <motion.div
-    initial={{ scale: 1.05, opacity: 0.8 }}
-    animate={{ scale: 1, opacity: 1 }}
-    transition={{ duration: 2, ease: "easeOut" }}
-    className="absolute inset-0 bg-cover bg-center"
-    style={{ backgroundImage: `url(${myImage})` }}
-  />
-  <div className="absolute inset-0 bg-gray-950/70"></div>
-  
-  {/* Centered Text Container */}
-  <motion.div 
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 1, delay: 0.8 }}
-    className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 space-y-4"
-  > 
-    <div className="flex flex-col items-center space-y-6">
-      <div className="h-20 w-20 mb-2">
-        <img src={logo} alt="Background" className="h-full w-full object-contain" />
-      </div>
-      <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-bonanova text-white">
-        EventiSense
-      </h1>
-      <p className="text-lg text-white/80 font-sofia max-w-md">
-        Discover the perfect venues, suppliers, and tools for extraordinary experiences
-      </p>
+      <div className="relative h-screen min-h-[400px]">
+      <motion.div
+        initial={{ scale: 1.05, opacity: 0.8 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 2, ease: "easeOut" }}
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${myImage})` }}
+      />
+      <div className="absolute inset-0 bg-gray-950/70"></div>
+      
+      {/* Centered Text Container */}
       <motion.div 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="relative inline-block"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, delay: 0.8 }}
+        className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8 space-y-4 md:space-y-6"
+      > 
+        <div className="flex flex-col items-center space-y-4 sm:space-y-5 md:space-y-6">
+          <div className="h-16 w-16 sm:h-20 sm:w-20 mb-2">
+            <img src={logo} alt="Logo" className="h-full w-full object-contain" />
+          </div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-bonanova text-white">
+            EventiSense
+          </h1>
+          <p className="text-base sm:text-lg text-white/80 font-sofia max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-auto">
+            Discover the perfect venues, suppliers, and tools for extraordinary experiences
+          </p>
+          <motion.div 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
+            className="relative inline-block mt-2 sm:mt-4"
+          >
+            <motion.div 
+              initial={{ opacity: 0.6 }}
+              whileHover={{ opacity: 0.9 }}
+              className="absolute inset-0 bg-gray-200 rounded-full bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100"
+            ></motion.div>
+            <Link to="/Pricing">
+              <button 
+                className="px-5 sm:px-6 h-12 sm:h-14 rounded-full hover:rounded-full transform transition-all duration-500 ease-in-out
+                bg-transparent hover:w-32 sm:hover:w-36 hover:h-32 sm:hover:h-36 text-white relative group z-10"
+              >
+                <span className="group-hover:opacity-0 transition-opacity duration-300 font-sofia tracking-widest ease-in-out text-sm whitespace-nowrap">
+                  Get Started 
+                </span>
+                <motion.div
+                  initial={{ rotate: 180 }}
+                  animate={{ rotate: 0 }}
+                  transition={{ duration: 0.5 }}
                 >
-                  <motion.div 
-                    initial={{ opacity: 0.6 }}
-                    whileHover={{ opacity: 0.9 }}
-                    className="absolute inset-0 bg-gray-200 rounded-full bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100"
-                  ></motion.div>
-                          <Link to="/Pricing">
-                  <button 
-                  
-                    className="px-6 h-14 rounded-full hover:rounded-full transform transition-all duration-500 ease-in-out
-                    bg-transparent hover:w-36 hover:h-36 text-white relative group z-10"
-                  >
-                    <span className="group-hover:opacity-0 transition-opacity duration-300 font-sofia tracking-widest ease-in-out text-sm whitespace-nowrap">
-                      Get Started 
-                    </span>
-                    <motion.div
-                      initial={{ rotate: 180 }}
-                      animate={{ rotate: window.scrollY > 50 ? 0 : 0 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <GoArrowRight
-                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"
-                        size={24}
-                      />
-                    </motion.div>
-                  </button>
-                  </Link>
+                  <GoArrowRight
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"
+                    size={24}
+                  />
                 </motion.div>
-    </div>
-  </motion.div>
+              </button>
+            </Link>
+          </motion.div>
+        </div>
+      </motion.div>
 
-  {/* Decorative Border with animation */}
-  <motion.div 
-    initial={{ opacity: 0, scale: 0.98 }}
-    animate={{ opacity: 1, scale: 1 }}
-    transition={{ duration: 1, delay: 0.5 }}
-    className="absolute inset-2 sm:inset-4 md:inset-6 border border-white/20 pointer-events-none"
-  />
-</div>
+      {/* Decorative Border with animation */}
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1, delay: 0.5 }}
+        className="absolute inset-2 sm:inset-4 md:inset-6 border border-white/20 pointer-events-none"
+      />
+    </div>
 
 
         <motion.section 

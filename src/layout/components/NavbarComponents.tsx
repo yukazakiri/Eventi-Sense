@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import Button from '../../components/Button/button';
+
 import ProfileAvatar from '../../components/Profile/profileAvatar';
 import Notification from '../../components/NewNotification/usernotification';
 import ChatIconWithUnread from '../../components/chatIcon/chat';
@@ -39,9 +39,9 @@ interface NavbarProps {
             </div>
   
             {/* Main navigation */}
-            <div className="flex-1 flex justify-center">
+            <div className="flex-1 flex justify-center gap-12">
               {/* Desktop navigation */}
-              <div className="hidden md:flex items-center justify-center space-x-8 font-sofia tracking-widest text-sm text-gray-100">
+              <div className="hidden lg:flex items-center justify-center space-x-8 font-sofia tracking-widest text-sm text-gray-100">
                 <NavLink to="/" className={({ isActive }) => `uppercase ${isActive ? 'gradient-text' : 'hover:text-white'}`}>
                   Home
                 </NavLink>
@@ -131,29 +131,25 @@ interface NavbarProps {
                  Create Event
                 </NavLink>
               </div>
-            </div>
-        <div className='md:hidden flex mr-16'>
-        <ChatIconWithUnread />
-        <Notification userId={user?.id}/>
-
-        </div>
-            {/* Profile/Auth buttons */}
-            <div className="hidden md:flex items-center gap-1">
+                 {/* Profile/Auth buttons */}
+                <div className="hidden md:flex items-center gap-1">
             <ChatIconWithUnread />
             <Notification userId={user?.id}/>
               {user ? (
                 <ProfileAvatar user={user} profile={profile} />
               ) : (
                 <div className="flex space-x-3">
-                  <Button
-                    label="Sign Up"
-                    onClick={() => navigate('/register')}
-                    gradientText={true}
-                    variant="secondary"
-                  />
+                  
                 </div>
               )}
+               </div>
             </div>
+        <div className='md:hidden flex mr-16'>
+        <ChatIconWithUnread />
+        <Notification userId={user?.id}/>
+
+        </div>
+         
             
             {/* Mobile menu button here if needed */}
             <div className="md:hidden flex items-center">
@@ -295,12 +291,7 @@ interface NavbarProps {
                 <ProfileAvatar user={user} profile={profile} />
               ) : (
                 <div className="flex space-x-3">
-                  <Button
-                    label="Sign Up"
-                    onClick={() => navigate('/register')}
-                    gradientText={true}
-                    variant="secondary"
-                  />
+               
                 </div>
               )}
             </div>

@@ -184,9 +184,9 @@ const AppRouter = () => {
       </AnimatePresence>
       
       {/* Fixed Position Components */}
-      <div className="fixed bottom-8 left-8 z-50">
+  
         <SurveyDisplay />
-      </div>
+     
       <ScrollToTopButton />
       <BotpressChat />
     </>

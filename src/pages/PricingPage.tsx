@@ -562,35 +562,28 @@ const PricingPage = () => {
         </div>
         
         {/* Pro Plan Modal */}
-        <AnimatePresence>
-          {showProModal && (
-            <motion.div
-              className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4 mt-10"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <motion.div 
-                className="relative"
-                variants={popIn}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-              >
-                <motion.button
-                  onClick={() => setShowProModal(false)}
-                  className="absolute -top-4 -right-4 bg-gray-800 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
-                  whileHover={{ scale: 1.1, backgroundColor: "#FF4444" }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  ×
-                </motion.button>
-                <ProPlanOverview />
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+     {/* Pro Plan Modal */}
+<AnimatePresence>
+  {showProModal && (
+    <motion.div
+      className="fixed inset-0 bg-black bg-opacity-80 z-50 p-4 pt-10"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <motion.div 
+        className="relative"
+        variants={popIn}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
+        <ProPlanOverview onClose={() => setShowProModal(false)} />
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
         
         <MainFooter />
       </motion.div>

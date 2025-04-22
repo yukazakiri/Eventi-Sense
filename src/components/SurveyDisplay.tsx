@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence, useDragControls } from 'framer-motion';
 import SurveyForm from "./SurveyForm";
@@ -36,14 +35,14 @@ function SurveyDisplay() {
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
-  // Update initial position to top right
-  const [position, setPosition] = useState({ x: window.innerWidth - 320, y: - 825 });
+  // Update initial position to top left
+  const [position, setPosition] = useState({ x: 50, y: 120 });
   const dragControls = useDragControls();
   
-  // Add window resize handler
+  // Add window resize handler to maintain position
   useEffect(() => {
     const handleResize = () => {
-      setPosition(prev => ({ ...prev, x: window.innerWidth - 300 }));
+      setPosition({ x: 50, y: 120 });
     };
     
     window.addEventListener('resize', handleResize);
@@ -58,13 +57,13 @@ function SurveyDisplay() {
     };
     fetchUser();
   }, []);
+  
   const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: { offset: { x: number; y: number } }) => {
     setPosition(prev => ({
       x: prev.x + info.offset.x,
       y: prev.y + info.offset.y
     }));
   };
-
 
   if (loading) return null;
 
@@ -88,17 +87,15 @@ function SurveyDisplay() {
         whileTap={{ scale: 0.98 }}
       >
         <motion.div 
-        className="bg-white rounded-lg shadow-2xl p-4 w-64  "
-        style={{
-          animation: 'bounce 1.7s infinite'
-        }}
-
-
+          className="bg-white rounded-lg shadow-2xl p-4 w-64"
+          style={{
+            animation: 'bounce 1.7s infinite'
+          }}
           variants={itemVariants}
         >
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm text-gray-800/90 font-medium">
-            Help us make event planning better for everyone!
+              Help us make event planning better for everyone!
             </h2>
             <motion.div
               animate={{ rotate: [0, 10, -10, 0] }}

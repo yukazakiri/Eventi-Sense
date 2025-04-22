@@ -35,7 +35,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, currentUserId, onDe
         return (
           <div key={message.id} className="w-full">
        
-            
+        
             <div className={`flex ${isSender ? 'justify-end' : 'justify-start'} w-full`}>
               {/* Avatar for receiver messages */}
               {!isSender && (
