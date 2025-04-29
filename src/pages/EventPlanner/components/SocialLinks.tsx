@@ -39,11 +39,12 @@ function SocialMediaLinks() {
             try {
                 setLoading(true);
 
-                const { data: eventPlanner, error: eventPlannerError } = await supabase
-                    .from('eventplanners')
-                    .select('profile_id')
-                    .eq('user_id', user.id)
-                    .single();
+             
+        const { data: eventPlanner, error: eventPlannerError } = await supabase
+        .from('eventplanners')
+        .select('profile_id')
+        .eq('profile_id', user.id)  // Changed from user_id to profile_id
+        .single();
 
                 if (eventPlannerError || !eventPlanner) {
                     setError('Event planner not found for this user.');
@@ -78,65 +79,83 @@ function SocialMediaLinks() {
         setNewSocialMedia((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError(null);
-        setSuccessMessage(null);
+// Fix the handleSubmit function to properly handle the event_planner_id
+const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSuccessMessage(null);
 
-        if (!user) {
-            setError('User is not authenticated.');
+    if (!user) {
+        setError('User is not authenticated.');
+        return;
+    }
+
+    try {
+        // Modified query to use the correct column
+        const { data: eventPlanner, error: eventPlannerError } = await supabase
+            .from('eventplanners')
+            .select('profile_id')
+            .eq('profile_id', user.id)  // Changed from user_id to profile_id
+            .single();
+
+        if (eventPlannerError || !eventPlanner) {
+            console.error('Event planner error:', eventPlannerError);
+            setError('Event planner not found for this user.');
             return;
         }
 
-        try {
-            const { data: eventPlanner, error: eventPlannerError } = await supabase
-                .from('eventplanners')
-                .select('profile_id')
-                .eq('user_id', user.id)
-                .single();
+        // The rest of your code remains the same
+        const socialMediaToSubmit = {
+            ...newSocialMedia,
+            event_planner_id: eventPlanner.profile_id
+        };
 
-            if (eventPlannerError || !eventPlanner) {
-                setError('Event planner not found for this user.');
-                return;
-            }
+        const { error } = await supabase
+            .from('event_planner_social_media')
+            .insert([socialMediaToSubmit]);
 
-            const { error } = await supabase
+        if (error) {
+            setError('Error adding social media link.');
+            console.error('Error adding link:', error);
+        } else {
+            setSuccessMessage('Social media link added successfully!');
+            // Reset all states
+            setNewSocialMedia({ event_planner_id: '', platform: '', link: '' });
+            setShowInput(false);
+            setSelectedPlatform(null);
+            setIsEditing(false);
+            
+            // Fetch updated links
+            const { data: updatedLinks, error: fetchError } = await supabase
                 .from('event_planner_social_media')
-                .insert([{ ...newSocialMedia, event_planner_id: eventPlanner.profile_id }]);
-
-            if (error) {
-                setError('Error adding social media link.');
-                console.error('Error adding link:', error);
-            } else {
-                setSuccessMessage('Social media link added successfully!');
-                setNewSocialMedia({ event_planner_id: '', platform: '', link: '' });
-                setShowInput(false); // Hide input fields after submission
-                const updatedLinks = await supabase
-                    .from('event_planner_social_media')
-                    .select('*')
-                    .eq('event_planner_id', eventPlanner.profile_id);
-                    
-                if (updatedLinks.data) {
-                    setSocialMedia(updatedLinks.data.map(item => ({...item, isEditing: false})));
-                }
+                .select('*')
+                .eq('event_planner_id', eventPlanner.profile_id);
+                
+            if (fetchError) {
+                console.error('Error fetching updated links:', fetchError);
+            } else if (updatedLinks) {
+                setSocialMedia(updatedLinks.map(item => ({...item, isEditing: false})));
             }
-        } catch (err) {
-            setError('An error occurred while adding the link.');
-            console.error('Error adding link:', err);
         }
-    };
-
+    } catch (err) {
+        setError('An error occurred while adding the link.');
+        console.error('Error adding link:', err);
+    }
+};
+// Fix the handleCancel function to reset all states
+const handleCancel = () => {
+    setShowInput(false);
+    setNewSocialMedia({event_planner_id: '', platform: '', link: ''});
+    setSelectedPlatform(null);
+    setIsEditing(false); // Add this to be consistent
+}
     const handleIconClick = (platform: string) => {
         setSelectedPlatform(platform);
         setNewSocialMedia((prev) => ({ ...prev, platform }));
         setShowInput(true); // Show input fields when an icon is clicked
     };
 
-    const handleCancel = () => {
-        setShowInput(false);
-        setNewSocialMedia({event_planner_id: '', platform: '', link: ''});
-        setSelectedPlatform(null);
-    };
+ 
 
     return (
         <div className={`bg-white  sm:p-6 md:p-[2rem] border-[1px] border-gray-300 rounded-3xl dark:bg-gray-900 dark:border-gray-700   shadow-lg hover:shadow-xl transition-all duration-300 p-6 backdrop-blur-sm bg-opacity-80 dark:bg-opacity-80 ${isEditing ? 'border-[1px] rounded-3xl border-indigo-400 dark:border-indigo-400' : ''}`}>

@@ -21,7 +21,9 @@ import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import { IoLogoBuffer } from "react-icons/io";
 import { useScroll, useTransform, useInView,motion } from 'framer-motion';
 import { MoonLoader } from "react-spinners";
-
+// Add these imports at the top
+import { getCurrentUser } from '../api/utiilty/profiles'; 
+import { createNewConversation } from '../components/messenger/services/supabaseService'; 
 
 
 
@@ -114,6 +116,67 @@ const PublicSupplierDetails: React.FC = () => {
   const [events, setEvents] = useState<AvailabilityEvent[]>([]);
   const [currentView] = useState('dayGridMonth');
   const calendarRef = useRef<FullCalendar>(null);
+  const [currentUser, setCurrentUser] = useState<{ id: string } | null>(null);
+  const [isMessageLoading, setIsMessageLoading] = useState(false);
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await getCurrentUser();
+      setCurrentUser(user as any);
+    };
+    fetchUser();
+  }, []);
+  const handleMessageSupplier = async () => {
+    if (!currentUser) {
+      navigate('/login', { state: { from: `/suppliers/${supplierId}` } });
+      return;
+    }
+    
+    setIsMessageLoading(true);
+    try {
+      if (!supplier || !supplier.company_id) {
+        console.error('Supplier data or company_id not available');
+        setIsMessageLoading(false);
+        return;
+      }
+  
+      console.log('Using company_id for messaging:', supplier.company_id);
+      
+      const { data: companyData, error: companyError } = await supabase
+        .from('company_profiles')
+        .select('id')
+        .eq('id', supplier.company_id)
+        .single();
+        
+      if (companyError || !companyData) {
+        console.error('Error fetching company user_id:', companyError);
+        setIsMessageLoading(false);
+        return;
+      }
+  
+      if (!companyData.id) {
+        console.error('Company profile has no associated id');
+        setIsMessageLoading(false);
+        return;
+      }
+  
+      console.log('Company user found:', companyData.id);
+      
+      const conversationId = await createNewConversation(currentUser.id, companyData.id);
+      console.log('Conversation created with ID:', conversationId);
+      
+      navigate('/Messenger', { 
+        state: { 
+          selectedUserId: companyData.id,
+          supplierName: supplier.name
+        } 
+      });
+      
+    } catch (error) {
+      console.error('Error starting conversation:', error);
+    } finally {
+      setIsMessageLoading(false);
+    }
+  };
 
   const targetSectionRef = useRef(null);
     const headerRef = useRef(null);
@@ -730,6 +793,56 @@ const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 1]); // Keep opacity
                           </div>
                         </section>
                       </ScrollReveal>
+                      <motion.div
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  className="bg-[#2F4157]/20 backdrop-blur-sm rounded-lg p-6 border border-white/10 shadow-xl max-w-md mx-auto my-8"
+>
+  <motion.div
+    initial={{ y: 20, opacity: 0 }}
+    animate={{ y: 0, opacity: 1 }}
+    transition={{ delay: 0.2 }}
+    className="text-center space-y-4"
+  >
+    <h3 className="text-white text-xl font-bonanova">Have Questions?</h3>
+    <p className="text-gray-200 font-sofia text-sm">
+      We're here to help you plan your perfect event. Reach out to us directly for personalized assistance and detailed information about our services.
+    </p>
+  </motion.div>
+
+  <motion.div 
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.98 }}
+    className="relative mt-6"
+  >
+    <motion.div 
+      initial={{ opacity: 0.6 }}
+      whileHover={{ opacity: 0.9 }}
+      className="h-full w-full bg-gray-200 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100 absolute inset-0"
+    ></motion.div>
+    <HoverButton2 
+      onClick={handleMessageSupplier} 
+      className="relative z-10 w-full"
+    >
+      {isMessageLoading ? (
+        <span className="flex items-center justify-center">
+          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Connecting...
+        </span>
+      ) : (
+        <span className="flex items-center justify-center gap-2">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-4l-4 4-4-4z"></path>
+          </svg>
+          Start a Conversation
+        </span>
+      )}
+    </HoverButton2>
+  </motion.div>
+</motion.div>
  
   </div>
   

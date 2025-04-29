@@ -67,18 +67,18 @@ const AttendeeManagementPage: React.FC = () => {
 
         // Fetch tickets for the event with status = 'confirmed'
         const { data: ticketsData, error: ticketsError } = await supabase
-          .from('tickets')
-          .select(`
-            *,
-            orders!left(
-              payment_status,
-              payment_date,
-              amount
-            ),
-            profiles!inner(*)
-          `)
-          .eq('event_id', eventId)
-          .eq('status', 'purchased'); // Only fetch confirmed tickets
+        .from('tickets')
+        .select(`
+          *,
+          orders!left(
+            payment_status,
+            payment_date,
+            amount
+          ),
+          profiles!tickets_user_id_fkey(*)
+        `)
+        .eq('event_id', eventId)
+        .eq('status', 'purchased');
           console.log(ticketsData);
         if (ticketsError) throw ticketsError;
 

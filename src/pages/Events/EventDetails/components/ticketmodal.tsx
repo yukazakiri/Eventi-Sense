@@ -122,7 +122,7 @@ const TicketReservationModal: React.FC<ModalProps> = ({
       const isEventFree = event.ticket_price === 0;
       setIsFreeEvent(isEventFree);
 
-      // Create ticket with appropriate status
+      // Create ticket and order entries (keep existing code)
       const { data: ticketData, error: ticketError } = await supabase
         .from('tickets')
         .insert([
@@ -141,7 +141,7 @@ const TicketReservationModal: React.FC<ModalProps> = ({
       const newTicketId = ticketData[0].id;
       setTicketId(newTicketId);
 
-      // Create order entry for both free and paid events
+      // Create order entry
       const { error: orderError } = await supabase
         .from('orders')
         .insert([
@@ -150,7 +150,6 @@ const TicketReservationModal: React.FC<ModalProps> = ({
             amount: event.ticket_price * quantity,
             payment_status: isEventFree ? 'completed' : 'pending',
             created_at: new Date().toISOString(),
-            // For free events, set payment date to now
             payment_date: isEventFree ? new Date().toISOString() : null,
           },
         ])
@@ -158,58 +157,55 @@ const TicketReservationModal: React.FC<ModalProps> = ({
 
       if (orderError) throw orderError;
 
-      // Update notification links to match the correct format
-      const { error: notificationErrorSender } = await supabase
-        .from('notifications')
-        .insert([
-          {
-            user_id: user.id,
-            sender_id: user.id,
-            type: isEventFree ? 'ticket_confirmation' : 'ticket_request',
-            message: isEventFree
-              ? `You have confirmed ${quantity} free ticket(s) for ${event.name}!`
-              : `You have requested ${quantity} ticket(s) for ${event.name}.`,
-            link: `/tickets/${newTicketId}/Details`,
-            is_read: false,
-          },
-        ]);
+      // Only send notifications for free events
+      if (isEventFree) {
+        // Get event organizer
+        const { data: eventData, error: eventError } = await supabase
+          .from('events')
+          .select('organizer_id')
+          .eq('id', event.id)
+          .single();
 
-      if (notificationErrorSender) {
-        console.error('Error creating sender notification:', notificationErrorSender);
-      }
+        if (eventError) {
+          console.error('Error fetching event organizer:', eventError);
+          return;
+        }
 
-      const { data: eventData, error: eventError } = await supabase
-        .from('events')
-        .select('organizer_id')
-        .eq('id', event.id)
-        .single();
+        // Send notification to user
+        const { error: notificationErrorSender } = await supabase
+          .from('notifications')
+          .insert([
+            {
+              user_id: user.id,
+              sender_id: user.id,
+              type: 'ticket_confirmation',
+              message: `You have confirmed ${quantity} free ticket(s) for ${event.name}!`,
+              link: `/tickets/${newTicketId}/Details`,
+              is_read: false,
+            },
+          ]);
 
-      if (eventError) {
-        console.error('Error fetching event organizer:', eventError);
-        return;
-      }
+        if (notificationErrorSender) {
+          console.error('Error creating sender notification:', notificationErrorSender);
+        }
 
-      // Define notification type and messages
-      const notificationType = isEventFree ? 'ticket_confirmation' : 'ticket_request';
-      const receiverMessage = isEventFree
-        ? `${user.email} has confirmed ${quantity} free ticket(s) for your event ${event.name}.`
-        : `${user.email} has requested ${quantity} ticket(s) for your event ${event.name}.`;
+        // Send notification to organizer
+        const { error: notificationErrorReceiver } = await supabase
+          .from('notifications')
+          .insert([
+            {
+              user_id: eventData.organizer_id,
+              sender_id: user.id,
+              type: 'ticket_confirmation',
+              message: `${user.email} has confirmed ${quantity} free ticket(s) for your event ${event.name}.`,
+              link: `/events/${event.id}`,
+              is_read: false,
+            },
+          ]);
 
-      const { error: notificationErrorReceiver } = await supabase
-        .from('notifications')
-        .insert([
-          {
-            user_id: eventData.organizer_id,
-            sender_id: user.id,
-            type: notificationType,
-            message: receiverMessage,
-            link: `/events/${event.id}`,
-            is_read: false,
-          },
-        ]);
-
-      if (notificationErrorReceiver) {
-        console.error('Error creating receiver notification:', notificationErrorReceiver);
+        if (notificationErrorReceiver) {
+          console.error('Error creating receiver notification:', notificationErrorReceiver);
+        }
       }
 
       // Set success message and show modal

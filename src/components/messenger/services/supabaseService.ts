@@ -3,7 +3,29 @@ import supabase from '../../../api/supabaseClient'
 import { Message, User, MessageToSend } from '../types';
 import { RealtimeChannel } from '@supabase/supabase-js';
 
+// Modify getUsers to support pagination
+export const getUsers = async (currentUserId: string, limit?: number) => {
+  let query = supabase
+    .from('profiles')
+    .select('*')
+    .neq('id', currentUserId);
+  
+  // If limit is provided, apply it to the query
+  if (limit) {
+    query = query.limit(limit);
+  }
 
+  const { data, error } = await query;
+
+  if (error) {
+    console.error('Error fetching users:', error);
+    return [];
+  }
+
+  return data as User[];
+};
+
+// The rest of your supabaseService.ts code remains unchanged
 // Messages services
 export const deleteMessage = async (messageId: string) => {
   try {
@@ -23,6 +45,7 @@ export const deleteMessage = async (messageId: string) => {
     throw error;
   }
 };
+
 export const getMessages = async (userId: string, otherUserId: string | undefined) => {
   if (!otherUserId) return [];
 
@@ -107,21 +130,6 @@ export const subscribeToMessages = (
   return activeSubscription;
 };
 
-// User services
-export const getUsers = async (currentUserId: string) => {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .neq('id', currentUserId);
-
-  if (error) {
-    console.error('Error fetching users:', error);
-    return [];
-  }
-
-  return data as User[];
-};
-
 export const getCurrentUser = async () => {
   const { data: { session } } = await supabase.auth.getSession();
   
@@ -143,8 +151,23 @@ export const getCurrentUser = async () => {
   return data as User;
 };
 
-export { supabase };
+export const getConversationPartners = async (userId: string) => {
+  const { data, error } = await supabase
+    .from('messages')
+    .select('sender_id, receiver_id')
+    .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
+    .order('created_at', { ascending: false });
 
+  if (error) throw error;
+    
+  const partnerIds = new Set<string>();
+  data?.forEach((message) => {
+    const partnerId = message.sender_id === userId ? message.receiver_id : message.sender_id;
+    partnerIds.add(partnerId);
+  });
+
+  return Array.from(partnerIds);
+};
 
 // Add this new function to mark messages as read
 export const markMessageAsRead = async (messageIds: string[]) => {
@@ -165,3 +188,48 @@ export const markMessageAsRead = async (messageIds: string[]) => {
     throw error;
   }
 };
+
+export const createNewConversation = async (senderId: string, receiverId: string): Promise<string> => {
+  try {
+    // First check if there are any existing messages between these users
+    const { data: existingMessages, error: fetchError } = await supabase
+      .from('messages')
+      .select('id')
+      .or(`and(sender_id.eq.${senderId},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${senderId})`)
+      .limit(1);
+
+    if (fetchError) {
+      throw fetchError;
+    }
+
+    // If there are no existing messages, create the first message
+    if (!existingMessages || existingMessages.length === 0) {
+      const { data: newMessage, error: insertError } = await supabase
+        .from('messages')
+        .insert([
+          {
+            sender_id: senderId,
+            receiver_id: receiverId,
+            content: '👋 Hello!' // Initial greeting message
+          }
+        ])
+        .select('id')
+        .single();
+
+      if (insertError) {
+        throw insertError;
+      }
+
+      return newMessage.id.toString();
+    }
+
+    // If messages exist, return the first message id as the conversation identifier
+    return existingMessages[0].id.toString();
+
+  } catch (error) {
+    console.error('Error in createNewConversation:', error);
+    throw error;
+  }
+};
+
+export { supabase };

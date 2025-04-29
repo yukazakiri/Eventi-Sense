@@ -23,7 +23,7 @@ const SeasideSupplierListing = () => {
 
   const [showAllSuppliers, setShowAllSuppliers] = useState(false);
   const { suppliers, loading, error } = useSuppliers(filters);
-  const [isInView, setIsInView] = useState(false);
+  const [_isInView, setIsInView] = useState(false);
 
   const handleFilterChange = (field: keyof SupplierFilters, value: string) => {
     setFilters(prev => ({ ...prev, [field]: value }));
@@ -231,48 +231,9 @@ const SeasideSupplierListing = () => {
           </motion.div>
         </div>
 
-        {/* Featured Section */}
-  
-        <section className='w-full h-full'>
-                    <motion.div 
-                        id="targetSection" 
-                        className='max-w-6xl mx-auto flex flex-col justify-center items-center py-6 pt-20 h-[8rem]'
-                        initial={{ opacity: 0 }}
-                        animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-                        transition={{ duration: 0.8 }}
-                    >
-                        <motion.h2 
-                            className="md:text-3xl text-xl font-bold font-bonanova gradient-text uppercase"
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-                            transition={{ duration: 0.8, delay: 0.2 }}
-                        >
-                            Featured Suppliers
-                        </motion.h2>
-                    </motion.div>
-                </section>
-        {/* Wave Animation */}
-        <section className='relative'>
-          <div className="ocean">
-            <div>
-              <svg className="waves" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
-                viewBox="0 24 150 28" preserveAspectRatio="none" shapeRendering="auto">
-                <defs>
-                  <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
-                </defs>
-                <g className="parallax">
-                  <use xlinkHref="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.5)" />
-                  <use xlinkHref="#gentle-wave" x="48" y="3" fill="rgba(146, 163, 177,0.5)" />
-                  <use xlinkHref="#gentle-wave" x="48" y="5" fill="rgba(59, 96, 124,0.5)" />
-                  <use xlinkHref="#gentle-wave" x="48" y="7" fill="#FFFFFF" />
-                </g>
-              </svg>
-            </div>
-          </div>
-        </section>
-
+     
         {/* Suppliers Section */}
-        <section className='bg-white'>
+        <section className='bg-white py-10'>
           <motion.div 
             className="mx-4 sm:mx-6 xl:mx-24 py-10 lg:border-r lg:border-b border-gray-600/20"
             variants={staggerContainer}

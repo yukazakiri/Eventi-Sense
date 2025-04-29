@@ -43,9 +43,9 @@ const EventSidebar: React.FC<EventSidebarProps> = ({
         }
     };
 
-  
+  console.log('Event Status:', eventStatus);
 
-    const getButtonContent = () => { // Modified to include 'disabled' flag
+    const getButtonContent = () => {
         if (eventStatus === 'cancelled') {
             return {
                 text: 'Event Cancelled',
@@ -54,7 +54,7 @@ const EventSidebar: React.FC<EventSidebarProps> = ({
             };
         }
         
-        if (hasTicket) {
+        if (hasTicket && eventStatus === 'completed') {
             return {
                 text: 'Write a Review',
                 className: 'bg-yellow-500 hover:bg-yellow-600',
@@ -62,11 +62,19 @@ const EventSidebar: React.FC<EventSidebarProps> = ({
             };
         }
         
-        if (eventStatus === 'completed') {
+        if (eventStatus === 'completed' && !hasTicket) {
             return {
                 text: 'Event Ended',
                 className: 'bg-gray-600 cursor-not-allowed opacity-60',
                 disabled: true
+            };
+        }
+
+        if (hasTicket) {
+            return {
+                text: 'View Ticket',
+                className: 'bg-sky-500 hover:bg-sky-600',
+                disabled: false
             };
         }
 

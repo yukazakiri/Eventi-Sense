@@ -560,8 +560,7 @@ const PricingPage = () => {
             {/* Add FAQ content here */}
           </motion.div>
         </div>
-        
-        {/* Pro Plan Modal */}
+ 
      {/* Pro Plan Modal */}
 <AnimatePresence>
   {showProModal && (

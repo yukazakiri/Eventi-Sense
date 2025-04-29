@@ -39,12 +39,12 @@ const EventDetails: React.FC = () => {
                 
                 // Get tickets with status = 'purchased' for this event for the current user
                 const { data: ticketsData, error: ticketsError } = await supabase
-                    .from('tickets')
-                    .select('profiles(id)')
-                    .eq('event_id', id)
-                    .eq('status', 'purchased')
-                    .eq('user_id', userId);
-                
+                .from('tickets')
+                .select('profiles!tickets_user_id_fkey(id)')  // Specify which foreign key to use
+                .eq('event_id', id)
+                .eq('status', 'purchased')
+                .eq('user_id', userId);
+
                 if (ticketsError) {
                     console.error('Error fetching tickets:', ticketsError);
                     setHasTicket(false);
@@ -61,21 +61,34 @@ const EventDetails: React.FC = () => {
             }
         };
 
-        // Separate effect for event status
+        // Separate logic for event status
         const updateEventStatus = () => {
             if (event) {
                 const now = new Date();
-                const startDate = new Date(event.start_date);
-                const endDate = new Date(event.end_date);
-
-                if (now < startDate) {
+                const eventDate = new Date(event.date);
+                
+                // Simple approach: 
+                // - If event date is in the future -> upcoming
+                // - If event date is today -> ongoing
+                // - If event date is in the past -> completed
+                
+                // Reset hours to compare just the dates
+                const todayStart = new Date(now.setHours(0, 0, 0, 0));
+                const todayEnd = new Date(now.setHours(23, 59, 59, 999));
+                
+                if (eventDate > todayEnd) {
                     setEventStatus('upcoming');
-                } else if (now >= startDate && now <= endDate) {
+                } else if (eventDate >= todayStart && eventDate <= todayEnd) {
                     setEventStatus('ongoing');
                 } else {
                     setEventStatus('completed');
                 }
-                console.log('Event dates:', { now, startDate, endDate });
+                
+                console.log('Event date status:', { 
+                    now: new Date(), 
+                    eventDate, 
+                    status: eventStatus 
+                });
             }
         };
       

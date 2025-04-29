@@ -1,22 +1,26 @@
 
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom'; // Add this import
 import { User } from '../messenger/types';
 import { getCurrentUser } from '../messenger/services/supabaseService';
 import MessengerContainer from '../messenger/Messenger/MessengerContainer';
 import UserList from '../messenger/UserList';
-import { useUsers } from '../messenger/hooks/useUsers';
+import { useUsers, getConversationPartners } from '../messenger/hooks/useUsers';
 import { useUnreadMessages } from '../messenger/hooks/unreadMessage';
+import toast from 'react-hot-toast'; // Add this import
 
 
 
 function Main() {
+    const location = useLocation(); // Add this
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const unreadFromUsers = useUnreadMessages(currentUser?.id || '');
+    const { users, loading: usersLoading } = useUsers(currentUser?.id || '');
+    const [conversationUserIds, setConversationUserIds] = useState<string[]>([]);
 
 
-  
     useEffect(() => {
       const fetchCurrentUser = async () => {
         try {
@@ -24,6 +28,7 @@ function Main() {
           setCurrentUser(user);
         } catch (error) {
           console.error('Error fetching current user:', error);
+          toast.error('Failed to fetch user data');
         } finally {
           setLoading(false);
         }
@@ -31,8 +36,31 @@ function Main() {
       
       fetchCurrentUser();
     }, []);
-    
-    const { users, loading: usersLoading } = useUsers(currentUser?.id || '');
+
+ // Main.tsx
+useEffect(() => {
+  const fetchData = async () => {
+    if (currentUser?.id) {
+      const partners = await getConversationPartners(currentUser.id);
+      setConversationUserIds(partners);
+    }
+  };
+  fetchData();
+}, [currentUser?.id]);
+
+// Update your existing location.state useEffect
+useEffect(() => {
+  if (location.state?.selectedUserId && users.length > 0) {
+    const preselectedUser = users.find(u => u.id === location.state.selectedUserId);
+    if (preselectedUser) {
+      setSelectedUser(preselectedUser);
+      setConversationUserIds(prev => {
+        const newIds = prev.filter(id => id !== preselectedUser.id);
+        return [preselectedUser.id, ...newIds];
+      });
+    }
+  }
+}, [location.state, users]);
     
     if (loading) {
       return (
@@ -67,7 +95,7 @@ function Main() {
    <div className='min-h-screen pt-32'>
         <div className="max-w-7xl h-[800px]  mx-auto py-6 flex gap-4 font-sofia">
           {/* Sidebar - User List */}
-          <div className="max-w-sm bg-gray-900 shadow-sm overflow-y-auto border-r border-gray-800 rounded-2xl"
+          <div className="max-w-sm bg-gray-900 shadow-sm overflow-y-auto border-r border-gray-800 rounded-2xl scrollbar-hide"
               style={{
                 background: `
                   linear-gradient(#152131, #152131) padding-box,
@@ -87,6 +115,7 @@ function Main() {
   onSelectUser={setSelectedUser} 
   loading={usersLoading}
   unreadFromUsers={unreadFromUsers}
+  conversationUsers={conversationUserIds} // <-- ADD THIS
 />
 
           </div>

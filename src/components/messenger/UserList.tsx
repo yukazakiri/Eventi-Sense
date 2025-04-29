@@ -9,6 +9,9 @@ interface UserListProps {
   loading: boolean;
   unreadFromUsers: string[]; // Unread messages
   conversationUsers?: string[]; // Users you've already had conversations with
+  onLoadMore?: () => void; // New prop for loading more users
+  hasMore?: boolean; // New prop to indicate if there are more users to load
+  totalCount?: number; // Total number of users
 }
 
 const UserList: React.FC<UserListProps> = ({ 
@@ -17,11 +20,14 @@ const UserList: React.FC<UserListProps> = ({
   onSelectUser, 
   loading,
   unreadFromUsers,
-  conversationUsers = []
+  conversationUsers = [],
+  onLoadMore,
+  hasMore = false,
+  totalCount = 0
 }) => {
   // Split users into three categories: unread, existing conversations, and new people
   const { unreadMessages, existingConversations, newPeople } = useMemo(() => {
-    return users.reduce(
+    const result = users.reduce(
       (acc, user) => {
         if (unreadFromUsers.includes(user.id)) {
           acc.unreadMessages.push(user);
@@ -38,6 +44,13 @@ const UserList: React.FC<UserListProps> = ({
         newPeople: [] as User[] 
       }
     );
+
+    // Sort existing conversations by their position in conversationUsers array
+    result.existingConversations.sort((a, b) => {
+      return conversationUsers.indexOf(a.id) - conversationUsers.indexOf(b.id);
+    });
+
+    return result;
   }, [users, conversationUsers, unreadFromUsers]);
 
   if (loading) {
@@ -73,7 +86,7 @@ const UserList: React.FC<UserListProps> = ({
       <button
         key={user.id}
         onClick={() => onSelectUser(user)}
-        className={`relative w-full text-left border-b border-gray-800 hover:bg-gray-800 focus:outline-none ${
+        className={`relative w-full text-left border-b border-gray-800 hover:bg-gray-800 focus:outline-none scrollbar-hide ${
           selectedUser?.id === user.id ? 'bg-sky-400/10 shadow-md text-sky-400 shadow-sky-400/30' : ''
         }`}
       >
@@ -162,6 +175,16 @@ const UserList: React.FC<UserListProps> = ({
           </div>
           {newPeople.map(renderUserButton)}
         </>
+      )}
+
+      {/* View More button */}
+      {hasMore && (
+        <button 
+          onClick={onLoadMore}
+          className="w-full py-3 text-center text-amber-400 bg-gray-900 hover:bg-gray-800 transition-colors border-t border-gray-800"
+        >
+          View More ({users.length} of {totalCount})
+        </button>
       )}
     </div>
   );

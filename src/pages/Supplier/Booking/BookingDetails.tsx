@@ -97,25 +97,42 @@ const UserBookings: React.FC<UserBookingsProps> = ({ supplierId }) => {
             setError(null);
 
             try {
-                const { data, error } = await supabase
+                // First fetch the bookings with service name
+                const { data: bookingsData, error: bookingsError } = await supabase
                     .from('supplier_bookings')
                     .select(`
                         *,
-                        suppliers_services (service_name),
-                        profiles (avatar_url)
+                        suppliers_services:service_id (service_name)
                     `)
                     .eq('supplier_id', supplierId);
 
-                if (error) {
-                    throw error;
+                if (bookingsError) {
+                    throw bookingsError;
                 }
 
-                if (data) {
-                    const bookingsWithAvatar = data.map((booking: any) => ({
-                        ...booking,
-                        avatar_url: booking.profiles?.avatar_url || fallbackAvatarUrl, // Use fallback here
-                    }));
-                    setBookings(bookingsWithAvatar);
+                if (bookingsData) {
+                    // Then fetch user avatars separately for each booking
+                    const bookingsWithDetails = await Promise.all(
+                        bookingsData.map(async (booking: any) => {
+                            // Fetch avatar from profiles using user_id
+                            const { data: userData, error: userError } = await supabase
+                                .from('profiles')
+                                .select('avatar_url')
+                                .eq('id', booking.user_id)
+                                .single();
+
+                            if (userError && userError.code !== 'PGRST116') {
+                                console.error('Error fetching user data:', userError);
+                            }
+
+                            return {
+                                ...booking,
+                                avatar_url: userData?.avatar_url || fallbackAvatarUrl
+                            };
+                        })
+                    );
+
+                    setBookings(bookingsWithDetails);
                 }
             } catch (err: any) {
                 setError(err.message);
@@ -127,6 +144,7 @@ const UserBookings: React.FC<UserBookingsProps> = ({ supplierId }) => {
 
         fetchBookings();
     }, [supplierId]);
+
     const updateBookingStatus = async (bookingId: string, status: 'confirmed' | 'cancelled') => {
         try {
             const { error } = await supabase
@@ -165,81 +183,74 @@ const UserBookings: React.FC<UserBookingsProps> = ({ supplierId }) => {
                     <table className="min-w-full divide-y divide-gray-200 p-4 dark:text-white">
                         <thead className="border-b-[1px] border-gray-200 dark:border-gray-700">
                             <tr>  
-                              
-                                <th className="px-6 py-3 text-left  text-sm font-medium text-gray-400  tracking-wider dark:text-gray-200">
+                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400 tracking-wider dark:text-gray-200">
                                     User
                                 </th>
-                                
-                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400  tracking-wider dark:text-gray-200">
+                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400 tracking-wider dark:text-gray-200">
                                     Service
                                 </th>
-                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400  tracking-wider dark:text-gray-200">
+                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400 tracking-wider dark:text-gray-200">
                                     Start Date
                                 </th>
-                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400  tracking-wider dark:text-gray-200">
+                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400 tracking-wider dark:text-gray-200">
                                     End Date
                                 </th>
-                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400  tracking-wider dark:text-gray-200">
+                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400 tracking-wider dark:text-gray-200">
                                     Status
                                 </th>
-                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400  tracking-wider dark:text-gray-200">
+                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-400 tracking-wider dark:text-gray-200">
                                     Actions
                                 </th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:border-gray-700">
-    {bookings.map((booking) => (
-        <tr key={booking.id} className="hover:bg-gray-50 transition-colors dark:hover:bg-gray-800">
-           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white flex items-center">
-                                    
-                                            <img
-                                                src={booking.avatar_url}
-                                                alt="User Avatar"
-                                                className="w-10 h-10 rounded-full mr-2"
-                                            />
-                                            <div className=''>
-                                                {booking.name}
-                                            </div>
-                                     
+                            {bookings.map((booking) => (
+                                <tr key={booking.id} className="hover:bg-gray-50 transition-colors dark:hover:bg-gray-800">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white flex items-center">
+                                        <img
+                                            src={booking.avatar_url}
+                                            alt="User Avatar"
+                                            className="w-10 h-10 rounded-full mr-2"
+                                        />
+                                        <div className=''>
+                                            {booking.name}
+                                        </div>
                                     </td>
-        
-           
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                {booking.suppliers_services?.service_name || 'Service Name Not Found'}
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                {format(
-                    toZonedTime(new Date(booking.start_date), phTimeZone),
-                    'yyyy-MM-dd hh:mm a'
-                )}
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                {format(
-                    toZonedTime(new Date(booking.end_date), phTimeZone),
-                    'yyyy-MM-dd hh:mm a'
-                )}
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                <span
-                    className={`px-4 py-2 text-xs font-semibold rounded-full ${booking.status === 'confirmed' ? 'bg-green-100 text-green-800' : booking.status === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}
-                >
-                    {booking.status}
-                </span>
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                <div className="flex space-x-2">
-                    <button
-                        onClick={() => setSelectedBooking(booking)}
-                        className="px-4 py-2 bg-sky-500 text-white text-sm rounded-lg hover:bg-sky-600 dark:bg-sky-500 dark:hover:bg-sky-600"
-                    >
-                        View
-                    </button>
-                  
-                </div>
-            </td>
-        </tr>
-    ))}
-</tbody>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                        {booking.suppliers_services?.service_name || 'Service Name Not Found'}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                        {format(
+                                            toZonedTime(new Date(booking.start_date), phTimeZone),
+                                            'yyyy-MM-dd hh:mm a'
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                        {format(
+                                            toZonedTime(new Date(booking.end_date), phTimeZone),
+                                            'yyyy-MM-dd hh:mm a'
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                        <span
+                                            className={`px-4 py-2 text-xs font-semibold rounded-full ${booking.status === 'confirmed' ? 'bg-green-100 text-green-800' : booking.status === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}
+                                        >
+                                            {booking.status}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                        <div className="flex space-x-2">
+                                            <button
+                                                onClick={() => setSelectedBooking(booking)}
+                                                className="px-4 py-2 bg-sky-500 text-white text-sm rounded-lg hover:bg-sky-600 dark:bg-sky-500 dark:hover:bg-sky-600"
+                                            >
+                                                View
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
                     </table>
                 </div>
             ) : (
