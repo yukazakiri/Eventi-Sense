@@ -92,16 +92,7 @@ interface NavbarProps {
                         >
                           Events
                         </NavLink>
-                        <NavLink 
-                          to="/Event-Planner"
-                          className="block px-4 py-2 text-white hover:bg-gray-200/10 hover:text-yellow-500"
-                          onClick={() => {
-                            setDropdownOpen?.(false);
-                            navigate('/Event-Planner');
-                          }}
-                        >
-                          Event Planners
-                        </NavLink>
+                   
                         <NavLink 
                           to="/venue-list"
                           className="block px-4 py-2 text-white hover:bg-gray-200/10 hover:text-yellow-500"
@@ -245,16 +236,7 @@ interface NavbarProps {
                         >
                           Events
                         </NavLink>
-                        <NavLink 
-                          to="/Event-Planner"
-                          className="block px-4 py-2 text-white hover:bg-gray-200/10 hover:text-yellow-500"
-                          onClick={() => {
-                            setDropdownOpen?.(false);
-                            navigate('/Event-Planner');
-                          }}
-                        >
-                          Event Planners
-                        </NavLink>
+                     
                         <NavLink 
                           to="/venue-list"
                           className="block px-4 py-2 text-white hover:bg-gray-200/10 hover:text-yellow-500"

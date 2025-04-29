@@ -41,6 +41,15 @@ export interface VenueFormData {
     company_id: string;
   
   }
+  // Add this to your types/venue.ts file
+  export interface VenueService {
+    id?: string;
+    venue_id?: string;
+    name: string;
+    description: string;
+    price: number;
+    is_required: boolean;
+  }
   export interface Venue {
     id: string; // UUID
     name: string;
@@ -60,11 +69,28 @@ export interface VenueFormData {
     venue_type: string[];
     company_id: string;
     created_at: string;
+    updated_at: string;
     cover_image_url: string;
     venue_types: VenueTypeOption[];
     venue_accessibilities: AccessibilityOption[];
     venue_pricing_models: PricingModelOption[];
     cover_photo: string | null;
+
+ // Legacy pricing fields (for backward compatibility)
+ base_price: number;          // Base price per hour/day
+ price_unit: 'hour' | 'day';  // Price per hour or per day
+ 
+ // New pricing fields
+ hourly_price?: number;       // Price per hour
+ daily_price?: number;        // Price per day
+ 
+ minimum_hours?: number;      // Minimum booking duration (in hours)
+ downpayment_percentage: number; // Percentage required as downpayment (e.g., 30 for 30%)
+ 
+ // Additional pricing options
+ weekend_surcharge_percentage?: number; // Additional percentage for weekend bookings
+ holiday_surcharge_percentage?: number; // Additional percentage for holiday bookings
+ additional_services?: VenueService[]; // Additional services with pricing
 }
 
 
@@ -92,7 +118,7 @@ export interface VenueImage {
   image_url: string;
  
 }
-export type BookingStatus = 'pending' | 'confirmed' | 'cancelled';
+export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'confirmed-for-downpayment' | 'confirmed-paid';
 
 export interface Booking {
   id?: string; // UUID, auto-generated

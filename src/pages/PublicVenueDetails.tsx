@@ -22,7 +22,7 @@ import '../components/borderwave/Wave.css';
 import { GoArrowDown,GoArrowUpRight } from "react-icons/go";
 import { CgWebsite } from "react-icons/cg";
 import { TbAddressBook } from "react-icons/tb";
-import { RiMoneyDollarCircleLine,RiBuilding2Line  } from "react-icons/ri";
+import { RiMoneyDollarCircleLine,RiBuilding2Line, RiPriceTag3Line, RiServiceLine  } from "react-icons/ri";
 import { IoLogoBuffer } from "react-icons/io";
 import { LuAccessibility, LuDiamondPlus } from 'react-icons/lu';
 
@@ -30,6 +30,7 @@ import { useScroll, useTransform, useInView } from 'framer-motion';
 import { getCurrentUser } from '../api/utiilty/profiles'; 
 import { createNewConversation } from '../components/messenger/services/supabaseService'; 
 
+// ... other imports ...
 
 interface AvailabilityEvent {
   id: string;
@@ -223,7 +224,13 @@ const PublicVenueDetails: React.FC = () => {
             *,
             venue_types (name),
             venue_accessibilities (name),
-            venue_pricing_models (name)
+            venue_pricing_models (name),
+                base_price,
+    price_unit,
+    minimum_hours,
+    downpayment_percentage,
+    weekend_surcharge_percentage,
+    holiday_surcharge_percentage
           `).eq('id', venueId).single(),
 
           supabase.from('venue_amenities').select('*').eq('venue_id', venueId),
@@ -660,6 +667,119 @@ const PublicVenueDetails: React.FC = () => {
                         </div>
                       </StaggeredReveal>
                     </ScrollReveal>
+ {/* Pricing Card */}
+<ScrollReveal delay={0.5}>
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    className="bg-[#2F4157] backdrop-blur-sm rounded-lg p-6 border border-white/10 shadow-xl mx-4 my-8"
+  >
+    <motion.div className="space-y-6">
+      {/* Base Pricing */}
+      <div>
+        <h3 className="text-white text-xl font-bonanova flex items-center gap-2 mb-4">
+          <RiPriceTag3Line className="text-yellow-500/70" />
+          Base Pricing
+        </h3>
+        
+        <div className="space-y-3">
+          {venue?.hourly_price && (
+            <div className="flex justify-between items-center text-gray-200">
+              <span className="font-sofia">Hourly Rate</span>
+              <span className="font-medium">₱{venue.hourly_price}</span>
+            </div>
+          )}
+          
+          {venue?.daily_price && (
+            <div className="flex justify-between items-center text-gray-200">
+              <span className="font-sofia">Daily Rate</span>
+              <span className="font-medium">₱{venue.daily_price}</span>
+            </div>
+          )}
+          
+          {venue?.minimum_hours && (
+            <div className="flex justify-between items-center text-gray-200">
+              <span className="font-sofia">Minimum Hours</span>
+              <span className="font-medium">{venue.minimum_hours} hours</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Payment Terms */}
+      <div>
+        <h3 className="text-white text-xl font-bonanova flex items-center gap-2 mb-4">
+          <RiMoneyDollarCircleLine className="text-yellow-500/70" />
+          Payment Terms
+        </h3>
+        
+        <div className="space-y-3">
+          <div className="flex justify-between items-center text-gray-200">
+            <span className="font-sofia">Downpayment Required</span>
+            <span className="font-medium">{venue?.downpayment_percentage}%</span>
+          </div>
+          
+          {(venue?.weekend_surcharge_percentage ?? 0) > 0 && (
+            <div className="flex justify-between items-center text-gray-200">
+              <span className="font-sofia">Weekend Surcharge</span>
+              <span className="font-medium">+{venue.weekend_surcharge_percentage}%</span>
+            </div>
+          )}
+          
+          {(venue?.holiday_surcharge_percentage ?? 0) > 0 && (
+            <div className="flex justify-between items-center text-gray-200">
+              <span className="font-sofia">Holiday Surcharge</span>
+              <span className="font-medium">+{venue.holiday_surcharge_percentage}%</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Additional Services */}
+      {venue?.additional_services && venue.additional_services.length > 0 && (
+        <div>
+          <h3 className="text-white text-xl font-bonanova flex items-center gap-2 mb-4">
+            <RiServiceLine className="text-yellow-500/70" />
+            Additional Services
+          </h3>
+          
+          <div className="space-y-3">
+            {venue.additional_services.map((service, index) => (
+              <motion.div
+                key={service.id || index}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="bg-[#2F4157]/30 p-3 rounded-lg"
+              >
+                <div className="flex justify-between items-center text-gray-200">
+                  <div>
+                    <span className="font-sofia">{service.name}</span>
+                    {service.is_required && (
+                      <span className="ml-2 text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded">
+                        Required
+                      </span>
+                    )}
+                  </div>
+                  <span className="font-medium">₱{service.price}</span>
+                </div>
+                {service.description && (
+                  <p className="text-sm text-gray-400 mt-1">{service.description}</p>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="mt-6 pt-4 border-t border-white/10">
+        <p className="text-sm text-gray-300 text-center font-sofia">
+          * Prices may vary based on season and specific requirements
+        </p>
+      </div>
+    </motion.div>
+  </motion.div>
+</ScrollReveal>
                   </div>
                 </div>
               </section>
@@ -900,7 +1020,7 @@ const PublicVenueDetails: React.FC = () => {
                           </div>
                         </section>
                       </ScrollReveal>
-                      // ... existing code ...
+              
 
 <motion.div
   initial={{ opacity: 0 }}
@@ -953,7 +1073,6 @@ const PublicVenueDetails: React.FC = () => {
   </motion.div>
 </motion.div>
 
-// ... existing code ...
                     </div>
                   </div>
              
@@ -1010,15 +1129,7 @@ const PublicVenueDetails: React.FC = () => {
               </div>
             </ScrollReveal>
             
-            <ScrollReveal>
-              <div>
-                {venueId ? (
-                  <PublicSocialLinks venueId={venueId} />
-                ) : (
-                  <div>Venue ID not found.</div>
-                )}
-              </div>
-            </ScrollReveal>
+        
           </section>
   {/* Availability Calendar Section */}
      {/* Availability Calendar Section */}

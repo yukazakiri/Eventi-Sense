@@ -9,7 +9,7 @@ import { Link, NavLink } from "react-router-dom";
 import { HoverButton } from "../components/Button/button-hover";
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
-import myImage from '../assets/images/bg-landing.jpg';
+import myImage from '../assets/images/format/bg-landing.webp';
 import logo from '../assets/images/logoES.png';
 import {  GoArrowRight } from 'react-icons/go';
 

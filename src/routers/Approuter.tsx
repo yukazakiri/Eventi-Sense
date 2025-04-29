@@ -61,6 +61,13 @@ import EmailVerification from '../pages/email-verification-sucess';
 import Terms from '../pages/terms';
 import Privacy from '../pages/privacy';
 
+import ResetPassword from '../pages/AuthForm/ResetPassword';
+import UpdatePassword from '../pages/AuthForm/UpdatePassword';
+
+import PaymentBooking from '../pages/paymentbooking'
+import ReceiptViewer from '../components/payment/ReceiptViewer';
+import VerifyReceipt from '../components/payment/VerifyReceipt';
+
 
 // Page Transition Animation Component
 const PageTransition = ({ children }: { children: React.ReactNode }) => {
@@ -179,7 +186,16 @@ const AppRouter = () => {
           <Route path="/confirm-success" element={<PageTransition><EmailVerification /></PageTransition>} />
           <Route path="/terms" element={<PageTransition><Terms/></PageTransition>} />
           <Route path="/privacy" element={<PageTransition><Privacy/></PageTransition>} />
+
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/update-password" element={<UpdatePassword />} />
+
+          <Route path="/payment/:venueId/:bookingId" element={<PageTransition><PaymentBooking /></PageTransition>} />
+
+        <Route path="/receipts/:receiptNumber" element={<PageTransition><ReceiptViewer /></PageTransition>} />
         
+   
+<Route path="/verify/:receiptNumber" element={<VerifyReceipt />} />
         </Routes>
       </AnimatePresence>
       

@@ -5,6 +5,7 @@ import VenueInfoForm from './VenueDetails/VenueInfor';
 import AddressForm from './VenueDetails/VenueAddress';
 import ImageUploadForm from './VenueDetails/VenueCoverPage';
 import AmenitiesForm from './VenueDetails/Amenities';
+import VenuePricingForm from '../VenuePricingForm/VenuePricingForm';
 import { Venue } from '../../../types/venue';
 import SocialMediaLinks from '../../VenueManager/Social/SocialLinks';
 import Gallery from './VenueDetails/AvailabiltyGallery/Gallery';
@@ -194,6 +195,7 @@ const VenueDetailPage: React.FC = () => {
   const tabs = [
     { id: 'info', name: 'Venue Info' },
     { id: 'address & amenities', name: 'Address & Amenities' },
+    { id: 'pricing', name: 'Pricing' }, // Add this new tab
     { id: 'social', name: 'Social Media' },
     { id: 'cover photo', name: 'Cover Photo' },
     { id: 'gallery', name: 'Gallery' },
@@ -274,6 +276,12 @@ const VenueDetailPage: React.FC = () => {
               venue={venue}
               isEditing={isEditingInfo}
               setIsEditing={setIsEditingInfo}
+            />
+          )}
+          {activeTab === 'pricing' && (
+            <VenuePricingForm
+              venueId={venue.id.toString()}
+              
             />
           )}
           {activeTab === 'address & amenities' && (

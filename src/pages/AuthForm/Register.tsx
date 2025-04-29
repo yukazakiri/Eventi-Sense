@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import supabase from '../../api/supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../../assets/images/logoES.png';
+import { Link } from 'react-router-dom';
 
 // Add function to record user activity
 const recordUserActivity = async (userId: string) => {
@@ -340,10 +341,15 @@ export default function Auth() {
             />
           </div>
           <div >
-            <div className="flex items-center justify-between">
-             <label className="text-sm font-medium text-gray-200">Password</label>
-              <a href="#" className="text-xs text-blue-400 hover:text-blue-300 hover:underline">Forgot password?</a>
-            </div>
+          <div className="flex items-center justify-between">
+  <label className="text-sm font-medium text-gray-200">Password</label>
+  <Link 
+    to="/reset-password" 
+    className="text-xs text-blue-400 hover:text-blue-300 hover:underline"
+  >
+    Forgot password?
+  </Link>
+</div>
             <input
               type="password"
               name="password"

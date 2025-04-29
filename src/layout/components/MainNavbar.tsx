@@ -163,7 +163,7 @@ function MainNavbar() {
         handleSearch={handleSearch}
         toggleMobileMenu={toggleMobileMenu}
         navigate={navigate}
-        label=""
+        label="Menu"
         position="bottom-right"
         zIndex={9999}
       />

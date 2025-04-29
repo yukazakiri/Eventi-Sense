@@ -20,7 +20,7 @@ interface CalendarProps {
     eventPlannerId: string;
 }
 
-const   AddEventPlannerAvailabilityForm: React.FC<CalendarProps> = ({ eventPlannerId }) => {
+const AddEventPlannerAvailabilityForm: React.FC<CalendarProps> = ({ eventPlannerId }) => {
   const [events, setEvents] = useState<AvailabilityEvent[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<AvailabilityEvent | null>(null);
@@ -69,6 +69,21 @@ const   AddEventPlannerAvailabilityForm: React.FC<CalendarProps> = ({ eventPlann
           console.error("Error fetching events:", error);
           setError("Failed to fetch events. Please try again.");
       }
+  };
+
+  // Function to check if a time range overlaps with existing events
+  const checkOverlap = (start: Date, end: Date, excludeEventId?: string): boolean => {
+      return events.some(event => {
+          if (excludeEventId && event.id === excludeEventId) {
+              return false; // Skip the event being edited
+          }
+          
+          const eventStart = new Date(event.start);
+          const eventEnd = new Date(event.end);
+          
+          // Check for overlap: new start is before existing end AND new end is after existing start
+          return start < eventEnd && end > eventStart;
+      });
   };
 
   const handleEventClick = (info: any) => {
@@ -157,6 +172,12 @@ const   AddEventPlannerAvailabilityForm: React.FC<CalendarProps> = ({ eventPlann
           return;
       }
 
+      // Check for overlapping events before saving
+      if (checkOverlap(newAvailability.start, newAvailability.end)) {
+          setError("This availability overlaps with an existing one. Please choose a different time range.");
+          return;
+      }
+
       try {
           const { error } = await supabase
               .from("event_planner_availability")
@@ -213,6 +234,12 @@ const   AddEventPlannerAvailabilityForm: React.FC<CalendarProps> = ({ eventPlann
       
       if (editedEnd <= editedStart) {
           setError('End time must be after start time');
+          return;
+      }
+      
+      // Check for overlapping events before updating, excluding the current event
+      if (checkOverlap(editedStart, editedEnd, selectedEvent.id)) {
+          setError("This availability overlaps with an existing one. Please choose a different time range.");
           return;
       }
       

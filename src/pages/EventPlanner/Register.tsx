@@ -107,7 +107,7 @@ export default function EventPlannerOnboarding() {
               Refresh Page
             </button>
             <NavLink 
-              to="/business-profile" 
+              to="/event-planner-Dashboard/Home" 
               className="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg text-white font-medium transition-colors duration-300 flex items-center justify-center"
             >
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

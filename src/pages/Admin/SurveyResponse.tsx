@@ -6,25 +6,22 @@ import {
 } from 'recharts';
 import supabase from '../../api/supabaseClient';
 
-// Update the interface to include email
+// Update the interface to match the table structure
 interface SurveyData {
   id: string;
   user_id: string;
-  email: string;
+  created_at: string;
   usability: number;
   responsiveness_performance: number;
-  data_security: number;
   functionality: number;
   reliability: number;
   user_satisfaction: number;
   comment: string | null;
-  last_name: string;
-  first_name: string;
-  profiles?: {
-    email: string;
-    last_name: string;
-    first_name: string;
-  };
+  data_security: number;
+  // Add profile data that will be joined
+  first_name?: string;
+  last_name?: string;
+  email?: string;
 }
 
 function SurveyResponse() {
@@ -39,47 +36,30 @@ function SurveyResponse() {
 
   async function fetchSurveyData() {
     try {
+      // Fetch survey responses with profiles data
       const { data: surveyData, error: surveyError } = await supabase
         .from('survey_responses')
-        .select('*')
+        .select(`
+          *,
+          profiles:user_id (
+            first_name,
+            last_name,
+            email
+          )
+        `)
         .order('created_at', { ascending: false });
   
       if (surveyError) throw surveyError;
   
-      const userIds = surveyData?.map(response => response.user_id) || [];
-      const { error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, first_name, last_name, email')
-        .in('id', userIds);
+      // Transform the data to include profile information
+      const transformedData = surveyData?.map(survey => ({
+        ...survey,
+        first_name: survey.profiles?.first_name || 'N/A',
+        last_name: survey.profiles?.last_name || 'N/A',
+        email: survey.profiles?.email || 'N/A'
+      })) || [];
   
-      if (profilesError) throw profilesError;
-  
-      // Create transformed data with unique names
-      const nameMap = new Map();
-    {/*  const _transformedData = surveyData?.map(survey => {
-        const profile = profilesData?.find(profile => profile.id === survey.user_id);
-        const fullName = `${profile?.first_name || 'N/A'} ${profile?.last_name || 'N/A'}`;
-        
-        // If we've seen this name before, use the existing data
-        if (nameMap.has(fullName)) {
-          return nameMap.get(fullName);
-        }
-  
-        const userData = {
-          ...survey,
-          email: profile?.email || 'N/A',
-          first_name: profile?.first_name || 'N/A',
-          last_name: profile?.last_name || 'N/A'
-        };
-  
-        // Store this name and data
-        nameMap.set(fullName, userData);
-        return userData;
-      }).filter(Boolean) || [];*/} 
-  
-      // Filter to keep only unique entries
-      const uniqueData = Array.from(nameMap.values());
-      setSurveyData(uniqueData);
+      setSurveyData(transformedData);
     } catch (err: any) {
       setError(err.message);
     } finally {

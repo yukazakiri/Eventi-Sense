@@ -8,6 +8,7 @@ interface Attendee {
   id: string;
   email: string;
   full_name: string;
+  user_id: string;
 }
 
 interface TicketWithAttendee extends Ticket {
@@ -15,6 +16,7 @@ interface TicketWithAttendee extends Ticket {
   order?: Order; // Optional since free tickets won't have an order
   check_in_time?: string;
   check_in_status?: string; // New field for check-in status
+  user_id?: string;
 }
 
 // Enhanced Event interface with status
@@ -580,7 +582,7 @@ const AttendeeManagementPage: React.FC = () => {
                             </span>
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{ticket.attendee?.full_name || 'Unknown'}</div>
+                            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{ticket.id || 'Unknown'}</div>
                             <div className="text-sm text-gray-500 dark:text-gray-400">{ticket.attendee?.email || 'No email'}</div>
                           </div>
                         </div>
