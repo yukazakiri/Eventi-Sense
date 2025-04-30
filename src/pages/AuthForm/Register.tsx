@@ -149,7 +149,7 @@ export default function Auth() {
         email: formData.email,
         password: formData.password,
         options: {
-          emailRedirectTo: 'https://eventi-sense-1b32-8dkkz517y-jays-projects-45cd8be1.vercel.app/confirm-success',
+          emailRedirectTo: 'https://eventisense.koamishin.org/register',
           data: {
             first_name: formData.firstName,
             last_name: formData.lastName,
